@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>희랑 — Portfolio</title>
+<script>
+/* 폰이면 모바일 모드로. ?desktop=1 이면 이 차원 여정을 그대로 본다 */
+if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) location.replace('m/' + location.hash);
+</script>
 <style>
   @font-face{font-family:"Pretendard";src:url("assets/fonts/PretendardVariable.woff2") format("woff2-variations");font-weight:100 900;font-display:swap}
 

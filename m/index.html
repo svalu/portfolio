@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c0203a">
+<title>희랑 — Portfolio</title>
+<style>
+  @font-face{font-family:"Pretendard";src:url("../assets/fonts/PretendardVariable.woff2") format("woff2-variations");font-weight:100 900;font-display:swap}
+
+  /* ═══════════════════════════════════════════════════════════
+     모바일 모드 — 폰에서 열면 이 페이지로 온다 (index.html 이 리다이렉트)
+       · 데스크톱의 sticky 차원 스택 대신 가벼운 세로 카드. 카드 = 차원. 배경색이 카드마다 바뀐다
+       · 같은 편집 체계(번호·큰 타이포·점 라인·띠·본문), 같은 3D 오브젝트(우상단에 작게, 카드마다 색이 먼저 바뀐다)
+       · 실물은 폰에서 '직접 열기'. 데스크톱 전용 화면은 미니어처 + 안내
+       · 첫 화면은 3초 안에 훅: 빨강 → 응축 → 이름 → 한 문장
+     ═══════════════════════════════════════════════════════════ */
+  :root{
+    --red:#c0203a; --paper:#ffffff; --ink:#111;
+    --ease:cubic-bezier(.4,.05,.2,1); --in:cubic-bezier(.2,.7,.2,1);
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth;background:#070a12}
+  body{font-family:"Pretendard","Malgun Gothic",-apple-system,system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+
+  /* ── 카드 공통 ── */
+  .card{position:relative;min-height:100svh;padding:14svh 6vw 12svh;overflow:hidden;
+    --bg:#fff;--fg:#111;--fg2:rgba(17,17,17,.62);--fg3:rgba(17,17,17,.38);--line:rgba(17,17,17,.14);--acc:#8a0f78;--acc2:#8a0f78;--band:#3a3a3a;
+    background:var(--bg);color:var(--fg)}
+  .no{font-size:10px;letter-spacing:.34em;color:var(--fg3)}
+  .h{margin-top:10px;font-size:clamp(46px,15.5vw,96px);font-weight:200;letter-spacing:-.035em;line-height:.9}
+  .h small{display:block}
+  .hook{margin-top:22px;font-size:clamp(19px,5.4vw,26px);font-weight:500;letter-spacing:-.02em;line-height:1.35}
+  .sub{margin-top:8px;font-size:13px;color:var(--fg2);font-weight:300;line-height:1.7}
+  .ddots{display:flex;justify-content:space-between;margin:22px 0 0;width:70%}
+  .ddots i{width:5px;height:5px;border-radius:50%;background:var(--acc);opacity:.5}
+  .ddots i:nth-child(3n){opacity:1}
+  .facts{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:10px}
+  .facts p{font-size:13px;line-height:1.65;color:var(--fg2);font-weight:300}
+  .facts p b{color:var(--fg);font-weight:500}
+  .btn{display:inline-flex;align-items:center;gap:10px;margin-top:22px;padding:13px 18px;border-radius:999px;border:1px solid var(--acc);color:var(--acc2);
+    font-size:12px;letter-spacing:.16em;text-decoration:none;font-weight:500;transition:transform .5s var(--in),background .4s var(--ease)}
+  .btn:active{transform:scale(.97)}
+  .btn::after{content:"→"}
+  .band{position:absolute;left:0;right:0;bottom:0;height:5.5svh;background:var(--band)}
+  .year{position:absolute;right:5vw;bottom:1.2svh;font-size:16px;font-weight:300;color:var(--fg);z-index:1}
+  /* 등장 */
+  .r{opacity:0;transform:translateY(18px);transition:opacity .8s var(--in),transform 1s var(--in)}
+  .card.in .r{opacity:1;transform:none}
+  .card.in .r:nth-child(2){transition-delay:.1s} .card.in .r:nth-child(3){transition-delay:.2s} .card.in .r:nth-child(4){transition-delay:.3s}
+  .card.in .r:nth-child(5){transition-delay:.4s} .card.in .r:nth-child(6){transition-delay:.5s} .card.in .r:nth-child(7){transition-delay:.6s}
+
+  /* ── 0 · 히어로 ── */
+  .hero{--bg:#fff;padding-top:0;display:grid;grid-template-rows:60svh 6svh 34svh}
+  .hero .top{position:relative;padding:5svh 6vw 0}
+  .hero .dots{position:absolute;left:44%;right:5vw;top:3.4svh;display:flex;justify-content:space-between}
+  .hero .dots i{width:6px;height:6px;border-radius:50%;background:#c9c9c9;opacity:0;transform:translateY(8px);transition:opacity .6s var(--in),transform .8s var(--in),background 1.2s var(--ease)}
+  body.act2 .hero .dots i{opacity:1;transform:none;transition-delay:var(--ad),var(--ad),var(--cd)}
+  body.color .hero .dots i{background:var(--dc)}
+  body.flow .hero .dots i{transition:none}
+  .hero .type{font-size:clamp(70px,22vw,140px);font-weight:200;letter-spacing:-.035em;line-height:.86;margin-top:9svh}
+  .hero .type small{display:block;opacity:0;transform:translateY(20px);transition:opacity .9s var(--in),transform 1.1s var(--in),color 1.6s var(--ease)}
+  body.act2 .hero .type small{opacity:1;transform:none}
+  body.act2 .hero .type small:nth-child(2){transition-delay:.25s,.25s,0s}
+  body.color .hero .type small{color:#8a0f78;transition-delay:0s,0s,1.1s}
+  .hero .tag{position:absolute;left:6vw;bottom:4svh;font-size:12px;letter-spacing:.3em;color:rgba(17,17,17,.5);opacity:0;transform:translateY(10px);transition:opacity .8s var(--in) .9s,transform .9s var(--in) .9s}
+  body.act2 .hero .tag{opacity:1;transform:none}
+  .hero .mid{position:relative;background:#3a3a3a}
+  .hero .mid::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#3fae7a,#12b3b9 55%,#1f8fd6);clip-path:inset(0 100% 0 0);transition:clip-path 1.8s var(--ease) .2s}
+  body.color .hero .mid::after{clip-path:inset(0 0 0 0)}
+  .hero .tri{position:absolute;left:0;bottom:0;width:22%;height:150%;background:linear-gradient(135deg,#c2c2c2,#8a8a8a);clip-path:polygon(0 0,100% 100%,0 100%);z-index:1}
+  .hero .tri::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#6fc28f,#9fd7a5);opacity:0;transition:opacity 1.2s var(--ease) 1.2s}
+  body.color .hero .tri::after{opacity:1}
+  .hero .role{position:absolute;right:5vw;bottom:14%;font-size:15px;color:#fff;font-weight:300;z-index:1}
+  .hero .bot{position:relative;background:#050505;padding:5svh 6vw 0}
+  .hero .bot::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#8a9a2a,#6f7a3a 55%,#8d4a86);clip-path:inset(0 100% 0 0);transition:clip-path 2s var(--ease) .5s}
+  body.color .hero .bot::after{clip-path:inset(0 0 0 0)}
+  .hero .lead{position:relative;z-index:1;font-size:15px;line-height:1.85;font-weight:300;color:#e6e6e6;clip-path:inset(0 0 100% 0);transition:clip-path 1.2s var(--in) 1.1s,color 1.6s var(--ease) .9s}
+  body.act2 .hero .lead{clip-path:inset(0 0 0 0)} body.color .hero .lead{color:#f4d54a}
+  .hero .lead b{font-weight:500;color:#fff}
+  .hint{position:absolute;left:50%;bottom:2.2svh;transform:translateX(-50%);z-index:2;font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.75);opacity:0;transition:opacity 1s var(--ease) 2s}
+  body.color .hint{opacity:1}
+  .hint i{display:block;width:1px;height:18px;margin:6px auto 0;background:rgba(255,255,255,.5);animation:drop 1.6s ease-in-out infinite}
+  @keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+  /* 빨강 베일 */
+  .veil{position:fixed;inset:0;background:var(--red);z-index:20;pointer-events:none;--vr:150%;
+    -webkit-mask-image:radial-gradient(ellipse var(--vr) var(--vr) at 78% 44%,#000 92%,transparent 100%);mask-image:radial-gradient(ellipse var(--vr) var(--vr) at 78% 44%,#000 92%,transparent 100%)}
+  body.done .veil{display:none}
+
+  /* ── 실물 프레임 ── */
+  .phone{position:relative;margin:26px auto 0;width:62vw;aspect-ratio:9/19.5;border-radius:9vw;background:#05070d;border:.9vw solid #1b2130;overflow:hidden;box-shadow:0 26px 60px rgba(0,0,0,.55)}
+  .phone::before{content:"";position:absolute;left:50%;top:2.6vw;transform:translateX(-50%);width:32%;height:2.2vw;border-radius:999px;background:#0b0e16;z-index:2}
+  .phone .view{position:absolute;left:0;top:0;width:390px;height:844px;transform-origin:0 0}
+  .phone .view iframe{width:100%;height:100%;border:0;display:block;background:#0d1117}
+  .phone .tap{position:absolute;inset:0;z-index:3}       /* 미니어처는 탭하면 실물을 연다 */
+  .frame{position:relative;margin-top:22px;border-radius:12px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 18px 44px rgba(30,20,0,.16)}
+  .frame .bar{height:24px;display:flex;align-items:center;gap:6px;padding:0 10px;background:#f1ede4;border-bottom:1px solid rgba(22,21,15,.08)}
+  .frame .bar i{width:8px;height:8px;border-radius:50%;background:rgba(22,21,15,.14)} .frame .bar span{margin-left:8px;font-size:10px;letter-spacing:.08em;color:var(--fg3)}
+  .frame .view{position:relative;transform-origin:0 0}
+  .frame .view iframe{border:0;display:block;background:#fff;width:100%;height:100%}
+  .frame .tap{position:absolute;inset:0;z-index:3}
+  .frame.small{width:58%}
+  .cap{margin-top:8px;font-size:11px;letter-spacing:.2em;color:var(--fg3)}
+
+  /* ── 팔레트 ── */
+  #c01{--bg:#0b1020;--fg:#e8ecf4;--fg2:rgba(232,236,244,.62);--fg3:rgba(232,236,244,.38);--line:rgba(232,236,244,.12);--acc:#4b6cff;--acc2:#9fb0ff;--band:#151d3f}
+  #c02{--bg:#f5f2ea;--fg:#16150f;--fg2:rgba(22,21,15,.62);--fg3:rgba(22,21,15,.4);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band:#e9dcc6}
+  #c03{--bg:#0f1412;--fg:#e8f4ee;--fg2:rgba(232,244,238,.62);--fg3:rgba(232,244,238,.38);--line:rgba(232,244,238,.12);--acc:#2fd3a0;--acc2:#8ff0cf;--band:#14241e}
+  #c04{--bg:#070a12;--fg:#f0eef5;--fg2:rgba(240,238,245,.62);--fg3:rgba(240,238,245,.38);--line:rgba(240,238,245,.12);--acc:#c0203a;--acc2:#ff7a90;--band:#1a0d14}
+  .nums{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .nums div{padding:14px 12px;border:1px solid var(--line);border-radius:12px}
+  .nums b{display:block;font-size:24px;font-weight:300;letter-spacing:-.02em;color:var(--acc2)}
+  .nums span{display:block;margin-top:4px;font-size:11px;line-height:1.5;color:var(--fg2)}
+  .foot{--bg:#fff;min-height:auto;padding:10svh 6vw 12svh;background:#fff}
+  .foot p{font-size:13px;line-height:1.8;color:rgba(17,17,17,.6);font-weight:300}
+  .foot a{color:#8a0f78;text-decoration:none;border-bottom:1px solid currentColor}
+  .foot .sig{margin-top:26px;font-size:22px;font-weight:200;letter-spacing:-.02em}
+
+  /* 3D 오브젝트: 우상단에 작게, 카드 색을 미리 입는다 */
+  #c{position:fixed;inset:0;z-index:10;pointer-events:none}
+</style>
+</head>
+<body class="act0">
+
+<!-- ═══ 0 · 히어로 ═══ -->
+<section class="card hero" id="hero">
+  <div class="top">
+    <div class="dots" id="dots"></div>
+    <div class="type"><small>HEE</small><small>RANG</small></div>
+    <div class="tag">UX ENGINEER · PORTFOLIO</div>
+  </div>
+  <div class="mid"><div class="tri"></div><div class="role">.UX Engineer</div></div>
+  <div class="bot">
+    <p class="lead"><b>화려한 디자이너인 줄 알았는데, 시스템을 만드는 사람.</b><br>상담 화면에 창과 작업표시줄을 넣은 2023년부터, AI 여럿과 일하는 방식을 설계한 2026년까지. 순서대로 보여줍니다.</p>
+    <div class="hint">SCROLL<i></i></div>
+  </div>
+</section>
+
+<!-- ═══ 01 · Blue Horizon ═══ -->
+<section class="card" id="c01" data-col="#3d5cff">
+  <div class="no r">01 — INTERFACE</div>
+  <h2 class="h r"><small>BLUE</small><small>HORIZON</small></h2>
+  <p class="hook r">관리자가 자리에 없어도 본다.</p>
+  <p class="sub r">클라우드 컨택센터 운영 플랫폼 · 디자인 리뉴얼 · 2026. 컨택센터 관리 화면은 늘 데스크톱 전용이었다. 그 전제를 깼다. 지금 이 폰에서 진짜가 돌아간다.</p>
+  <div class="phone r"><div class="view"><iframe data-src="../work/blue-horizon/live.html" title="Blue Horizon"></iframe></div><a class="tap" href="../work/blue-horizon/live.html" target="_blank" aria-label="실물 열기"></a></div>
+  <a class="btn r" href="../work/blue-horizon/live.html" target="_blank">실물 열기 · admin 으로 로그인</a>
+  <div class="facts r">
+    <p><b>한 화면에서 보고, 판단하고, 조치한다.</b> 실시간 KPI·상담원 상태·채널 대기열을 하나의 흐름으로.</p>
+    <p><b>디자인을 코드로 냈다.</b> 프레임워크 없는 단일 HTML. Three.js 지구본 로그인, p5 차트, 다크·라이트, AI Mode. 표면은 내가, 배선은 개발팀이.</p>
+  </div>
+  <div class="band"></div><div class="year">.2026</div>
+</section>
+
+<!-- ═══ 02 · OS UI ═══ -->
+<section class="card" id="c02" data-col="#e0762e">
+  <div class="no r">02 — SYSTEM</div>
+  <h2 class="h r"><small>OS</small><small>UI</small></h2>
+  <p class="hook r">화면이 아니라 책상을 줬다.</p>
+  <p class="sub r">상담사는 창을 여러 개 띄워 일하는 사람이었다. 2023년 상담 화면에 창·최소화·작업표시줄을 넣었고, 2026년 같은 관점이 관리자 도구 전체로 번졌다. 같은 관점을 3년 두 번.</p>
+  <div class="frame r" data-vw="1024"><div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
+    <div class="view"><iframe data-src="../work/os-ui/2026/index.html" title="Admin OS 2026"></iframe></div>
+    <a class="tap" href="../work/os-ui/2026/index.html" target="_blank" aria-label="열기"></a></div>
+  <div class="cap r">2026 · 관리자 OS — 드래그·리사이즈·스냅·시작메뉴</div>
+  <div class="frame small r" data-vw="1440"><div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
+    <div class="view"><iframe data-src="../work/os-ui/2023/main.html" title="Counseling OS 2023"></iframe></div>
+    <a class="tap" href="../work/os-ui/2023/main.html" target="_blank" aria-label="열기"></a></div>
+  <div class="cap r">2023 · 상담사 화면 — 창과 작업표시줄</div>
+  <div class="facts r">
+    <p><b>둘 다 데스크톱 화면이라 폰에선 미니어처로 보입니다.</b> 창을 끌어보려면 데스크톱에서 열어주세요. 탭하면 실물이 열립니다.</p>
+    <p><b>화려해 보이지만 구조 얘기다.</b> 사용자가 여러 일을 동시에 하면, UI는 하나의 페이지이길 그만둬야 한다.</p>
+  </div>
+  <div class="band"></div><div class="year">.2023 → 2026</div>
+</section>
+
+<!-- ═══ 03 · Working with AI ═══ -->
+<section class="card" id="c03" data-col="#2fd3a0">
+  <div class="no r">03 — METHOD</div>
+  <h2 class="h r"><small>WORKING</small><small>WITH AI</small></h2>
+  <p class="hook r">AI 여럿과 한 프로젝트를 석 달 이어서 일했다.</p>
+  <p class="sub r">AI는 대화가 끝나면 잊는다. 그래서 기억을 사람 밖에, 파일로 두었다. 역할별 AI가 읽고 쓰며 서로 인계하고, 사람은 방향만 준다.</p>
+  <div class="nums r">
+    <div><b>3.4일 · 8분</b><span>실사용 로그 실측. "직전 3턴"은 근거 없는 단위였다 → 대화 단위를 시간으로 재설계</span></div>
+    <div><b>17일치</b><span>빠진 기록을 AI가 스스로 발견하고 지난 작업을 훑어 채워 넣게 만들었다</span></div>
+    <div><b>1회 롤백</b><span>학습 전에 판정 기준을 문서에 고정. 한 항목이 깨져서 버전 전체를 되돌렸다</span></div>
+    <div><b>계정 이동</b><span>회사·개인 계정을 분리한 날, 새 대화가 그대로 이어받아 작업을 계속했다</span></div>
+  </div>
+  <div class="facts r">
+    <p><b>대부분의 팀이 AI 도입에서 겉도는 이유는</b> 도구가 없어서가 아니라 일하는 방식을 못 바꿔서다. 그걸 혼자 석 달 해봤고, 무엇이 실제로 문제가 되는지 몸으로 안다.</p>
+  </div>
+  <div class="band"></div><div class="year">.2026</div>
+</section>
+
+<!-- ═══ 04 · svalu (예고) ═══ -->
+<section class="card" id="c04" data-col="#c0203a">
+  <div class="no r">04 — NEXT</div>
+  <h2 class="h r"><small>SVALU</small></h2>
+  <p class="hook r">내 말투를 배우는 로컬 AI. 곧 여기서 말합니다.</p>
+  <p class="sub r">API 없이 한 장의 GPU 안에서 산다. 데이터가 밖으로 나가지 않는 구조를 택했고, 그 대가와 한계를 안다. 아바타가 뜨고, 물으면 목소리로 답하는 장면이 이 자리에 들어옵니다.</p>
+  <div class="facts r">
+    <p><b>파일 기반 기억 · 역할 분업 · 실패 기록 · 판정 규율.</b> 3장에서 말한 방식으로 키운 존재다.</p>
+  </div>
+  <div class="band"></div><div class="year">.soon</div>
+</section>
+
+<section class="card foot">
+  <p>데스크톱에서 열면 <a href="../?desktop=1">차원을 지나가는 여정</a>으로 봅니다. 오브젤트가 문이 되어 다음 세계가 열립니다.</p>
+  <p class="sig">장유석 / 희랑 · UX Engineer</p>
+</section>
+
+<div class="veil" id="veil"></div>
+<canvas id="c"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const B = document.body, veil = document.getElementById('veil');
+const clamp01 = x=>Math.min(Math.max(x,0),1), easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+
+/* ── 히어로 점 라인 ── */
+const dots = document.getElementById('dots'), DOTS = 22, dotEls = [];
+const dotHue = i => 50 - (i/(DOTS-1))*230;
+for(let i=0;i<DOTS;i++){ const d=document.createElement('i'); dotEls.push(d);
+  d.style.setProperty('--dc', `hsl(${(dotHue(i)+360)%360} 72% 52%)`); d.style.setProperty('--ad',(0.5+i*0.03)+'s'); d.style.setProperty('--cd',(0.2+(DOTS-1-i)*0.035)+'s'); dots.appendChild(d); }
+
+/* ── 3D 오브젠트 (가볍게) ── */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'low-power'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5)); renderer.outputEncoding = THREE.sRGBEncoding;
+const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(30,1,.1,100); camera.position.set(0,0,20);
+const prof = [[0,-4.6],[1.0,-4.5],[1.55,-3.9],[1.65,-3.1],[1.35,-2.35],[0.85,-1.75],[0.7,-1.35],[0.95,-0.75],[1.15,-0.05],[0.95,0.55],[0.68,1.05],[0.66,1.55],[1.2,2.0],[2.15,2.35],[2.35,2.62],[2.1,2.85],[0,2.9]];
+const curve = new THREE.SplineCurve(prof.map(p=>new THREE.Vector2(p[0],p[1])));
+const lathe = new THREE.LatheGeometry(curve.getPoints(60), 64); lathe.computeVertexNormals();
+const RED = new THREE.Color(0x9c0a18), mat = new THREE.MeshStandardMaterial({color:RED.clone(), roughness:.7});
+const bodyM = new THREE.Mesh(lathe, mat), ball = new THREE.Mesh(new THREE.SphereGeometry(.68,40,28), mat); ball.position.y = 4.15;
+const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x333333, .55));
+const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(-4,6,8); scene.add(key);
+let vwW=1, vhW=1, base=1;
+function place(){ renderer.setSize(innerWidth, innerHeight, false); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  vhW = 2*Math.tan(camera.fov*Math.PI/360)*camera.position.z; vwW = vhW*camera.aspect; base = Math.min(vhW*0.34/9.43, vwW*0.30/4.7); }
+addEventListener('resize', place); place();
+const worldXY = (x,y)=>[(x-0.5)*vwW, -(y-0.5)*vhW - 0.115*base];
+
+/* ── 히어로 타임라인: 0.4s 빨강 → 1.5s 응축 → 이름 → 색 ── */
+const T = {act1:.4, act2:1.75, color:3.0}; const SHRINK = 1.5;
+const t0 = performance.now()/1000; let fired={}, flowStart=0;
+function flowDots(now){ const hs=(now-flowStart)*38; for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now-flowStart)*2.2-i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
+
+/* ── 카드 진입: 등장 + 오브젝트 색/자리 ── */
+const cards = [...document.querySelectorAll('.card')];
+const cols = cards.map(c=> c.dataset.col ? new THREE.Color(c.dataset.col) : RED.clone());
+let colT = RED.clone(), colTarget = RED.clone(), cur = 0;
+const inObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.18});
+cards.forEach(c=>inObs.observe(c));
+/* 색은 카드가 화면 40% 올라오면 먼저 바뀐다 */
+cards.forEach((c,i)=>new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ cur=i; colTarget.copy(cols[i]); } }),{rootMargin:'-40% 0px -40% 0px',threshold:0}).observe(c));
+
+/* ── 실물 지연 로드 + 스케일 ── */
+function fitViews(){
+  document.querySelectorAll('.phone').forEach(p=>{ const s=p.clientWidth/390, v=p.querySelector('.view'); v.style.transform=`scale(${s.toFixed(4)})`; v.style.height=(p.clientHeight/s)+'px'; });
+  document.querySelectorAll('.frame').forEach(f=>{ const W=+f.dataset.vw||1024, H=Math.round(W*0.625), s=f.clientWidth/W, v=f.querySelector('.view');
+    v.style.width=W+'px'; v.style.height=H+'px'; v.style.transform=`scale(${s.toFixed(4)})`; v.style.marginBottom=(H*s-H)+'px'; });
+}
+addEventListener('resize', fitViews); fitViews(); setTimeout(fitViews, 500);
+/* 화면 위아래 60% 안에 들어오면 로드, 2.5화면 이상 멀어지면 내린다 */
+const loadObs = new IntersectionObserver(es=>es.forEach(e=>{
+  const f = e.target;
+  if(e.isIntersecting){ if(!f.getAttribute('src')) f.setAttribute('src', f.dataset.src); }
+  else if(f.getAttribute('src') && Math.abs(e.boundingClientRect.top) > innerHeight*2.5) f.removeAttribute('src');
+}), {rootMargin:'60% 0px 60% 0px'});
+document.querySelectorAll('iframe[data-src]').forEach(f=>loadObs.observe(f));
+
+/* ── 프레임 ── */
+function frame(){
+  requestAnimationFrame(frame);
+  const now = performance.now()/1000, t = now - t0;
+  for(const k in T){ if(!fired[k] && t>=T[k]){ fired[k]=1; B.classList.add(k); if(k==='act1') B.classList.remove('act0'); if(k==='color'){ setTimeout(()=>{ B.classList.add('flow'); flowStart=performance.now()/1000; }, 1900); } } }
+  if(B.classList.contains('flow') && scrollY < innerHeight) flowDots(now);
+
+  const s = easeIO(clamp01((t - T.act1)/SHRINK));
+  veil.style.setProperty('--vr', (150*(1-s)).toFixed(2)+'%'); if(s>=1) B.classList.add('done');
+
+  /* 자리: 히어로에선 우측 중앙 크게(응축), 카드에선 우상단 작게. 스크롤 첫 화면에서 서서히 옮겨간다 */
+  const p = clamp01(scrollY/(innerHeight*0.9));
+  const x = .78 + (.84-.78)*p, y = .44 + (.11-.44)*p, sz = (1 + (1-s)*3.0) * (1 - .55*p);
+  const [wx,wy] = worldXY(x,y); group.position.set(wx,wy,0); group.scale.setScalar(base*sz);
+  colT.lerp(colTarget, .04); mat.color.copy(colT);
+  group.rotation.y = now*.2; group.rotation.z = Math.sin(now*.6)*.04;
+  ball.position.y = 4.15 + Math.sin(now*1.3)*.12;
+  renderer.render(scene, camera);
+}
+frame();
+</script>
+</body>
+</html>
