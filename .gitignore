@@ -1,0 +1,11 @@
+# 회사 원본 자료 — 절대 공개 금지
+data/
+# 로컬 도구
+.claude/
+*.zip
+*.ai
+*.pptx
+*.pdf
+*.xlsx
+Thumbs.db
+desktop.ini

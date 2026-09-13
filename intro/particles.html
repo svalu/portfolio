@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>희랑 — Intro 프로토타입 A</title>
+<style>
+  :root{
+    --bg:#070a12; --ink:#e8ecf4; --sub:rgba(232,236,244,.55); --line:rgba(232,236,244,.14);
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","Malgun Gothic",-apple-system,system-ui,sans-serif;overflow:hidden}
+  #c{position:fixed;inset:0;display:block}
+  /* 창 안에 뜨는 텍스트 — 파티클이 정렬된 뒤 등장 */
+  .title{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+    text-align:center;opacity:0;transition:opacity .9s ease;pointer-events:none}
+  .title.on{opacity:1}
+  .title .name{font-size:clamp(34px,5vw,64px);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+  .title .role{margin-top:14px;font-size:clamp(13px,1.2vw,16px);letter-spacing:.32em;color:var(--sub);text-transform:uppercase}
+  .title .line{width:36px;height:1px;background:var(--line);margin:22px auto 0}
+  .hint{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);font-size:12px;letter-spacing:.2em;
+    color:var(--sub);opacity:0;transition:opacity .8s ease 1.2s}
+  .hint.on{opacity:1}
+  .hint i{display:block;width:1px;height:26px;margin:10px auto 0;background:var(--line);
+    animation:drop 1.6s ease-in-out infinite}
+  @keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+  .skip{position:fixed;right:22px;top:20px;font-size:11px;letter-spacing:.2em;color:var(--sub);
+    border:1px solid var(--line);padding:8px 12px;border-radius:999px;background:transparent;cursor:pointer}
+  .skip:hover{color:var(--ink);border-color:rgba(232,236,244,.4)}
+  /* 개발용 리플레이 */
+  .replay{position:fixed;left:22px;top:20px;font-size:11px;letter-spacing:.2em;color:var(--sub);
+    border:1px solid var(--line);padding:8px 12px;border-radius:999px;background:transparent;cursor:pointer}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="title" id="title">
+  <div class="name">장유석 <span style="font-weight:300;opacity:.6">/</span> 희랑</div>
+  <div class="role">UX Engineer</div>
+  <div class="line"></div>
+</div>
+<div class="hint" id="hint">SCROLL<i></i></div>
+<button class="skip" id="skip">SKIP</button>
+<button class="replay" id="replay">REPLAY</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────
+   인트로 A — "화려함이 시스템으로 접힌다"
+   0.0~1.2s  파티클이 색을 띠고 흩날리며 나타남 (화려함)
+   1.2~3.2s  OS 창 윤곽 위치로 정렬, 색이 단색으로 가라앉음 (시스템)
+   3.2s~     이름·직함 등장, 스크롤 힌트
+   스크롤·클릭·SKIP → 즉시 정렬 완료 상태로 점프
+   ───────────────────────────────────────────────────────────── */
+const N = 7000;
+const T_BURST = 0.75, T_FLOAT = 1.25, T_ALIGN = 2.0;   // 초. burst는 float 구간 안에 포함
+let baseZ = 30;                                        // resize에서 계산되는 기본 카메라 거리
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x070a12);
+const camera = new THREE.PerspectiveCamera(42, 1, .1, 100);
+camera.position.set(0, 0, 30);
+
+/* 목표 형태: OS 창 윤곽을 2D 캔버스에 선으로 그리고 픽셀을 샘플링 */
+function windowShapePoints(count){
+  const W = 900, H = 560;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  g.fillStyle = '#000'; g.fillRect(0,0,W,H);
+  g.strokeStyle = '#fff'; g.lineWidth = 2.2; g.lineJoin = 'round';
+  const rr = (x,y,w,h,r)=>{g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();g.stroke();};
+  // 창 외곽
+  rr(60,50,780,460,14);
+  // 타이틀바
+  g.beginPath(); g.moveTo(60,92); g.lineTo(840,92); g.stroke();
+  // 신호등 점 3개
+  [86,104,122].forEach(x=>{g.beginPath();g.arc(x,71,4.5,0,Math.PI*2);g.fillStyle='#fff';g.fill();});
+  // 사이드바
+  g.beginPath(); g.moveTo(230,92); g.lineTo(230,510); g.stroke();
+  for(let i=0;i<6;i++){ g.beginPath(); g.moveTo(84,130+i*34); g.lineTo(190+(i%2)*14,130+i*34); g.stroke(); }
+  // KPI 카드 4
+  for(let i=0;i<4;i++){ rr(258+i*142,118,124,74,8); }
+  // 차트 영역 — 가운데는 비워서 이름이 앉을 자리를 만든다. 선은 아래쪽에 낮게
+  rr(258,214,404,272,8);
+  g.beginPath(); g.moveTo(280,462);
+  const pts=[[280,462],[330,430],[380,444],[430,400],[480,420],[530,380],[580,398],[640,360]];
+  pts.forEach(p=>g.lineTo(p[0],p[1])); g.stroke();
+  for(let i=0;i<3;i++){ g.beginPath(); g.moveTo(280,392+i*30); g.lineTo(640,392+i*30); g.strokeStyle='rgba(255,255,255,.35)'; g.lineWidth=1; g.stroke(); }
+  g.strokeStyle='#fff'; g.lineWidth=2.2;
+  // 우측 패널
+  rr(684,214,156,272,8);
+  for(let i=0;i<5;i++){ g.beginPath(); g.moveTo(704,246+i*46); g.lineTo(820,246+i*46); g.stroke(); }
+
+  // 픽셀 샘플링 → 가중치 있는 후보 배열
+  const img = g.getImageData(0,0,W,H).data;
+  const cand = [];
+  for(let y=0;y<H;y+=2) for(let x=0;x<W;x+=2){
+    const a = img[(y*W+x)*4];
+    if(a>40) cand.push(x, y, a/255);
+  }
+  const out = new Float32Array(count*3);
+  const sx = 34/W;                                 // 월드 폭 34
+  for(let i=0;i<count;i++){
+    const k = (Math.random()*(cand.length/3))|0;
+    const x = cand[k*3], y = cand[k*3+1];
+    out[i*3]   = (x - W/2)*sx + (Math.random()-.5)*.06;
+    out[i*3+1] = (H/2 - y)*sx + (Math.random()-.5)*.06;
+    out[i*3+2] = (Math.random()-.5)*.25;
+  }
+  return out;
+}
+
+/* 시작 형태: 넓게 흩어진 구름 */
+const start = new Float32Array(N*3);
+for(let i=0;i<N;i++){
+  // 중앙에 밀도가 몰린 구름 (r 분포를 제곱으로 당겨서 안쪽이 진하게)
+  const r = 2 + Math.pow(Math.random(),1.6)*16, th = Math.random()*Math.PI*2, ph = Math.acos(2*Math.random()-1);
+  start[i*3]   = r*Math.sin(ph)*Math.cos(th)*1.6;
+  start[i*3+1] = r*Math.sin(ph)*Math.sin(th)*.95;
+  start[i*3+2] = r*Math.cos(ph)*.9 + 2;   // 카메라 쪽으로 조금 당겨 크게 보이게
+}
+const target = windowShapePoints(N);
+const pos = new Float32Array(start);
+const col = new Float32Array(N*3);
+const seed = new Float32Array(N); for(let i=0;i<N;i++) seed[i]=Math.random();
+
+/* 화려한 색 (AIR Connect 톤) → 정렬 후 단색 */
+const cA = [new THREE.Color(0x4b9eff), new THREE.Color(0x9b6fff), new THREE.Color(0x00d9c6), new THREE.Color(0xff8c5a)];
+const cB = new THREE.Color(0xb9c3d6);
+const baseCol = new Float32Array(N*3);
+for(let i=0;i<N;i++){ const c = cA[(Math.random()*cA.length)|0]; baseCol[i*3]=c.r; baseCol[i*3+1]=c.g; baseCol[i*3+2]=c.b; }
+
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+geo.setAttribute('color', new THREE.BufferAttribute(col,3));
+const mat = new THREE.PointsMaterial({size:.085, vertexColors:true, transparent:true, opacity:0, sizeAttenuation:true, depthWrite:false, blending:THREE.AdditiveBlending});
+const points = new THREE.Points(geo, mat);
+scene.add(points);
+
+/* 타임라인 */
+let t0 = performance.now()/1000, done = false, jump = false;
+const ease = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+const title = document.getElementById('title'), hint = document.getElementById('hint');
+const mouse = {x:0,y:0};
+addEventListener('pointermove', e=>{ mouse.x=(e.clientX/innerWidth-.5); mouse.y=(e.clientY/innerHeight-.5); });
+
+function finish(){ if(done) return; done=true; title.classList.add('on'); hint.classList.add('on'); }
+function skip(){ jump = true; }
+addEventListener('wheel', skip, {passive:true}); addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON') skip(); });
+document.getElementById('skip').onclick = skip;
+document.getElementById('replay').onclick = ()=>{ t0=performance.now()/1000; done=false; jump=false; title.classList.remove('on'); hint.classList.remove('on'); pos.set(start); };
+
+function resize(){
+  const w=innerWidth, h=innerHeight; renderer.setSize(w,h,false);
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  // 창 폭 34가 화면에 들어오게 카메라 거리 조정
+  const fov = camera.fov*Math.PI/180;
+  const need = Math.max(34/ (2*Math.tan(fov/2)*camera.aspect), 22/(2*Math.tan(fov/2)));
+  baseZ = need*1.08;
+  camera.position.z = baseZ;
+}
+addEventListener('resize', resize); resize();
+
+function frame(){
+  requestAnimationFrame(frame);
+  const now = performance.now()/1000; let t = now - t0;
+  if(jump){ t = Math.max(t, T_FLOAT+T_ALIGN); }
+  // 폭발: 중심 한 점 → start 구름. easeOutExpo 라 첫 0.2초에 대부분 튀어나온다
+  const pB = Math.min(t/T_BURST,1);
+  const burst = pB>=1 ? 1 : 1 - Math.pow(2,-10*pB);
+  const pAl = ease(Math.min(Math.max((t-T_FLOAT)/T_ALIGN,0),1)); // 정렬
+  // 터질 때 크고 하얗게 타오르다(additive 겹침) → 부유 크기 → 정렬되면 가라앉아 텍스트가 뜬다
+  mat.opacity = (1 - .25*burst) * (1 - .5*pAl);
+  mat.size = (.42 - .23*burst) - .135*pAl;
+  // 카메라 펀치: 터지는 순간 살짝 앞에 있다가 뒤로 밀린다
+  const punch = 1 - .14*(1-burst);
+
+  for(let i=0;i<N;i++){
+    const i3=i*3, s=seed[i];
+    // 파티클마다 튀어나오는 속도가 다르게 (빠른 놈이 먼저 바깥으로)
+    const b = Math.min(burst*(0.8+ s*.5),1);
+    // 부유: 느린 흔들림, 정렬되며 사라짐
+    const wob = (1-pAl);
+    const fx = Math.sin(now*.7 + s*12)*.35*wob, fy = Math.cos(now*.6 + s*9)*.35*wob;
+    // 파티클마다 정렬 타이밍이 조금씩 다르게 (앞줄부터 접히는 느낌)
+    const local = Math.min(Math.max((pAl - s*.25)/.75,0),1);
+    const sx = start[i3]*b, sy = start[i3+1]*b, sz = 2 + (start[i3+2]-2)*b;
+    pos[i3]   = sx + (target[i3]  -sx)*local + fx;
+    pos[i3+1] = sy + (target[i3+1]-sy)*local + fy;
+    pos[i3+2] = sz + (target[i3+2]-sz)*local;
+    // 색: 화려 → 단색
+    col[i3]   = baseCol[i3]  + (cB.r-baseCol[i3])  *local;
+    col[i3+1] = baseCol[i3+1]+ (cB.g-baseCol[i3+1])*local;
+    col[i3+2] = baseCol[i3+2]+ (cB.b-baseCol[i3+2])*local;
+  }
+  geo.attributes.position.needsUpdate = true;
+  geo.attributes.color.needsUpdate = true;
+
+  // 카메라 패럴랙스 (정렬 후엔 아주 약하게)
+  const amp = .9 - .6*pAl;
+  camera.position.x += ((mouse.x*amp*2) - camera.position.x)*.05;
+  camera.position.y += ((-mouse.y*amp*1.2) - camera.position.y)*.05;
+  camera.position.z = baseZ*punch;
+  camera.lookAt(0,0,0);
+  points.rotation.y = (1-pAl)*Math.sin(now*.25)*.12;
+
+  if(pAl>=1 && !done) finish();
+  renderer.render(scene, camera);
+}
+frame();
+</script>
+</body>
+</html>

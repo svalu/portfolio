@@ -1,0 +1,3551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blue Horizon — Live</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>@font-face{font-family:"Pretendard";src:url("../../assets/fonts/PretendardVariable.woff2") format("woff2-variations");font-weight:100 900;font-display:swap}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<!-- Globe (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0d1117;
+  --panel:#13182a;
+  --border:rgba(255,255,255,0.20);
+  --blue:#0090ff;
+  --cyan:#38bdf8;
+  --orange:#ff8c5a;
+  --purple:#818cf8;
+  --green:#60a5fa;
+  --red:#ff4d6a;
+  --text:#e2e8f0;
+  --sub:rgba(226,232,240,0.71);
+  --nav:56px;
+}
+[data-theme="light"]{
+  --bg:#f1f3f8;
+  --panel:#ffffff;
+  --border:rgba(0,0,0,0.18);
+  --blue:#0078ff;
+  --cyan:#0ea5e9;
+  --orange:#e07030;
+  --purple:#6366f1;
+  --green:#3b82f6;
+  --red:#dc2626;
+  --text:#18181b;
+  --sub:rgba(24,24,27,0.45);
+}
+html{font-size:16px;}
+body{
+  width:100%;height:100vh;height:100dvh;overflow:hidden;
+  background:var(--bg);color:var(--text);
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+  display:flex;
+}
+
+/* ══ SIDEBAR (아이콘 스트립) ══ */
+.sidebar{
+  width:var(--nav);height:100vh;flex-shrink:0;
+  background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;
+  padding:14px 0;gap:2px;z-index:10;
+}
+.sb-logo{
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:6px;flex-shrink:0;cursor:pointer;
+}
+.sb-item{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--sub);transition:background .15s,color .15s;
+}
+.sb-item:hover{background:rgba(128,128,128,0.1);color:var(--text);}
+.sb-item.active{background:rgba(0,144,255,0.14);color:var(--blue);}
+[data-theme="light"] .sb-item.active{background:rgba(45,107,228,0.12);}
+.sb-item .material-icons{font-size:1.28rem;}
+.sb-gap{flex:1;}
+.sb-avatar{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  background:var(--purple);display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;font-weight:700;color:#fff;
+}
+
+/* ══ OVERLAY NAV ══ */
+.backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(3px);z-index:300;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.backdrop.show{opacity:1;pointer-events:all;}
+
+.overlay-nav{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--panel);border-right:1px solid var(--border);
+  box-shadow:4px 0 28px rgba(0,0,0,0.4);
+  z-index:400;transform:translateX(-100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1),
+             background-color 0.42s ease,
+             border-color 0.35s ease;
+  display:flex;flex-direction:column;
+}
+.overlay-nav.open{transform:translateX(0);}
+
+.on-head{
+  display:flex;align-items:center;gap:10px;
+  padding:13px 16px;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.on-head-logo{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.on-title{
+  font-size:1rem;font-weight:800;letter-spacing:0.03em;
+  color:var(--text);flex:1;
+}
+.on-title em{color:var(--blue);font-style:normal;}
+.on-close{
+  width:28px;height:28px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--sub);transition:background .15s,color .15s;
+}
+.on-close:hover{background:rgba(128,128,128,0.12);color:var(--text);}
+.on-close .material-icons{font-size:1.2rem;}
+.sb-title{
+  display:none;
+  font-size:1rem;font-weight:800;letter-spacing:0.02em;color:var(--text);
+  margin-right:auto;
+}
+.sb-title em{color:var(--blue);font-style:normal;}
+.on-close-bottom{
+  display:none;
+  align-items:center;justify-content:center;gap:6px;
+  padding:14px;border-top:1px solid var(--border);
+  font-size:0.9rem;font-weight:600;color:var(--sub);
+  cursor:pointer;flex-shrink:0;
+  transition:background .15s,color .15s;
+}
+.on-close-bottom:hover{background:rgba(128,128,128,0.08);color:var(--text);}
+.on-close-bottom .material-icons{font-size:1.2rem;}
+
+.on-body{flex:1;padding:10px 12px;overflow-y:auto;}
+.on-section-label{
+  font-size:0.5rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--sub);
+  padding:12px 8px 6px;
+}
+.on-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 10px;border-radius:8px;cursor:pointer;
+  color:var(--sub);transition:background .15s,color .15s;
+  margin-bottom:2px;border:1px solid transparent;
+}
+.on-item:hover{background:rgba(128,128,128,0.08);color:var(--text);}
+.on-item.active{
+  background:rgba(0,144,255,0.1);
+  border-color:rgba(0,144,255,0.18);color:var(--blue);
+}
+[data-theme="light"] .on-item.active{
+  background:rgba(45,107,228,0.07);border-color:rgba(45,107,228,0.18);color:var(--blue);
+}
+.on-icon{
+  width:32px;height:32px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(128,128,128,0.08);
+}
+.on-item.active .on-icon{background:rgba(0,144,255,0.15);}
+.on-icon .material-icons{font-size:1.3rem;}
+.on-label{font-size:0.92rem;font-weight:500;flex:1;}
+.on-item.active .on-label{font-weight:700;}
+.on-badge{
+  padding:1px 7px;border-radius:100px;
+  font-size:0.88rem;font-weight:700;
+  background:rgba(255,77,106,0.15);color:var(--red);
+}
+
+.on-footer{
+  padding:14px 16px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.on-avatar{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:var(--purple);display:flex;align-items:center;justify-content:center;
+  font-size:0.88rem;font-weight:700;color:#fff;
+}
+.on-user-info{flex:1;min-width:0;}
+.on-user-name{font-size:0.92rem;font-weight:600;color:var(--text);}
+.on-user-role{font-size:0.85rem;color:var(--sub);}
+.on-footer{cursor:pointer;transition:background .15s;}
+.on-footer:hover{background:rgba(128,128,128,0.07);}
+
+/* 유저 팝업 */
+.user-menu{
+  position:fixed;z-index:600;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:6px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.45);
+  min-width:190px;
+  opacity:0;pointer-events:none;
+  transform:translateY(6px);
+  transition:opacity .18s ease, transform .18s cubic-bezier(.22,1,.36,1);
+}
+.user-menu.show{opacity:1;pointer-events:all;transform:translateY(0);}
+.ump-header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 10px 10px;
+}
+.ump-avatar{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:var(--purple);display:flex;align-items:center;justify-content:center;
+  font-size:0.88rem;font-weight:700;color:#fff;
+}
+.ump-name{font-size:0.88rem;font-weight:600;color:var(--text);}
+.ump-role{font-size:0.88rem;color:var(--sub);}
+.ump-divider{height:1px;background:var(--border);margin:4px 0;}
+.ump-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:7px;
+  font-size:0.85rem;color:var(--sub);cursor:pointer;
+  transition:background .15s,color .15s;
+}
+.ump-item:hover{background:rgba(128,128,128,0.08);color:var(--text);}
+.ump-item .material-icons{font-size:1.1rem;}
+.ump-item.logout{color:var(--red);}
+.ump-item.logout:hover{background:rgba(255,77,106,0.10);color:var(--red);}
+
+/* 메뉴 버튼 (topbar) */
+.tb-menu-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  width:32px;height:32px;cursor:pointer;flex-shrink:0;border-radius:6px;
+  transition:background .15s;
+}
+.tb-menu-btn:hover{background:rgba(128,128,128,0.1);}
+.tb-menu-btn span{
+  display:block;width:16px;height:2px;
+  background:var(--sub);border-radius:1px;transition:all .25s;
+}
+
+/* ══ MAIN ══ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.page-wrap{flex:1;position:relative;overflow:hidden;min-width:0;}
+.pg{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  overflow-y:auto;min-width:0;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.18s ease;
+}
+.pg.active{opacity:1;pointer-events:auto;}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:50px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;
+  white-space:nowrap;overflow:hidden;
+}
+.tb-title{font-size:1.08rem;font-weight:800;letter-spacing:0.02em;flex:1;}
+.tb-title em{color:var(--blue);font-style:normal;}
+.tb-live{
+  display:flex;align-items:center;gap:6px;
+  font-size:0.85rem;font-weight:700;color:var(--green);letter-spacing:0.1em;
+}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--green);
+  animation:blink 1.4s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.45;transform:scale(0.75);}}
+.tb-time{font-size:0.88rem;color:var(--sub);font-variant-numeric:tabular-nums;}
+.theme-toggle{
+  display:flex;align-items:center;
+  width:90px;height:28px;border-radius:100px;
+  background:#1a2744;
+  position:relative;cursor:pointer;flex-shrink:0;
+  transition:background .3s;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.08);
+}
+.theme-toggle::before{
+  content:'DARK';
+  position:absolute;left:10px;
+  font-size:9px;font-weight:700;letter-spacing:0.12em;
+  color:rgba(255,255,255,0.55);
+  transition:opacity .2s;
+  z-index:1;
+}
+.theme-toggle::after{
+  content:'';position:absolute;right:4px;
+  width:20px;height:20px;border-radius:50%;
+  background:#4b9eff;box-shadow:0 0 8px rgba(0,144,255,0.6);
+  transition:transform .3s cubic-bezier(.4,0,.2,1),background .3s;
+}
+[data-theme="light"] .theme-toggle{background:#e8eef8;border-color:rgba(0,0,0,0.1);}
+[data-theme="light"] .theme-toggle::before{content:'LIGHT';color:rgba(24,24,27,0.5);left:auto;right:10px;}
+[data-theme="light"] .theme-toggle::after{transform:translateX(-62px);background:#2d6be4;box-shadow:0 0 8px rgba(45,107,228,0.4);}
+/* AI Mode 버튼 */
+.tb-ai-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 13px;border:none;border-radius:20px;
+  background:linear-gradient(135deg,rgba(0,144,255,0.28),rgba(14,165,233,0.22));
+  border:1px solid rgba(99,102,241,0.45);
+  font-size:0.85rem;font-weight:600;color:var(--text);
+  cursor:pointer;flex-shrink:0;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+  transition:transform .2s;
+  animation:tb-aiglow 3s ease-in-out infinite;
+}
+.tb-ai-btn:hover{transform:scale(1.05);}
+@keyframes tb-aiglow{
+  0%,100%{box-shadow:0 0 8px rgba(0,144,255,0.25);}
+  50%{box-shadow:0 0 18px rgba(0,144,255,0.55),0 0 28px rgba(14,165,233,0.25);}
+}
+.tb-ai-star{
+  display:inline-block;font-size:12px;
+  animation:tb-starspin 4s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes tb-starspin{
+  0%,100%{transform:rotate(0deg) scale(1);}
+  50%{transform:rotate(180deg) scale(1.2);}
+}
+.tb-alert{
+  display:flex;align-items:center;gap:5px;padding:4px 11px;
+  background:rgba(255,77,106,0.1);border:1px solid rgba(255,77,106,0.22);
+  border-radius:100px;font-size:0.88rem;font-weight:600;color:var(--red);cursor:pointer;
+}
+
+/* ── METRIC STRIP ── */
+.metric-strip{
+  display:flex;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.mc{
+  flex:1;min-width:260px;
+  padding:14px 24px;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.mc:last-child{border-right:none;}
+.mc-left{display:flex;flex-direction:column;gap:3px;min-width:0;}
+/* ── 공통 타이틀 시스템 ── */
+.sec-label{
+  font-size:0.9rem;font-weight:600;letter-spacing:0.14em;
+  text-transform:uppercase;color:rgba(255,255,255,0.72);margin-bottom:8px;flex-shrink:0;
+  white-space:nowrap;
+}
+[data-theme="light"] .sec-label{color:rgba(24,24,27,0.72);}
+.sec-title{font-size:0.92rem;font-weight:700;color:var(--text);}
+.mc-val{font-size:2rem;font-weight:900;line-height:1;letter-spacing:-0.025em;flex-shrink:0;white-space:nowrap;}
+.mc-val small{font-size:0.92rem;font-weight:400;color:var(--sub);margin-left:2px;}
+.mc-change{font-size:0.85rem;font-weight:600;white-space:nowrap;}
+.up{color:var(--green);}
+.dn{color:var(--red);}
+.neu{color:var(--sub);}
+
+/* ── HERO STRIP ── */
+.hero-strip{
+  display:flex;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.hb{flex:1;min-width:200px;padding:12px 24px;position:relative;overflow:hidden;border-bottom:1px solid var(--border);}
+.hb:not(:last-child){border-right:1px solid var(--border);}
+.hb-num{font-weight:900;line-height:1;letter-spacing:-0.03em;color:var(--text);white-space:nowrap;}
+.hb-num.lg{font-size:44px;}
+.hb-num.md{font-size:30px;}
+.hb-unit{font-size:1rem;font-weight:300;color:var(--sub);margin-left:3px;}
+.hb-sub{font-size:0.85rem;color:var(--sub);margin-top:4px;}
+.hb-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.hb-pill{
+  padding:2px 8px;border-radius:100px;font-size:0.85rem;font-weight:600;
+  background:rgba(255,255,255,0.07);color:rgba(226,232,240,0.7);
+}
+[data-theme="light"] .hb-pill{
+  background:rgba(0,0,0,0.07);color:rgba(24,24,27,0.6);
+}
+.hb-pill.accent{background:rgba(0,144,255,0.15);color:var(--blue);}
+.hb-pill.warn{background:rgba(255,140,90,0.15);color:var(--orange);}
+[data-theme="light"] .hb-pill.warn{background:rgba(224,112,48,0.12);}
+/* 바 인디케이터 */
+.hb-bars{margin-top:10px;display:flex;flex-direction:column;gap:7px;}
+.hb-bar-row{}
+.hb-bar-meta{display:flex;justify-content:space-between;font-size:0.88rem;color:var(--sub);margin-bottom:3px;}
+.hb-bar-track{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;}
+[data-theme="light"] .hb-bar-track{background:rgba(0,0,0,0.10);}
+.hb-bar-fill{height:100%;border-radius:2px;background:rgba(255,255,255,0.5);}
+[data-theme="light"] .hb-bar-fill{background:rgba(0,0,0,0.35);}
+.hb-bar-fill{height:100%;border-radius:2px;background:rgba(255,255,255,0.5);
+  transform-origin:left;transform:scaleX(0);animation:barIn .9s ease-out forwards;}
+.hb-bar-row:nth-child(1) .hb-bar-fill{animation-delay:.1s;}
+.hb-bar-row:nth-child(2) .hb-bar-fill{animation-delay:.25s;}
+.hb-bar-row:nth-child(3) .hb-bar-fill{animation-delay:.4s;}
+@keyframes barIn{to{transform:scaleX(1);}}
+@keyframes dangerPulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.danger{animation:dangerPulse 1.6s ease-in-out infinite;}
+/* 채널 리스트 */
+.hb-list{margin-top:8px;display:flex;flex-direction:column;gap:0;}
+.hb-list-item{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:0.88rem;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.hb-list-item:last-child{border-bottom:none;}
+.hb-list-label{color:var(--sub);}
+.hb-list-val{font-weight:700;color:var(--text);}
+.hb-list-val.warn{color:var(--red);}
+
+/* ── CHARTS AREA ── */
+.charts{
+  flex:1;display:grid;
+  grid-template-columns:minmax(300px,1.5fr) minmax(260px,1fr);
+  overflow:hidden;min-height:420px;
+}
+
+/* ── BOTTOM ROW ── */
+.bottom-row{
+  min-height:200px;flex-shrink:0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  border-top:1px solid var(--border);
+}
+.bot-panel{
+  padding:14px 20px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;min-height:200px;
+}
+.bot-panel:last-child{border-right:none;}
+
+/* 알림 */
+.alert-list{display:flex;flex-direction:column;gap:5px;}
+.al-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:6px 8px;border-radius:6px;
+  background:rgba(255,77,106,0.07);border-left:2px solid var(--red);
+}
+.al-icon{font-size:0.88rem;flex-shrink:0;margin-top:1px;}
+.al-body{}
+.al-title{font-size:0.88rem;font-weight:600;color:var(--text);}
+.al-desc{font-size:0.88rem;color:var(--sub);margin-top:1px;}
+
+/* 퀵스탯 */
+.qs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;}
+.qs-item{
+  padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:6px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.qs-label{font-size:11px;color:var(--sub);white-space:nowrap;}
+.qs-val{font-size:1.17rem;font-weight:800;color:var(--text);white-space:nowrap;}
+.qs-unit{font-size:0.88rem;color:var(--sub);margin-left:2px;}
+
+/* AI */
+.bot-ai{
+  background:rgba(0,144,255,0.08);border:1px solid rgba(0,144,255,0.15);
+  border-radius:8px;padding:10px 12px;flex:1;display:flex;flex-direction:column;gap:6px;
+}
+.ai-badge{
+  font-size:0.88rem;font-weight:700;letter-spacing:0.1em;
+  color:var(--blue);text-transform:uppercase;
+}
+.ai-body{font-size:0.88rem;color:rgba(226,232,240,0.75);line-height:1.5;}
+.ai-body strong{color:var(--text);}
+.ai-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
+.ai-btn{
+  padding:3px 8px;border-radius:100px;
+  background:rgba(0,144,255,0.12);border:1px solid rgba(0,144,255,0.2);
+  font-size:0.88rem;font-weight:600;color:var(--blue);cursor:pointer;
+  transition:background .15s;white-space:nowrap;
+}
+.ai-btn:hover{background:rgba(0,144,255,0.22);}
+
+/* LEFT: 아이소메트릭 */
+.chart-left{
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--border);
+  background:var(--panel);overflow:hidden;
+}
+.ch-head{
+  padding:16px 24px 8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ch-legend{display:flex;gap:14px;}
+.cl-item{display:flex;align-items:center;gap:5px;font-size:0.85rem;color:var(--sub);}
+.cl-dot{width:8px;height:8px;border-radius:2px;}
+.canvas-wrap{flex:1;position:relative;min-height:0;transition:opacity 0.35s ease;}
+.canvas-wrap canvas{position:absolute!important;top:0;left:0;}
+
+/* ROSE */
+.chart-rose{
+  display:flex;flex-direction:column;
+  border-left:1px solid var(--border);
+  background:var(--panel);overflow:hidden;
+}
+.rose-head{padding:14px 16px 4px;flex-shrink:0;}
+.rose-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden;transition:opacity 0.35s ease;}
+.rose-legend{
+  display:flex;flex-wrap:wrap;gap:4px 12px;
+  padding:8px 16px 10px;flex-shrink:0;
+}
+.rose-leg-item{
+  display:flex;align-items:center;gap:5px;
+  font-size:0.85rem;color:var(--sub);white-space:nowrap;
+}
+.rose-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.rose-leg-val{font-weight:700;margin-left:2px;}
+
+/* RIGHT (상담원) */
+.chart-right{
+  display:flex;flex-direction:column;
+  background:var(--panel);overflow:hidden;
+  border-left:1px solid var(--border);
+}
+.wave-wrap{
+  flex:1;display:flex;flex-direction:column;
+  border-bottom:1px solid var(--border);min-height:0;overflow:hidden;
+}
+.wave-head{padding:16px 16px 8px;flex-shrink:0;}
+.ch-queue{display:flex;flex-direction:column;gap:0;flex:1;padding:0 16px 12px;}
+.cq-item{flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px 0;border-bottom:1px solid var(--border);}
+.cq-item:last-child{border-bottom:none;}
+.cq-top{display:flex;align-items:center;gap:6px;}
+.cq-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.cq-name{font-size:0.88rem;color:var(--sub);flex:1;}
+.cq-processing{font-size:0.85rem;color:var(--sub);}
+.cq-processing strong{color:var(--text);font-weight:700;}
+.cq-num{font-size:1.6rem;font-weight:900;line-height:1;letter-spacing:-0.02em;}
+.cq-unit{font-size:0.85rem;font-weight:400;color:var(--sub);margin-left:4px;}
+.cq-track{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;}
+[data-theme="light"] .cq-track{background:rgba(0,0,0,0.10);}
+.cq-fill{height:100%;border-radius:2px;}
+
+/* 상담원 상태 */
+.agent-panel{padding:14px 16px;flex-shrink:0;}
+.ag-rows{display:flex;flex-direction:column;gap:8px;}
+.ag-row{display:flex;align-items:center;gap:9px;}
+.ag-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.ag-name{font-size:0.88rem;color:var(--sub);white-space:nowrap;width:52px;flex-shrink:0;}
+.ag-track{flex:2;height:2px;background:rgba(255,255,255,0.07);border-radius:1px;}
+[data-theme="light"] .ag-track{background:rgba(0,0,0,0.10);}
+.ag-fill{height:100%;border-radius:1px;}
+.ag-num{font-size:0.88rem;font-weight:700;color:var(--text);min-width:22px;text-align:right;}
+
+/* ══ 슬롯 카운터 ══ */
+.slot-wrap{
+  display:inline-block;overflow:hidden;
+  height:1em;line-height:1;vertical-align:top;
+}
+.slot-inner{
+  display:flex;flex-direction:column;
+  will-change:transform;
+}
+.slot-inner>span{display:block;height:1em;line-height:1;}
+.slot-sep{display:inline-block;vertical-align:top;}
+
+/* ══ 테마 전환 CSS TRANSITION ══ */
+body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
+.topbar, .metric-strip, .mc,
+.hero-strip, .hb,
+.charts, .chart-right,
+.bottom-row, .bot-panel, .bot-ai, .ai-btn,
+.qs-item, .al-item, .hb-bar-track, .hb-pill,
+.theme-toggle, .tb-alert, .backdrop {
+  transition:
+    background-color 0.42s ease,
+    background 0.42s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.4s ease;
+}
+/* 차트 패널 배경은 p5 캔버스와 항상 동일해야 하므로 즉시 전환 */
+.chart-left, .chart-rose {
+  transition:
+    border-color 0.35s ease;
+}
+
+/* ══ PAGE COMMON ══ */
+.pg-head{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;
+  padding:11px 20px;border-bottom:1px solid var(--border);
+  background:var(--panel);flex-shrink:0;
+  transition:background-color 0.42s,border-color 0.35s;
+}
+.pg-head-title{font-size:1rem;font-weight:700;color:var(--text);white-space:nowrap;}
+.pg-head-right{display:flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;flex-flow:column;}
+.pg-time{font-size:0.7rem;color:var(--sub);font-variant-numeric:tabular-nums;}
+.live-badge-sm{display:flex;align-items:center;gap:5px;font-size:0.88rem;font-weight:700;color:var(--green);}
+.pg-row{display:flex;gap:0;flex-shrink:0;border-bottom:1px solid var(--border);}
+.pg-panel{
+  flex:1;background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;min-width:0;
+  transition:background-color 0.42s,border-color 0.35s;
+}
+.pg-panel:last-child{border-right:none;}
+.pg-panel-head{
+  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  padding:12px 16px 8px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.pg-panel-title{font-size:0.88rem;font-weight:700;color:var(--text);}
+.pg-panel-sub{font-size:0.88rem;color:var(--sub);}
+.pg-panel-body{padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+.pg-empty{color:var(--sub);font-size:0.88rem;text-align:center;padding:24px 16px;}
+
+/* ══ 상담원 현황 ══ */
+.ag-kpi-bar{
+  display:flex;align-items:center;background:var(--panel);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+  transition:background-color 0.42s,border-color 0.35s;
+}
+.ag-kpi-item{flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;padding:14px 8px;gap:8px;}
+@media(max-width:600px){.ag-kpi-item{flex-direction:column;gap:3px;}}
+.ag-kpi-val{font-size:1.6rem;font-weight:900;line-height:1;letter-spacing:-0.02em;color:var(--text);}
+.ag-kpi-lbl{font-size:0.85rem;color:var(--sub);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;}
+.ag-kpi-sep{width:1px;height:36px;background:var(--border);flex-shrink:0;}
+.warn-panel .pg-panel-head{border-left:3px solid #fbbf24;}
+.live-panel .pg-panel-head{border-left:3px solid var(--green);}
+.warn-title{color:#fbbf24;}
+.warn-badges{display:flex;gap:6px;flex-wrap:wrap;}
+.warn-badge{font-size:0.88rem;font-weight:600;padding:2px 8px;border-radius:20px;}
+.warn-badge.red{background:rgba(255,77,106,0.15);color:var(--red);}
+.warn-badge.orange{background:rgba(251,191,36,0.15);color:#fbbf24;}
+.warn-badge.purple{background:rgba(129,140,248,0.15);color:var(--purple);}
+.live-count-badge{font-size:0.85rem;font-weight:700;color:var(--green);display:flex;align-items:center;gap:4px;}
+.ag-act-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.ag-act-item:last-child{border-bottom:none;}
+.ag-act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ag-act-name{font-size:0.88rem;font-weight:600;color:var(--text);flex:1;}
+.ag-act-status{font-size:0.85rem;color:var(--sub);}
+.ag-act-time{font-size:0.88rem;color:var(--sub);margin-left:auto;}
+.ag-top-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
+.ag-top-item:last-child{border-bottom:none;}
+.ag-rank{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:800;flex-shrink:0;}
+.ag-rank.rank-1{background:rgba(255,200,0,0.2);color:#f59e0b;}
+.ag-rank.rank-2{background:rgba(156,163,175,0.2);color:#9ca3af;}
+.ag-rank.rank-3{background:rgba(180,120,60,0.2);color:#b45309;}
+.ag-top-name{font-size:0.88rem;font-weight:600;color:var(--text);width:60px;flex-shrink:0;}
+.ag-top-meta{font-size:0.88rem;color:var(--sub);flex:1;}
+.ag-top-bar-wrap{flex:2;height:4px;background:rgba(128,128,128,0.12);border-radius:2px;overflow:hidden;}
+.ag-top-bar{height:100%;border-radius:2px;}
+.ag-top-val{font-size:0.88rem;font-weight:700;color:var(--text);min-width:44px;text-align:right;}
+
+/* ══ 통계/분석 ══ */
+.stat-tabs{display:flex;gap:2px;background:rgba(128,128,128,0.08);border-radius:8px;padding:3px;}
+.stat-tab{padding:4px 12px;border-radius:6px;font-size:0.7rem;font-weight:600;color:var(--sub);cursor:pointer;transition:background .15s,color .15s;}
+.stat-tab.active{background:var(--panel);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.15);}
+.stat-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-bottom:1px solid var(--border);flex-shrink:0;}
+.stat-kpi{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-right:1px solid var(--border);background:var(--panel);transition:background-color 0.42s,border-color 0.35s;}
+.stat-kpi:last-child{border-right:none;}
+.stat-kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.stat-kpi-body{flex:1;text-align:right;display:flex;flex-direction:column;gap:5px;}
+.stat-kpi-val{font-size:1.3rem;font-weight:900;line-height:1;letter-spacing:-0.02em;color:var(--text);}
+.stat-kpi-unit{font-size:0.85rem;font-weight:400;color:var(--sub);margin-left:2px;}
+.stat-kpi-lbl{font-size:0.85rem;color:var(--sub);}
+.stat-kpi-chg{font-size:0.85rem;font-weight:600;}
+.stat-kpi-chg.up{color:var(--green);}
+.stat-kpi-chg.dn{color:var(--orange);}
+.stat-kpi-chg.neu{color:var(--sub);}
+.stat-bar-chart{padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:6px;}
+.sbc-bars{display:flex;align-items:flex-end;gap:8px;flex:1;min-height:100px;}
+.sbc-bar-group{flex:1;display:flex;align-items:flex-end;gap:2px;}
+.sbc-bar{border-radius:3px 3px 0 0;min-width:8px;transition:height .4s ease;}
+.sbc-labels{display:flex;gap:8px;}
+.sbc-label{flex:1;text-align:center;font-size:0.85rem;color:var(--sub);}
+.stat-ch-list{padding:12px 16px;display:flex;flex-direction:column;gap:10px;}
+.stat-ch-item{display:flex;align-items:center;gap:8px;}
+.stat-ch-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.stat-ch-name{font-size:0.85rem;color:var(--sub);flex:1;}
+.stat-ch-track{flex:2;height:4px;background:rgba(128,128,128,0.12);border-radius:2px;overflow:hidden;}
+.stat-ch-fill{height:100%;border-radius:2px;}
+.stat-ch-pct{font-size:0.88rem;font-weight:700;color:var(--text);min-width:36px;text-align:right;}
+
+/* ══ 통계/분석 — 도넛 ══ */
+.donut-wrap{display:flex;flex-direction:row;align-items:center;justify-content:center;padding:14px 16px;gap:20px;flex:1;overflow:hidden;}
+.donut{width:148px;height:148px;border-radius:50%;flex-shrink:0;position:relative;}
+.donut-hole{position:absolute;inset:26px;border-radius:50%;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background 0.42s;}
+.donut-hole-val{font-size:1.1rem;font-weight:900;line-height:1;color:var(--text);}
+.donut-hole-lbl{font-size:0.83rem;color:var(--sub);margin-top:3px;}
+.donut-legend{display:flex;flex-direction:column;gap:7px;width:100%;}
+.donut-leg-item{display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.donut-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.donut-leg-name{font-size:0.88rem;color:var(--sub);flex:1;white-space:nowrap;}
+.donut-leg-pct{font-size:0.88rem;font-weight:700;white-space:nowrap;}
+/* SLA 7일 추이 */
+.sla-chart{display:flex;align-items:flex-end;gap:3px;padding:14px 12px 8px;flex:1;min-height:80px;min-width:0;overflow:hidden;}
+.sla-col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 4px;}
+.sla-bar-val{font-size:0.78rem;color:var(--sub);white-space:nowrap;}
+.sla-bar{width:100%;border-radius:3px 3px 0 0;}
+.sla-bar-day{font-size:0.88rem;color:var(--sub);border-top:1px solid var(--border);padding-top:4px;width:100%;text-align:center;transition:border-color 0.35s;white-space:nowrap;}
+/* TOP 5 */
+.top5-list{padding:10px 16px 12px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.top5-item{display:flex;align-items:center;gap:9px;}
+.top5-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.88rem;font-weight:700;color:#fff;flex-shrink:0;}
+.top5-rank{font-size:0.85rem;font-weight:700;color:var(--sub);min-width:12px;text-align:center;}
+.top5-name{font-size:0.85rem;font-weight:600;min-width:40px;}
+.top5-bar-wrap{flex:1;height:5px;background:rgba(128,128,128,0.12);border-radius:3px;overflow:hidden;}
+.top5-bar{height:100%;border-radius:3px;}
+.top5-meta{font-size:0.85rem;color:var(--sub);min-width:52px;text-align:right;}
+/* 채널별 누적 바 */
+.ch-stacked{padding:14px 16px;display:flex;flex-direction:column;gap:14px;flex:1;justify-content:center;}
+.ch-stack-bar{height:30px;border-radius:6px;overflow:hidden;display:flex;}
+.ch-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:rgba(255,255,255,0.9);}
+.ch-leg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;}
+.ch-leg-item{display:flex;align-items:center;gap:6px;}
+.ch-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.ch-leg-name{font-size:0.88rem;color:var(--sub);flex:1;}
+.ch-leg-pct{font-size:0.85rem;font-weight:700;color:var(--text);}
+/* 버블 매트릭스 히트맵 */
+.bubble-wrap{height:220px;flex-shrink:0;overflow:hidden;position:relative;}
+.bubble-wrap canvas{display:block;}
+/* 대표번호 테이블 */
+.rep-table{width:100%;border-collapse:collapse;}
+.rep-table th{font-size:0.85rem;color:var(--sub);font-weight:500;padding:8px 14px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;transition:border-color 0.35s;}
+.rep-table td{font-size:0.88rem;padding:8px 14px;border-bottom:1px solid var(--border);transition:border-color 0.35s;}
+[data-theme="light"] .rep-table td{border-bottom-color:rgba(0,0,0,0.06);}
+.rep-table tbody tr:last-child td{border-bottom:none;}
+.rep-num{font-weight:700;color:var(--blue);}
+.rep-sla-good{color:var(--green);font-weight:700;}
+
+/* ══ 통계/분석 — 카드 레이아웃 오버라이드 ══ */
+#pg-stats{background:var(--bg);padding:0 14px 20px;gap:0;}
+
+/* 페이지 헤더 강조 */
+#pg-stats .pg-head,
+#pg-agents .pg-head{
+  background:var(--panel);
+  padding:14px 20px;
+  margin-bottom:14px;
+  border-bottom:2px solid var(--blue);
+  height:auto;
+  min-height:57px;
+}
+#pg-stats .pg-head .pg-head-title,
+#pg-agents .pg-head .pg-head-title{
+  font-size:1.18rem;font-weight:900;
+  position:relative;padding-left:14px;
+}
+#pg-stats .pg-head .pg-head-title::before,
+#pg-agents .pg-head .pg-head-title::before{
+  content:'';position:absolute;left:0;top:10%;bottom:10%;
+  width:3px;border-radius:2px;background:var(--blue);
+}
+
+/* KPI 그리드 카드 */
+#pg-stats .stat-kpi-grid{margin:12px 0 0;border-radius:12px;border:1px solid var(--border);overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.18);}
+#pg-stats .stat-kpi{border-bottom:1px solid var(--border);}
+[data-theme="light"] #pg-stats .stat-kpi-grid{box-shadow:0 2px 8px rgba(0,0,0,0.07);}
+
+/* 섹션 그루핑 */
+.stat-section{display:flex;flex-direction:column;gap:0;margin-bottom:6px;}
+.stat-section-label{
+  display:flex;align-items:center;gap:8px;
+  font-size:1.1rem;font-weight:800;
+  color:var(--text);letter-spacing:0.02em;
+  padding:14px 2px 7px;flex-shrink:0;
+}
+.stat-section-label::before{
+  content:'';width:3px;height:14px;border-radius:2px;
+  background:var(--sl-color, var(--blue));flex-shrink:0;
+}
+
+/* pg-row → 카드 행 */
+#pg-stats .pg-row{border-bottom:none;gap:10px;align-items:stretch;min-height:280px;flex-wrap:wrap;}
+#pg-stats .pg-row:last-child{min-height:auto;}
+
+/* pg-panel → 카드 */
+#pg-stats .pg-panel,
+#pg-agents .pg-panel{
+  border-radius:12px;
+  border:1px solid var(--border);
+  border-right:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(0,0,0,0.18);
+  min-width:310px;
+}
+#pg-stats .pg-panel:last-child,
+#pg-agents .pg-panel:last-child{border-right:1px solid var(--border);}
+[data-theme="light"] #pg-stats .pg-panel,
+[data-theme="light"] #pg-agents .pg-panel{box-shadow:0 2px 8px rgba(0,0,0,0.07);}
+
+/* pg-agents 레이아웃 */
+#pg-agents{background:var(--bg);padding:0 14px 20px;gap:0;}
+#pg-agents .pg-row{border-bottom:none;gap:10px;align-items:stretch;min-height:240px;flex-wrap:wrap;}
+#pg-agents .stat-section:first-of-type{margin-top:0;}
+#pg-agents .stat-section:first-of-type .stat-section-label{padding-top:12px;}
+#pg-agents .pg-panel{min-width:280px;}
+#pg-agents .pg-row:last-child{min-height:auto;}
+/* KPI 바 카드화 */
+#pg-agents .ag-kpi-bar{
+  border-radius:12px;border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(0,0,0,0.18);
+  display:flex;flex-wrap:nowrap;overflow:hidden;
+}
+/* 700px 이하 → 3행 2열 */
+@media(max-width:700px){
+  #pg-agents .ag-kpi-bar{display:grid;grid-template-columns:repeat(2,1fr);flex-wrap:unset;}
+  #pg-agents .ag-kpi-sep{display:none;}
+  #pg-agents .ag-kpi-item{border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+  /* 2열(짝수 위치 item → nth-child 3,7,11): right border 제거 */
+  #pg-agents .ag-kpi-item:nth-child(3),
+  #pg-agents .ag-kpi-item:nth-child(7),
+  #pg-agents .ag-kpi-item:nth-child(11){border-right:none;}
+  /* 마지막 행(9,11번째): bottom border 제거 */
+  #pg-agents .ag-kpi-item:nth-child(9),
+  #pg-agents .ag-kpi-item:nth-child(11){border-bottom:none;}
+}
+
+/* ══ POLISH ══ */
+
+/* 커스텀 스크롤바 */
+.pg::-webkit-scrollbar{width:6px;}
+.pg::-webkit-scrollbar-track{background:#0d1117;border-radius:4px;}
+.pg::-webkit-scrollbar-thumb{background:rgba(0,144,255,0.28);border-radius:4px;}
+.pg::-webkit-scrollbar-thumb:hover{background:rgba(0,144,255,0.52);}
+[data-theme="light"] .pg::-webkit-scrollbar-track{background:#e8eaf0;}
+[data-theme="light"] .pg::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.18);}
+[data-theme="light"] .pg::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.32);}
+/* Firefox */
+.pg{scrollbar-width:thin;scrollbar-color:rgba(0,144,255,0.28) #0d1117;}
+[data-theme="light"] .pg{scrollbar-color:rgba(0,0,0,0.18) #e8eaf0;}
+
+/* 메트릭 카드 hover */
+.mc{cursor:pointer;transition:background .18s;}
+.mc:hover{background:rgba(255,255,255,0.04);}
+[data-theme="light"] .mc:hover{background:rgba(0,0,0,0.035);}
+
+/* 히어로 패널 hover — 좌측 컬러 accent bar */
+.hb{transition:background .18s;}
+.hb::before{
+  content:'';position:absolute;left:0;top:14px;bottom:14px;
+  width:2px;border-radius:2px;background:var(--blue);
+  transform:scaleY(0);transform-origin:center;
+  transition:transform .22s cubic-bezier(.4,0,.2,1);
+}
+.hb:hover{background:rgba(255,255,255,0.025);}
+.hb:hover::before{transform:scaleY(1);}
+[data-theme="light"] .hb:hover{background:rgba(0,0,0,0.025);}
+
+/* 바텀 패널 hover */
+.bot-panel{transition:background .18s;}
+.bot-panel:hover{background:rgba(255,255,255,0.025);}
+[data-theme="light"] .bot-panel:hover{background:rgba(0,0,0,0.025);}
+
+/* 경보 배지 펄스 dot */
+.tb-alert::before{
+  content:'';display:inline-block;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--red);margin-right:5px;flex-shrink:0;
+  animation:blink 1.2s ease-in-out infinite;
+}
+
+/* 숫자 변경 flash */
+@keyframes numPulse{0%,100%{opacity:1;}40%{opacity:0.35;}}
+.num-flash{animation:numPulse .45s ease;}
+
+/* qs-item hover */
+.qs-item{
+  padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:6px;
+  transition:background .18s;cursor:default;
+}
+.qs-item:hover{background:rgba(255,255,255,0.07);}
+[data-theme="light"] .qs-item{background:rgba(0,0,0,0.04);}
+[data-theme="light"] .qs-item:hover{background:rgba(0,0,0,0.08);}
+
+/* al-item hover */
+.al-item{transition:background .18s;}
+.al-item:hover{background:rgba(255,77,106,0.14);}
+
+/* ai-btn 개선 */
+.ai-btn{transition:background .15s,transform .12s;}
+.ai-btn:hover{background:rgba(0,144,255,0.22);transform:translateY(-1px);}
+.ai-btn:active{transform:translateY(0);}
+
+/* on-item 개선 */
+.on-item{transition:background .15s,color .15s;border-radius:8px;}
+
+
+@media(max-width:800px){
+  .aim-sb{width:0!important;border-right:none!important;}
+  .aim-sb>*{opacity:0;transition:opacity 0s;}
+  .charts{
+    grid-template-columns:1fr;
+    flex:none;
+    overflow:visible;
+  }
+  .chart-left{border-right:none;border-bottom:1px solid var(--border);min-height:380px;overflow:hidden;}
+  .chart-rose{border-left:none;border-top:1px solid var(--border);min-height:380px;overflow:hidden;}
+  .chart-right{border-left:none;border-top:1px solid var(--border);min-height:260px;overflow:hidden;}
+  .bottom-row{grid-template-columns:1fr 1fr;height:auto;}
+  .bot-panel{border-bottom:1px solid var(--border);}
+  .bot-panel:last-child{border-bottom:none;}
+  /* hero strip → min-width 기준 자동 */
+  .hb{min-width:200px;}
+}
+@media(max-width:700px){
+  /* ── 사이드바 → 상단 네비바 ── */
+  body{flex-direction:column;overflow-x:hidden;}
+  .sidebar{
+    width:100%;height:50px;flex-shrink:0;
+    flex-direction:row;align-items:center;
+    padding:0 14px;gap:4px;
+    border-right:none;border-bottom:1px solid var(--border);
+  }
+  .sb-logo{margin-bottom:0;}
+  /* 페이지 이동 아이콘 숨기고 AI + 햄버거 + 아바타만 */
+  .sb-item[data-page]{display:none;}
+  .sb-gap{display:none;}
+  .sb-avatar{margin-top:0;}
+  /* topbar 숨김 (사이드바가 대체) */
+  .topbar{display:none;}
+  /* 오버레이 nav → 위에서 풀 width 드롭다운 */
+  .overlay-nav{
+    top:50px;left:0;right:0;bottom:auto;
+    width:100%;max-height:calc(100vh - 50px);
+    border-right:none;border-bottom:1px solid var(--border);
+    box-shadow:0 8px 32px rgba(0,0,0,0.45);
+    transform:translateY(-110%);
+    overflow-y:auto;
+  }
+  .overlay-nav.open{transform:translateY(0);}
+  /* 백드롭 탑 오프셋 */
+  .backdrop{top:50px;}
+  /* 오버레이 헤더 줄 숨김 */
+  .on-head{display:none;}
+  /* 하단 닫기 버튼 표시 */
+  .on-close-bottom{display:flex;}
+  /* 사이드바 타이틀 표시 */
+  .sb-title{display:flex;}
+}
+@media(max-width:640px){
+  /* 전체 가로 스크롤 방지 */
+  body{overflow-x:hidden;}
+  .main{overflow-x:hidden;}
+  /* topbar 2줄 고정 */
+  .topbar{
+    padding:8px 12px;
+    gap:6px;row-gap:6px;
+    height:auto;flex-wrap:wrap;
+    align-items:center;
+  }
+  .tb-title{flex:1;min-width:0;}
+  .tb-live{flex-shrink:0;margin-right:100%;} /* 강제 줄바꿈 */
+  .tb-time{display:none;}
+  .theme-toggle{display:none;}
+  .tb-alert{flex:1;}
+  .tb-ai-btn{flex-shrink:0;}
+  /* bottom row */
+  .bottom-row{grid-template-columns:1fr;height:auto;}
+  .bot-panel{border-right:none;border-bottom:1px solid var(--border);min-height:auto;}
+  .bot-panel:last-child{border-bottom:none;}
+  /* metric strip → 1열 */
+  .metric-strip{display:flex;flex-direction:column;}
+  .mc{min-width:0;width:100%;border-right:none;border-bottom:1px solid var(--border);}
+  .mc:last-child{border-bottom:none;}
+  /* hero strip → 세로 스택 */
+  .hero-strip{flex-direction:column;}
+  .hb{min-width:unset;width:100%;border-right:none;}
+}
+
+/* ══ 카드 확장 ══ */
+.hb-expand-bg{
+  position:fixed;inset:0;z-index:150;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+.hb-expand-bg.show{opacity:1;pointer-events:all;}
+
+.hb-expand-card{
+  position:fixed;z-index:200;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px 24px;
+  overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,0.55);
+  opacity:0;pointer-events:none;
+}
+.hb-expand-card.show{opacity:1;pointer-events:all;}
+
+/* ── 모바일 중앙 모달 ── */
+@media(max-width:640px){
+  .hb-expand-card{
+    left:50%!important;top:50%!important;
+    transform:translate(-50%,-50%)!important;
+    width:92vw!important;height:auto!important;
+    max-height:85vh;
+    border-radius:14px!important;
+    padding:18px 18px 24px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .hbd-grid{grid-template-columns:1fr 1fr;}
+}
+
+.hb-expand-close{
+  position:absolute;top:12px;right:14px;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:0.85rem;color:var(--sub);
+  transition:background .15s,color .15s;
+}
+.hb-expand-close:hover{background:rgba(255,77,106,0.2);color:var(--red);}
+[data-theme="light"] .hb-expand-close{background:rgba(0,0,0,0.06);}
+
+.hb-detail{opacity:0;transition:opacity 0.22s ease;}
+.hb-detail.show{opacity:1;}
+
+.hbd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;}
+.hbd-item{
+  padding:8px 10px;border-radius:6px;
+  background:rgba(255,255,255,0.04);
+}
+[data-theme="light"] .hbd-item{background:rgba(0,0,0,0.04);}
+.hbd-label{font-size:0.85rem;color:var(--sub);margin-bottom:3px;}
+.hbd-val{font-size:1.1rem;font-weight:800;color:var(--text);}
+.hbd-val.up{color:var(--green);}
+.hbd-val.warn{color:var(--red);}
+.hbd-unit{font-size:0.85rem;font-weight:400;color:var(--sub);}
+
+.hbd-section{font-size:0.85rem;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--sub);margin:12px 0 6px;}
+
+.hbd-channels{display:flex;gap:10px;flex-wrap:wrap;}
+.hbd-ch{display:flex;align-items:center;gap:5px;font-size:0.88rem;color:var(--sub);}
+.hbd-ch strong{color:var(--text);font-weight:700;}
+.hbd-ch-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
+
+.hbd-top{display:flex;flex-direction:column;gap:4px;}
+.hbd-top-item{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:0.88rem;padding:5px 8px;border-radius:5px;
+  background:rgba(255,255,255,0.03);
+}
+[data-theme="light"] .hbd-top-item{background:rgba(0,0,0,0.03);}
+.hbd-top-rank{color:var(--sub);margin-right:6px;font-size:0.88rem;}
+.hbd-top-name{color:var(--text);flex:1;}
+.hbd-top-val{font-weight:700;color:var(--blue);}
+
+.hb.clickable{cursor:pointer;}
+.hb.clickable::after{
+  content:'↗';position:absolute;bottom:10px;right:12px;
+  font-size:0.85rem;color:var(--blue);opacity:0;
+  transition:opacity .2s;
+}
+.hb.clickable:hover::after{opacity:1;}
+
+/* ══ LOGIN OVERLAY ══ */
+#viewLogin{
+  position:fixed;inset:0;z-index:2000;
+  background:#080818;
+  display:flex;align-items:center;justify-content:center;
+  perspective:1200px;
+  transition:opacity 0.7s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+#viewLogin.lv-hidden{opacity:0;pointer-events:none;}
+#viewLogin canvas{position:absolute !important;inset:0;width:100% !important;height:100% !important;opacity:0;transition:opacity 1.6s cubic-bezier(.4,0,.2,1);}
+/* 카드 래퍼 — 이게 실제로 회전 */
+.lc-card{
+  position:relative;z-index:10;
+  width:340px;height:480px;
+  transform-style:preserve-3d;
+  animation:lc-in .7s cubic-bezier(.22,1,.36,1) both;
+  animation-delay:0.5s;
+}
+@keyframes lc-in{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+/* 앞/뒷면 공통 스타일 */
+.lc-face{
+  position:absolute;inset:0;
+  background:rgb(8 8 28 / 34%);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:22px;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 8px 48px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.08);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:40px 32px 36px;
+  overflow:hidden;
+}
+/* 뒷면은 Y축 180도 회전된 상태로 배치 */
+.lc-face-back{
+  transform:rotateY(180deg);
+  align-items:center;text-align:center;gap:0;
+}
+/* 로그인 완료 체크 */
+.lc-check{
+  width:64px;height:64px;border-radius:50%;
+  border:2px solid rgba(99,102,241,0.5);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  background:rgba(99,102,241,0.1);
+  animation:lc-check-pop .4s cubic-bezier(.22,1,.36,1) both;
+  animation-delay:0.05s;
+}
+@keyframes lc-check-pop{from{transform:scale(0.4);opacity:0}to{transform:scale(1);opacity:1}}
+.lc-check svg{animation:lc-draw .4s ease both;animation-delay:0.15s;}
+@keyframes lc-draw{from{opacity:0;transform:scale(0.6)}to{opacity:1;transform:scale(1)}}
+.lc-ok-title{font-size:20px;font-weight:700;color:#f1f5f9;margin-bottom:8px;}
+.lc-ok-sub{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;margin-bottom:20px;}
+.lc-ok-dots{display:flex;gap:5px;justify-content:center;margin-top:4px;}
+.lc-ok-dots span{
+  width:6px;height:6px;border-radius:50%;background:#6366f1;
+  animation:lc-dot .9s ease infinite;
+}
+.lc-ok-dots span:nth-child(2){animation-delay:.18s;}
+.lc-ok-dots span:nth-child(3){animation-delay:.36s;}
+@keyframes lc-dot{0%,80%,100%{transform:scale(0.6);opacity:0.3}40%{transform:scale(1);opacity:1}}
+.lc-logo{text-align:center;margin-bottom:28px;}
+.lc-hex{display:block;margin:0 auto 14px;}
+.lc-title{font-size:22px;font-weight:700;color:#f1f5f9;letter-spacing:.02em;}
+.lc-sub{font-size:11px;color:rgba(255,255,255,0.28);margin-top:5px;}
+.lc-badge-row{margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;}
+.lc-badge{font-size:11px;background:rgba(99,102,241,.18);color:#818cf8;padding:3px 10px;border-radius:20px;border:1px solid rgba(99,102,241,.3);}
+.lc-form{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+.lc-fw{position:relative;}
+.lc-fi{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.28);display:flex;}
+.lc-f{
+  width:100%;background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);border-radius:10px;
+  padding:12px 12px 12px 38px;color:#f1f5f9;font-size:14px;outline:none;
+  transition:all .3s ease;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+}
+.lc-f:focus{border-color:rgba(99,102,241,.6);background:rgba(99,102,241,.08);}
+.lc-f::placeholder{color:rgba(255,255,255,0.28);}
+.lc-btn{
+  width:100%;padding:14px;background:#6366f1;border:none;border-radius:10px;
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+}
+.lc-btn:hover{background:#4f46e5;transform:translateY(-1px);}
+.lc-btn.loading{opacity:.8;pointer-events:none;}
+.lc-spinner{
+  width:14px;height:14px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:lc-spin .7s linear infinite;display:inline-block;flex-shrink:0;
+}
+@keyframes lc-spin{to{transform:rotate(360deg)}}
+.lc-div{display:flex;align-items:center;gap:10px;margin:4px 0;}
+.lc-dl{flex:1;height:1px;background:rgba(255,255,255,.08);}
+.lc-dt{font-size:11px;color:rgba(255,255,255,0.28);}
+.lc-reg{
+  width:100%;padding:11px;background:transparent;
+  border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  color:rgba(255,255,255,0.55);font-size:14px;cursor:pointer;transition:all .3s ease;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+}
+.lc-reg:hover{background:rgba(255,255,255,.05);}
+.lc-note{font-size:11px;color:rgba(255,255,255,0.28);text-align:center;margin-top:18px;line-height:1.5;}
+
+/* 로그인 라이트모드 */
+[data-theme="light"] #viewLogin{background:linear-gradient(135deg,#dde6f8 0%,#e8edf8 50%,#d8e2f5 100%);}
+[data-theme="light"] #viewLogin canvas{
+  filter:invert(1) hue-rotate(160deg) contrast(1.1) opacity(0.58) !important;
+  mix-blend-mode:multiply;
+}
+[data-theme="light"] .lc-face{background:rgba(255,255,255,0.72);border-color:rgba(0,0,0,0.08);backdrop-filter:blur(20px);}
+[data-theme="light"] .lc-title{color:#18181b;}
+[data-theme="light"] .lc-sub{color:rgba(24,24,27,0.42);}
+[data-theme="light"] .lc-badge{background:rgba(99,102,241,.12);color:#4f46e5;border-color:rgba(99,102,241,.25);}
+[data-theme="light"] .lc-fi{color:rgba(24,24,27,0.35);}
+[data-theme="light"] .lc-f{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.12);color:#18181b;}
+[data-theme="light"] .lc-f::placeholder{color:rgba(24,24,27,0.35);}
+[data-theme="light"] .lc-f:focus{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.06);}
+[data-theme="light"] .lc-dl{background:rgba(0,0,0,0.1);}
+[data-theme="light"] .lc-dt{color:rgba(24,24,27,0.4);}
+[data-theme="light"] .lc-reg{border-color:rgba(0,0,0,0.12);color:rgba(24,24,27,0.55);}
+[data-theme="light"] .lc-reg:hover{background:rgba(0,0,0,0.04);}
+[data-theme="light"] .lc-note{color:rgba(24,24,27,0.38);}
+[data-theme="light"] .lc-ok-title{color:#18181b;}
+[data-theme="light"] .lc-ok-sub{color:rgba(24,24,27,0.52);}
+
+/* 미니 테마 스위치 (로그인·AI모드용) */
+.mini-theme-toggle{
+  display:flex;align-items:center;position:relative;
+  width:72px;height:26px;border-radius:100px;cursor:pointer;
+  background:#1a2744;border:1px solid rgba(255,255,255,0.08);
+  transition:background .3s,border-color .3s;overflow:hidden;flex-shrink:0;
+}
+.mini-theme-toggle::before{
+  content:'DARK';position:absolute;left:9px;
+  font-size:8px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.45);
+  transition:opacity .2s;z-index:1;
+}
+.mini-theme-toggle::after{
+  content:'';position:absolute;right:4px;
+  width:18px;height:18px;border-radius:50%;
+  background:#4b9eff;box-shadow:0 0 7px rgba(0,144,255,0.55);
+  transition:transform .3s cubic-bezier(.4,0,.2,1),background .3s;
+}
+[data-theme="light"] .mini-theme-toggle{background:#e8eef8;border-color:rgba(0,0,0,0.1);}
+[data-theme="light"] .mini-theme-toggle::before{content:'LIGHT';color:rgba(24,24,27,0.45);left:auto;right:9px;}
+[data-theme="light"] .mini-theme-toggle::after{transform:translateX(-48px);background:#2d6be4;box-shadow:0 0 7px rgba(45,107,228,0.4);}
+
+/* 로그인 토글 위치 */
+.lc-theme-corner{position:absolute;top:16px;right:16px;z-index:20;}
+
+/* ══ AI MODE OVERLAY ══ */
+/* AI 모드 글로브 배경 컨테이너 */
+#aiSpaceBg{
+  position:fixed;inset:0;z-index:299;
+  overflow:hidden;pointer-events:none;
+  opacity:0;transition:opacity 0.38s cubic-bezier(.4,0,.2,1);
+  background:#080c18;
+}
+#aiSpaceBg.show{opacity:1;}
+#aiSpaceBg canvas{
+  position:absolute !important;inset:0;
+  width:100% !important;height:100% !important;
+  transition:filter 0.42s,opacity 0.42s;
+}
+/* 라이트모드 — 글로브 배경 + 캔버스 반전 */
+[data-theme="light"] #aiSpaceBg{
+  background:linear-gradient(135deg,#dde6f8 0%,#e8edf8 50%,#d8e2f5 100%);
+}
+[data-theme="light"] #aiSpaceBg canvas{
+  filter:invert(1) hue-rotate(160deg) contrast(1.1) opacity(0.58) !important;
+  mix-blend-mode:multiply;
+}
+#viewAi{
+  position:fixed;inset:0;z-index:300;
+  display:flex;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.38s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+  background:rgba(8,12,24,0.45);
+}
+[data-theme="light"] #viewAi{
+  background:rgba(220,230,248,0.55);
+}
+#viewAi.show{opacity:1;pointer-events:all;}
+
+/* 사이드바 */
+.aim-sb{
+  width:220px;flex-shrink:0;display:flex;flex-direction:column;
+  background:var(--panel);border-right:1px solid var(--border);
+  overflow:hidden;
+  transition:width .35s cubic-bezier(.4,0,.2,1),border-color 0.35s,background-color 0.42s;
+}
+.aim-sb.collapsed{width:0;border-right:none;}
+/* 접힐 때 줄바꿈 방지 — overflow:hidden이 슥 잘라냄 */
+.aim-sb *{white-space:nowrap;}
+.aim-sb-logo{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 14px 14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.aim-sb-logo-inner{display:flex;align-items:center;gap:9px;cursor:pointer;color:var(--cyan);}
+.aim-sb-logo-text{font-size:0.88rem;font-weight:700;color:var(--text);white-space:nowrap;}
+.aim-sb-collapse{
+  width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--sub);transition:background .15s,color .15s;flex-shrink:0;
+}
+.aim-sb-collapse:hover{background:rgba(128,128,128,0.1);color:var(--text);}
+.aim-sb-actions{display:flex;flex-direction:column;gap:2px;padding:10px 10px 6px;}
+.aim-sb-newchat{
+  display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:8px;
+  font-size:0.88rem;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;
+  background:linear-gradient(135deg,rgba(0,144,255,0.18),rgba(14,165,233,0.14));
+  border:1px solid rgba(99,102,241,0.28);transition:background .15s;
+}
+.aim-sb-newchat:hover{background:linear-gradient(135deg,rgba(0,144,255,0.28),rgba(14,165,233,0.22));}
+.aim-sb-sec{
+  font-size:0.88rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--sub);padding:10px 18px 3px;white-space:nowrap;
+}
+.aim-sb-hist{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 8px;}
+.aim-sb-empty{font-size:0.88rem;color:var(--sub);text-align:center;padding:20px 12px;line-height:1.5;}
+.aim-sb-item{padding:8px 10px;border-radius:7px;cursor:pointer;margin-bottom:2px;transition:background .15s;}
+.aim-sb-item:hover{background:rgba(128,128,128,0.08);}
+.aim-sb-item-title{font-size:0.88rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.aim-sb-item-meta{font-size:0.85rem;color:var(--sub);margin-top:2px;}
+.aim-sb-footer{
+  padding:12px 18px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:9px;font-size:0.85rem;color:var(--sub);
+  cursor:pointer;white-space:nowrap;transition:color .15s;flex-shrink:0;
+}
+.aim-sb-footer:hover{color:var(--cyan);}
+
+/* 메인 */
+.aim-main{flex:1;display:flex;flex-direction:column;min-width:0;background:transparent;transition:background-color 0.42s;}
+.aim-header{
+  height:var(--nav);display:flex;align-items:center;gap:10px;padding:0 20px;
+  background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;
+  transition:background-color 0.42s,border-color 0.35s;
+}
+.aim-h-toggle{
+  width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  background:rgba(128,128,128,0.08);border:1px solid var(--border);color:var(--sub);
+  cursor:pointer;transition:background .15s,color .15s;flex-shrink:0;
+}
+.aim-h-toggle:hover{background:rgba(128,128,128,0.15);color:var(--text);}
+.aim-h-title{font-size:0.92rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px;flex:1;}
+.aim-h-star{color:var(--cyan);font-size:1rem;}
+.aim-h-back{
+  display:flex;align-items:center;gap:5px;font-size:0.85rem;color:var(--sub);
+  cursor:pointer;padding:6px 10px;border-radius:6px;transition:background .15s,color .15s;white-space:nowrap;
+}
+.aim-h-back:hover{background:rgba(128,128,128,0.08);color:var(--text);}
+
+/* 웰컴 */
+.aim-welcome{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;gap:24px;overflow-y:auto;
+}
+.aim-welcome-star{
+  font-size:36px;color:var(--cyan);
+  animation:aim-starspin 4s ease-in-out infinite;transform-origin:center;
+  filter:drop-shadow(0 0 12px rgba(56,189,248,0.6));display:inline-block;
+}
+@keyframes aim-starspin{
+  0%{transform:rotate(0) scale(1)}25%{transform:rotate(90deg) scale(.78)}
+  50%{transform:rotate(180deg) scale(1.22)}75%{transform:rotate(270deg) scale(.78)}100%{transform:rotate(360deg) scale(1)}
+}
+.aim-welcome-title{font-size:1.4rem;font-weight:700;color:var(--text);animation:aim-slideup .4s ease both;}
+@keyframes aim-slideup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.aim-iw{
+  width:100%;max-width:640px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.35);
+  animation:aim-slideup .45s .05s ease both;overflow:hidden;
+  transition:border-color .2s,background-color 0.42s;
+}
+.aim-iw:focus-within{border-color:rgba(56,189,248,0.45);}
+.aim-iw-inner{display:flex;align-items:flex-end;gap:8px;padding:12px 14px 10px;}
+.aim-ta{
+  flex:1;background:none;border:none;outline:none;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+  font-size:0.92rem;color:var(--text);resize:none;min-height:22px;max-height:120px;line-height:1.55;
+}
+.aim-ta::placeholder{color:var(--sub);}
+.aim-send-btn{
+  width:34px;height:34px;border-radius:10px;border:none;flex-shrink:0;
+  background:linear-gradient(135deg,#0891b2,#38bdf8);color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s,box-shadow .25s;
+  box-shadow:0 3px 10px rgba(56,189,248,.35);
+}
+.aim-send-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(56,189,248,.5);}
+.aim-iw-hint{font-size:0.85rem;color:var(--sub);padding:0 14px 10px;display:flex;align-items:center;gap:5px;}
+.aim-kbd{font-size:9px;padding:1px 5px;border:1px solid var(--border);border-radius:4px;color:var(--sub);background:rgba(128,128,128,0.06);}
+.aim-samples{display:flex;flex-direction:column;gap:7px;width:100%;max-width:640px;animation:aim-slideup .5s .1s ease both;}
+.aim-sample{
+  display:flex;align-items:flex-start;gap:8px;font-size:0.88rem;color:var(--sub);
+  cursor:pointer;padding:4px 0;transition:color .15s;line-height:1.4;
+}
+.aim-sample:hover{color:var(--text);}
+.aim-sample-dot{color:var(--cyan);font-size:0.9rem;line-height:1;flex-shrink:0;margin-top:1px;filter:drop-shadow(0 0 4px rgba(56,189,248,0.5));}
+
+/* 채팅 */
+.aim-chat-layout{flex:1;display:flex;overflow:hidden;}
+.aim-msgs-col{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.aim-scroll{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px;}
+.aim-scroll::-webkit-scrollbar{width:4px;}
+.aim-scroll::-webkit-scrollbar-thumb{background:rgba(128,128,128,0.2);border-radius:4px;}
+.aim-msg-user{display:flex;justify-content:flex-end;align-items:flex-end;gap:10px;}
+.aim-msg-user-av{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;order:2;
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  display:flex;align-items:center;justify-content:center;font-size:0.88rem;font-weight:700;color:#fff;
+}
+.aim-msg-user-bubble{
+  max-width:460px;padding:10px 14px;
+  background:linear-gradient(135deg,rgba(0,144,255,0.28),rgba(14,165,233,0.22));
+  border:1px solid rgba(99,102,241,0.30);color:var(--text);
+  border-radius:14px 14px 4px 14px;font-size:0.85rem;line-height:1.5;
+}
+.aim-msg-time{font-size:0.85rem;color:var(--sub);margin-top:4px;text-align:right;}
+.aim-msg-ai{display:flex;align-items:flex-start;gap:10px;}
+.aim-ai-av{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:rgba(56,189,248,0.1);border:1.5px solid rgba(56,189,248,0.35);
+  display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:0.85rem;
+}
+.aim-ai-bubble{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:4px 14px 14px 14px;padding:10px 14px;
+  font-size:0.85rem;color:var(--text);line-height:1.55;max-width:480px;
+  transition:background-color 0.42s,border-color 0.35s;
+}
+.aim-ai-bubble strong{color:var(--cyan);font-weight:700;}
+.aim-ai-bubble .hw{color:var(--red);font-weight:600;}
+.aim-ai-bubble .hg{color:var(--green);font-weight:600;}
+.aim-ai-bubble ol{padding-left:16px;margin-top:4px;}
+.aim-ai-bubble ol li{margin-bottom:3px;}
+.aim-ai-time{font-size:0.85rem;color:var(--sub);margin-top:4px;padding-left:38px;}
+.aim-thinking{display:flex;gap:4px;align-items:center;padding:2px 0;}
+.aim-t-dot{width:7px;height:7px;border-radius:50%;background:var(--sub);animation:aim-bounce .9s ease-in-out infinite;}
+.aim-t-dot:nth-child(2){animation-delay:.18s;}.aim-t-dot:nth-child(3){animation-delay:.36s;}
+@keyframes aim-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+.aim-chat-bottom{
+  padding:12px 20px 14px;border-top:1px solid var(--border);
+  background:var(--panel);flex-shrink:0;transition:background-color 0.42s,border-color 0.35s;
+}
+.aim-chat-input-row{
+  display:flex;align-items:flex-end;gap:8px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:12px;padding:10px 12px 8px;
+  transition:border-color .2s,background-color 0.42s;
+}
+.aim-chat-input-row:focus-within{border-color:rgba(56,189,248,0.4);}
+.aim-chat-input-row textarea{
+  flex:1;background:none;border:none;outline:none;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+  font-size:0.85rem;color:var(--text);resize:none;min-height:20px;max-height:100px;line-height:1.5;
+}
+.aim-chat-input-row textarea::placeholder{color:var(--sub);}
+.aim-chat-hint{font-size:0.85rem;color:var(--sub);margin-top:6px;text-align:center;}
+
+/* 스탯 패널 */
+.aim-stats{
+  width:0;overflow:hidden;border-left:0px solid var(--border);
+  background:var(--panel);flex-shrink:0;
+  transition:width .38s cubic-bezier(.4,0,.2,1),border-left-width .38s,background-color 0.42s;
+  display:flex;flex-direction:column;
+}
+.aim-stats.open{width:280px;border-left-width:1px;}
+.aim-stats-inner{width:280px;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.aim-stats-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.aim-stats-title{font-size:0.85rem;font-weight:600;color:var(--text);}
+.aim-stats-close{color:var(--sub);cursor:pointer;padding:3px;border-radius:5px;transition:background .15s,color .15s;}
+.aim-stats-close:hover{background:rgba(128,128,128,0.1);color:var(--text);}
+.aim-stats-body{flex:1;overflow-y:auto;padding:12px;}
+.aim-kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.aim-kpi{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;transition:background-color 0.42s,border-color 0.35s;}
+.aim-kpi-val{font-size:1.3rem;font-weight:700;line-height:1;margin-bottom:3px;letter-spacing:-.02em;}
+.aim-kpi-lbl{font-size:0.85rem;color:var(--sub);}
+.aim-stat-row{display:flex;flex-direction:column;gap:8px;}
+.aim-stat-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 12px;transition:background-color 0.42s,border-color 0.35s;}
+.aim-stat-item-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.aim-stat-item-label{font-size:0.85rem;color:var(--sub);}
+.aim-stat-item-val{font-size:0.88rem;font-weight:700;color:var(--text);}
+.aim-bar{height:4px;background:rgba(128,128,128,0.15);border-radius:2px;overflow:hidden;}
+.aim-bar-fill{height:100%;border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN OVERLAY ══ -->
+<div id="aiSpaceBg"></div>
+<div id="viewLogin">
+  <!-- Three.js canvas injected here -->
+  <div class="lc-theme-corner">
+    <div class="mini-theme-toggle" onclick="toggleTheme()" title="테마 전환"></div>
+  </div>
+  <div class="lc-card" id="lcCard">
+    <!-- 앞면 -->
+    <div class="lc-face lc-face-front">
+      <div class="lc-logo">
+        <svg class="lc-hex" viewBox="0 0 56 56" fill="none" width="56" height="56">
+          <defs>
+            <linearGradient id="lc-sweep" gradientUnits="userSpaceOnUse" x1="6" y1="28" x2="50" y2="28">
+              <stop offset="0%"   stop-color="#818cf8" stop-opacity="0.3"/>
+              <stop offset="35%"  stop-color="#818cf8" stop-opacity="0.3"/>
+              <stop offset="50%"  stop-color="#818cf8" stop-opacity="0.65"/>
+              <stop offset="65%"  stop-color="#818cf8" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#818cf8" stop-opacity="0.3"/>
+              <animateTransform attributeName="gradientTransform" type="rotate" from="0 28 28" to="360 28 28" dur="4s" repeatCount="indefinite"/>
+            </linearGradient>
+          </defs>
+          <polygon points="28,4 48,16 48,40 28,52 8,40 8,16" stroke="url(#lc-sweep)" stroke-width="1.6" stroke-linejoin="round"/>
+          <circle cx="28" cy="28" r="3" fill="#818cf8"/>
+          <line x1="28" y1="28" x2="28" y2="4"  stroke="url(#lc-sweep)" stroke-width="1"/>
+          <line x1="28" y1="28" x2="48" y2="40" stroke="url(#lc-sweep)" stroke-width="1"/>
+          <line x1="28" y1="28" x2="8"  y2="40" stroke="url(#lc-sweep)" stroke-width="1"/>
+        </svg>
+        <div class="lc-title">Blue Horizon</div>
+        <div class="lc-sub">클라우드 컨택센터 운영 플랫폼</div>
+        <div class="lc-badge-row">
+          <span style="color:rgba(255,255,255,0.22);font-size:13px">⊟</span>
+          <span class="lc-badge">horizon</span>
+        </div>
+      </div>
+      <div class="lc-form">
+        <div class="lc-fw">
+          <span class="lc-fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <input class="lc-f" id="lc-user" type="text" placeholder="아이디" value="admin" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="lc-fw">
+          <span class="lc-fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+          <input class="lc-f" id="lc-pass" type="password" placeholder="비밀번호" value="password123" style="letter-spacing:.12em" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <button class="lc-btn" id="loginBtn" onclick="doLogin()">로그인</button>
+        <div class="lc-div"><div class="lc-dl"></div><span class="lc-dt">또는</span><div class="lc-dl"></div></div>
+        <button class="lc-reg">회원가입</button>
+      </div>
+      <div class="lc-note">처음 이용하시는 분은 회원가입 후 관리자 승인이 필요합니다.</div>
+    </div>
+
+    <!-- 뒷면 — 로그인 완료 -->
+    <div class="lc-face lc-face-back">
+      <div class="lc-check">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="lc-ok-title">로그인 완료</div>
+      <div class="lc-ok-sub">장유석 관리자님, 환영합니다<br>서울센터 · 관리자 권한</div>
+      <div class="lc-ok-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closeNav()"></div>
+
+<!-- 카드 확장 -->
+<div class="hb-expand-bg" id="hbExpandBg" onclick="collapseHb()"></div>
+<div class="hb-expand-card" id="hbExpandCard">
+  <div class="hb-expand-close" onclick="collapseHb()">✕</div>
+  <div class="sec-label">오늘 총 인입콜</div>
+  <div class="hb-num lg" style="color:var(--blue);margin:4px 0 2px;" id="hb-expand-num"></div>
+  <div class="hb-sub">2026.05.14 · 실시간 기준</div>
+  <div class="hb-detail" id="hbDetail">
+    <div class="hbd-grid">
+      <div class="hbd-item"><div class="hbd-label">시간대 피크</div><div class="hbd-val">11~12시<br><span style="font-size:1.3rem">64</span><span class="hbd-unit">건</span></div></div>
+      <div class="hbd-item"><div class="hbd-label">현재 대기</div><div class="hbd-val warn">58<span class="hbd-unit">건</span></div></div>
+      <div class="hbd-item"><div class="hbd-label">평균 대기</div><div class="hbd-val">1:42<span class="hbd-unit">분</span></div></div>
+      <div class="hbd-item"><div class="hbd-label">처리 완료</div><div class="hbd-val up">3,701<span class="hbd-unit">건</span></div></div>
+      <div class="hbd-item"><div class="hbd-label">미처리</div><div class="hbd-val warn">170<span class="hbd-unit">건</span></div></div>
+      <div class="hbd-item"><div class="hbd-label">처리율</div><div class="hbd-val up">96.2<span class="hbd-unit">%</span></div></div>
+    </div>
+    <div class="hbd-section">채널별</div>
+    <div class="hbd-channels">
+      <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#4b9eff"></div>음성 <strong>55%</strong></div>
+      <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#38bdf8"></div>채팅 <strong>28%</strong></div>
+      <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#ff8c5a"></div>이메일 <strong>12%</strong></div>
+      <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#818cf8"></div>콜백 <strong>5%</strong></div>
+    </div>
+    <div class="hbd-section">상담사 Top 3</div>
+    <div class="hbd-top">
+      <div class="hbd-top-item"><span class="hbd-top-rank">1</span><span class="hbd-top-name">김민준</span><span class="hbd-top-val">142건</span></div>
+      <div class="hbd-top-item"><span class="hbd-top-rank">2</span><span class="hbd-top-name">이서연</span><span class="hbd-top-val">138건</span></div>
+      <div class="hbd-top-item"><span class="hbd-top-rank">3</span><span class="hbd-top-name">박지호</span><span class="hbd-top-val">131건</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY NAV -->
+<div class="overlay-nav" id="overlayNav">
+  <div class="on-head">
+    <div class="on-head-logo">
+      <svg viewBox="0 0 20 20" fill="none" width="22" height="22" color="#4b9eff" style="flex-shrink:0">
+        <defs>
+          <linearGradient id="sweep" gradientUnits="userSpaceOnUse" x1="2" y1="10" x2="18" y2="10">
+            <stop offset="0%" stop-color="currentColor" stop-opacity="0.3"/>
+            <stop offset="50%" stop-color="currentColor" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="currentColor" stop-opacity="0.3"/>
+            <animateTransform attributeName="gradientTransform" type="rotate" from="0 10 10" to="360 10 10" dur="4s" repeatCount="indefinite"/>
+          </linearGradient>
+        </defs>
+        <polygon points="10,1.5 17.4,5.75 17.4,14.25 10,18.5 2.6,14.25 2.6,5.75" stroke="url(#sweep)" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle cx="10" cy="10" r="1.2" fill="currentColor"/>
+        <line x1="10" y1="10" x2="10" y2="1.5" stroke="url(#sweep)" stroke-width="1"/>
+        <line x1="10" y1="10" x2="17.4" y2="14.25" stroke="url(#sweep)" stroke-width="1"/>
+        <line x1="10" y1="10" x2="2.6" y2="14.25" stroke="url(#sweep)" stroke-width="1"/>
+      </svg>
+    </div>
+    <span class="on-title">Blue <em>Horizon</em></span>
+    <div class="on-close" onclick="closeNav()">
+      <span class="material-icons">close</span>
+    </div>
+  </div>
+  <div class="on-body">
+    <div class="on-section-label">MONITORING</div>
+    <div class="on-item active" onclick="showPage('pg-home',this)">
+      <div class="on-icon"><span class="material-icons">home</span></div>
+      <span class="on-label">홈</span>
+    </div>
+    <div class="on-item" onclick="showPage('pg-agents',this)">
+      <div class="on-icon"><span class="material-icons">groups</span></div>
+      <span class="on-label">상담원 현황</span>
+    </div>
+    <div class="on-section-label">ANALYTICS</div>
+    <div class="on-item" onclick="showPage('pg-stats',this)">
+      <div class="on-icon"><span class="material-icons">bar_chart</span></div>
+      <span class="on-label">통계/분석</span>
+    </div>
+    <div class="on-section-label">SYSTEM</div>
+    <div class="on-item">
+      <div class="on-icon"><span class="material-icons">manage_accounts</span></div>
+      <span class="on-label">사용자 관리</span>
+    </div>
+    <div class="on-item">
+      <div class="on-icon"><span class="material-icons">key</span></div>
+      <span class="on-label">권한 관리</span>
+    </div>
+  </div>
+  <div class="on-footer" onclick="toggleUserMenu(this)">
+    <div class="on-avatar">JY</div>
+    <div class="on-user-info">
+      <div class="on-user-name">장유석</div>
+      <div class="on-user-role">관리자 · 서울센터</div>
+    </div>
+    <span class="material-icons" style="font-size:1.1rem;color:var(--sub);margin-left:auto">more_vert</span>
+  </div>
+  <div class="on-close-bottom" onclick="closeNav()">
+    <span class="material-icons">keyboard_arrow_up</span>닫기
+  </div>
+</div>
+
+<!-- SIDEBAR (아이콘 스트립) -->
+<div class="sidebar">
+  <div class="sb-logo" onclick="openNav()">
+    <svg viewBox="0 0 20 20" fill="none" width="24" height="24" color="#4b9eff">
+      <defs>
+        <linearGradient id="sweep2" gradientUnits="userSpaceOnUse" x1="2" y1="10" x2="18" y2="10">
+          <stop offset="0%" stop-color="currentColor" stop-opacity="0.3"/>
+          <stop offset="50%" stop-color="currentColor" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="currentColor" stop-opacity="0.3"/>
+          <animateTransform attributeName="gradientTransform" type="rotate" from="0 10 10" to="360 10 10" dur="4s" repeatCount="indefinite"/>
+        </linearGradient>
+      </defs>
+      <polygon points="10,1.5 17.4,5.75 17.4,14.25 10,18.5 2.6,14.25 2.6,5.75" stroke="url(#sweep2)" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="10" cy="10" r="1.2" fill="currentColor"/>
+      <line x1="10" y1="10" x2="10" y2="1.5" stroke="url(#sweep2)" stroke-width="1"/>
+      <line x1="10" y1="10" x2="17.4" y2="14.25" stroke="url(#sweep2)" stroke-width="1"/>
+      <line x1="10" y1="10" x2="2.6" y2="14.25" stroke="url(#sweep2)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="sb-title">Blue <em>Horizon</em></div>
+  <div class="sb-item active" data-page="pg-home" onclick="sbNav('pg-home',this)"><span class="material-icons">home</span></div>
+  <div class="sb-item" data-page="pg-agents" onclick="sbNav('pg-agents',this)"><span class="material-icons">groups</span></div>
+  <div class="sb-item" data-page="pg-stats" onclick="sbNav('pg-stats',this)"><span class="material-icons">bar_chart</span></div>
+  <div class="sb-item" onclick="showAiMode()"><span class="material-icons">auto_awesome</span></div>
+  <div class="sb-gap"></div>
+  <div class="sb-item" onclick="openNav()"><span class="material-icons">settings</span></div>
+  <div class="sb-avatar" onclick="toggleUserMenu(this)">JY</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-title">Blue <em>Horizon</em></div>
+    <div class="tb-live"><div class="live-dot"></div>LIVE</div>
+    <div class="tb-time" id="liveTime">--:--:--</div>
+    <div class="tb-alert" id="tb-alert">경보 3건</div>
+    <button class="tb-ai-btn" onclick="showAiMode()"><span class="tb-ai-star">✦</span>AI Mode</button>
+    <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="라이트/다크 모드"></div>
+  </div>
+
+  <div class="page-wrap">
+  <!-- ══ PAGE: 홈 ══ -->
+  <div class="pg active" id="pg-home">
+
+  <!-- METRIC STRIP -->
+  <div class="metric-strip">
+    <div class="mc">
+      <div class="mc-left">
+        <div class="sec-label">오늘 인입콜</div>
+        <div class="mc-change up">▲ 12.4% vs 어제</div>
+      </div>
+      <div class="mc-val" style="color:var(--blue)" id="mc-calls">0</div>
+    </div>
+    <div class="mc">
+      <div class="mc-left">
+        <div class="sec-label">현재 대기</div>
+        <div class="mc-change dn">▲ 대기 증가중</div>
+      </div>
+      <div class="mc-val" style="color:var(--orange)" id="mc-wait">0</div>
+    </div>
+    <div class="mc">
+      <div class="mc-left">
+        <div class="sec-label">온라인 상담원</div>
+        <div class="mc-change neu">총 80명</div>
+      </div>
+      <div class="mc-val" style="color:var(--green)" id="mc-online">0<small>명</small></div>
+    </div>
+    <div class="mc">
+      <div class="mc-left">
+        <div class="sec-label">처리율</div>
+        <div class="mc-change up">▲ SLA 달성</div>
+      </div>
+      <div class="mc-val" style="color:var(--cyan)" id="mc-rate">0<small>%</small></div>
+    </div>
+  </div>
+
+  <!-- HERO STRIP -->
+  <div class="hero-strip">
+    <div class="hb clickable" onclick="expandHb(this,'calls')">
+      <div class="sec-label">오늘 총 인입콜</div>
+      <div class="hb-num lg" id="hb-calls" style="color:var(--blue)">0<span class="hb-unit">건</span></div>
+      <div class="hb-sub">2026.05.14 · 09:41 기준</div>
+      <div class="hb-pills">
+        <span class="hb-pill accent">▲ 어제 대비 12.4%</span>
+        <span class="hb-pill">처리율 96.2%</span>
+        <span class="hb-pill warn">피크 11–12시</span>
+      </div>
+    </div>
+    <div class="hb clickable" onclick="expandHb(this,'voice')">
+      <div class="sec-label">음성 콜</div>
+      <div class="hb-num md" style="color:var(--cyan)">2,104<span class="hb-unit">건</span></div>
+      <div class="hb-sub">처리중 38 · 대기 12</div>
+      <div class="hb-bars">
+        <div class="hb-bar-row">
+          <div class="hb-bar-meta"><span>처리율</span><span>96%</span></div>
+          <div class="hb-bar-track"><div class="hb-bar-fill" style="width:96%"></div></div>
+        </div>
+        <div class="hb-bar-row">
+          <div class="hb-bar-meta"><span>SLA 달성</span><span>98%</span></div>
+          <div class="hb-bar-track"><div class="hb-bar-fill" style="width:98%"></div></div>
+        </div>
+        <div class="hb-bar-row">
+          <div class="hb-bar-meta"><span>FCR율</span><span>71%</span></div>
+          <div class="hb-bar-track"><div class="hb-bar-fill" style="width:71%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="hb clickable" onclick="expandHb(this,'channel')">
+      <div class="sec-label">채널별 현황</div>
+      <div class="hb-num md" style="color:var(--purple)">1,593<span class="hb-unit">건</span></div>
+      <div class="hb-sub">채팅 + 이메일 합계</div>
+      <div class="hb-list">
+        <div class="hb-list-item"><span class="hb-list-label">채팅</span><span class="hb-list-val">1,203건</span></div>
+        <div class="hb-list-item danger"><span class="hb-list-label">이메일 대기</span><span class="hb-list-val warn">⚠ 41건</span></div>
+        <div class="hb-list-item"><span class="hb-list-label">콜백 미처리</span><span class="hb-list-val">18건</span></div>
+        <div class="hb-list-item"><span class="hb-list-label">챗봇 자동</span><span class="hb-list-val">820건</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts">
+
+    <!-- LEFT: 아이소메트릭 바 차트 -->
+    <div class="chart-left">
+      <div class="ch-head">
+        <span class="sec-title">시간대별 인입 현황</span>
+        <div class="ch-legend">
+          <div class="cl-item"><div class="cl-dot" style="background:var(--blue)"></div>음성</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--cyan)"></div>채팅</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--orange)"></div>이메일</div>
+        </div>
+      </div>
+      <div class="canvas-wrap" id="iso-wrap"></div>
+    </div>
+
+    <!-- ROSE: 채널별 비중 -->
+    <div class="chart-rose">
+      <div class="rose-head">
+        <span class="sec-title">채널별 비중</span>
+      </div>
+      <div class="rose-wrap" id="rose-wrap"></div>
+      <div class="rose-legend" id="rose-legend"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom-row">
+
+    <!-- 알림 -->
+    <div class="bot-panel">
+      <div class="sec-label">⚠ Active Alerts</div>
+      <div class="alert-list">
+        <div class="al-item danger">
+          <span class="al-icon">🔴</span>
+          <div class="al-body">
+            <div class="al-title">이메일 대기 임계치 초과</div>
+            <div class="al-desc">대기 41건 · SLA 위험</div>
+          </div>
+        </div>
+        <div class="al-item">
+          <span class="al-icon">🟠</span>
+          <div class="al-body">
+            <div class="al-title">콜백 미처리 급증</div>
+            <div class="al-desc">30분내 18건 누적</div>
+          </div>
+        </div>
+        <div class="al-item">
+          <span class="al-icon">🟡</span>
+          <div class="al-body">
+            <div class="al-title">상담원 이탈률 상승</div>
+            <div class="al-desc">전일 대비 +4.2%p</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 퀵스탯 -->
+    <div class="bot-panel">
+      <div class="sec-label">오늘 현황</div>
+      <div class="qs-grid">
+        <div class="qs-item">
+          <div class="qs-label">처리 완료</div>
+          <div class="qs-val">3,701<span class="qs-unit">건</span></div>
+        </div>
+        <div class="qs-item">
+          <div class="qs-label">평균 대기</div>
+          <div class="qs-val">1:42<span class="qs-unit">분</span></div>
+        </div>
+        <div class="qs-item">
+          <div class="qs-label">FCR율</div>
+          <div class="qs-val">71<span class="qs-unit">%</span></div>
+        </div>
+        <div class="qs-item">
+          <div class="qs-label">챗봇 전환</div>
+          <div class="qs-val">68<span class="qs-unit">%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 상담원 현황 -->
+    <div class="bot-panel">
+      <div class="sec-label">상담원 현황</div>
+      <div class="ag-rows" style="margin-top:6px;">
+        <div class="ag-row">
+          <div class="ag-dot" style="background:#60a5fa"></div>
+          <span class="ag-name">통화중</span>
+          <div class="ag-track"><div class="ag-fill" style="width:56%;background:#60a5fa"></div></div>
+          <span class="ag-num">38</span>
+        </div>
+        <div class="ag-row">
+          <div class="ag-dot" style="background:#fbbf24"></div>
+          <span class="ag-name">후처리</span>
+          <div class="ag-track"><div class="ag-fill" style="width:18%;background:#fbbf24"></div></div>
+          <span class="ag-num">12</span>
+        </div>
+        <div class="ag-row">
+          <div class="ag-dot" style="background:var(--blue)"></div>
+          <span class="ag-name">대기중</span>
+          <div class="ag-track"><div class="ag-fill" style="width:26%;background:var(--blue)"></div></div>
+          <span class="ag-num">18</span>
+        </div>
+        <div class="ag-row">
+          <div class="ag-dot" style="background:var(--red)"></div>
+          <span class="ag-name">휴식</span>
+          <div class="ag-track"><div class="ag-fill" style="width:9%;background:var(--red)"></div></div>
+          <span class="ag-num">6</span>
+        </div>
+        <div class="ag-row">
+          <div class="ag-dot" style="background:rgba(128,128,128,0.4)"></div>
+          <span class="ag-name">오프라인</span>
+          <div class="ag-track"><div class="ag-fill" style="width:18%;background:rgba(128,128,128,0.35)"></div></div>
+          <span class="ag-num">12</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 인사이트 -->
+    <div class="bot-panel">
+      <div class="sec-label">✦ AI 인사이트</div>
+      <div class="bot-ai">
+        <div class="ai-body"><strong>이메일 대기가 임계치 도달.</strong> 30분 내 SLA 위반 가능성 높습니다.</div>
+        <div class="ai-actions">
+          <div class="ai-btn">인력 재배치 →</div>
+          <div class="ai-btn">SLA 리포트 →</div>
+          <div class="ai-btn">상세 분석 →</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- /pg-home -->
+
+  <!-- ══ PAGE: 상담원 현황 ══ -->
+  <div class="pg" id="pg-agents">
+    <div class="pg-head">
+      <div class="pg-head-title">상담원 현황</div>
+      <div class="pg-head-right">
+        <div class="live-badge-sm"><span class="live-dot"></span>실시간</div>
+        <div class="pg-time" id="agentTime">--:--:--</div>
+      </div>
+    </div>
+
+    <!-- 섹션 1: 상태 요약 -->
+    <div class="stat-section">
+      <div class="stat-section-label" style="--sl-color:var(--green)">상태 요약</div>
+      <div class="ag-kpi-bar">
+        <div class="ag-kpi-item"><div class="ag-kpi-lbl">전체</div><div class="ag-kpi-val">74</div></div>
+        <div class="ag-kpi-sep"></div>
+        <div class="ag-kpi-item"><div class="ag-kpi-lbl">통화 중</div><div class="ag-kpi-val" style="color:var(--green)">38</div></div>
+        <div class="ag-kpi-sep"></div>
+        <div class="ag-kpi-item"><div class="ag-kpi-lbl">대기</div><div class="ag-kpi-val" style="color:var(--blue)">18</div></div>
+        <div class="ag-kpi-sep"></div>
+        <div class="ag-kpi-item"><div class="ag-kpi-lbl">후처리</div><div class="ag-kpi-val" style="color:#fbbf24">12</div></div>
+        <div class="ag-kpi-sep"></div>
+        <div class="ag-kpi-item"><div class="ag-kpi-lbl">휴식</div><div class="ag-kpi-val" style="color:var(--red)">6</div></div>
+        <div class="ag-kpi-sep"></div>
+        <div class="ag-kpi-item"><div class="ag-kpi-lbl">오프라인</div><div class="ag-kpi-val" style="color:var(--sub)">12</div></div>
+      </div>
+    </div>
+
+    <!-- 섹션 2: 실시간 모니터링 -->
+    <div class="stat-section">
+      <div class="stat-section-label" style="--sl-color:var(--orange)">실시간 모니터링</div>
+      <div class="pg-row">
+        <!-- 주의 필요 -->
+        <div class="pg-panel warn-panel">
+          <div class="pg-panel-head">
+            <span class="pg-panel-title warn-title">⚠ 주의 필요</span>
+            <div class="warn-badges">
+              <span class="warn-badge red">후처리 초과 <strong>0</strong></span>
+              <span class="warn-badge orange">휴식 초과 <strong>0</strong></span>
+              <span class="warn-badge purple">장기통화 <strong>0</strong></span>
+            </div>
+          </div>
+          <div class="pg-panel-body pg-empty">현재 주의가 필요한 상담원이 없습니다.</div>
+        </div>
+        <!-- 현재 통화중 -->
+        <div class="pg-panel live-panel">
+          <div class="pg-panel-head">
+            <span class="pg-panel-title">📞 현재 통화중</span>
+            <span class="live-count-badge">38명 <span class="live-dot" style="width:5px;height:5px;display:inline-block;border-radius:50%;background:var(--green);margin-left:3px;animation:blink 1.4s infinite"></span> 실시간</span>
+          </div>
+          <div class="ag-rows" style="padding:12px 16px;gap:10px;">
+            <div class="ag-row"><div class="ag-dot" style="background:#60a5fa"></div><span class="ag-name">통화중</span><div class="ag-track"><div class="ag-fill" style="width:51%;background:#60a5fa"></div></div><span class="ag-num">38</span></div>
+            <div class="ag-row"><div class="ag-dot" style="background:#fbbf24"></div><span class="ag-name">후처리</span><div class="ag-track"><div class="ag-fill" style="width:16%;background:#fbbf24"></div></div><span class="ag-num">12</span></div>
+            <div class="ag-row"><div class="ag-dot" style="background:var(--blue)"></div><span class="ag-name">대기중</span><div class="ag-track"><div class="ag-fill" style="width:24%;background:var(--blue)"></div></div><span class="ag-num">18</span></div>
+            <div class="ag-row"><div class="ag-dot" style="background:var(--red)"></div><span class="ag-name">휴식</span><div class="ag-track"><div class="ag-fill" style="width:8%;background:var(--red)"></div></div><span class="ag-num">6</span></div>
+            <div class="ag-row"><div class="ag-dot" style="background:rgba(128,128,128,0.4)"></div><span class="ag-name">오프라인</span><div class="ag-track"><div class="ag-fill" style="width:16%;background:rgba(128,128,128,0.35)"></div></div><span class="ag-num">12</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 섹션 3: 성과 -->
+    <div class="stat-section">
+      <div class="stat-section-label" style="--sl-color:var(--blue)">성과</div>
+      <div class="pg-row">
+        <!-- 최근 활동 -->
+        <div class="pg-panel">
+          <div class="pg-panel-head"><span class="pg-panel-title">🕐 최근 활동</span><span class="pg-panel-sub">실시간 상태 변경</span></div>
+          <div class="pg-panel-body">
+            <div class="ag-act-item"><span class="ag-act-dot" style="background:var(--green)"></span><span class="ag-act-name">김민준</span><span class="ag-act-status">통화중</span><span class="ag-act-time">방금 전</span></div>
+            <div class="ag-act-item"><span class="ag-act-dot" style="background:#fbbf24"></span><span class="ag-act-name">이서연</span><span class="ag-act-status">후처리</span><span class="ag-act-time">1분 전</span></div>
+            <div class="ag-act-item"><span class="ag-act-dot" style="background:var(--blue)"></span><span class="ag-act-name">박지호</span><span class="ag-act-status">대기중</span><span class="ag-act-time">2분 전</span></div>
+            <div class="ag-act-item"><span class="ag-act-dot" style="background:var(--red)"></span><span class="ag-act-name">최수진</span><span class="ag-act-status">휴식</span><span class="ag-act-time">5분 전</span></div>
+          </div>
+        </div>
+        <!-- 상담 Top3 -->
+        <div class="pg-panel">
+          <div class="pg-panel-head"><span class="pg-panel-title">🏆 상담 건수 상위</span><span class="pg-panel-sub">오늘 누적 (Top 3)</span></div>
+          <div class="pg-panel-body">
+            <div class="ag-top-item"><span class="ag-rank rank-1">1</span><span class="ag-top-name">김민준</span><span class="ag-top-meta">FCR 82%</span><div class="ag-top-bar-wrap"><div class="ag-top-bar" style="width:100%;background:var(--blue)"></div></div><span class="ag-top-val">142건</span></div>
+            <div class="ag-top-item"><span class="ag-rank rank-2">2</span><span class="ag-top-name">이서연</span><span class="ag-top-meta">FCR 79%</span><div class="ag-top-bar-wrap"><div class="ag-top-bar" style="width:97%;background:var(--cyan)"></div></div><span class="ag-top-val">138건</span></div>
+            <div class="ag-top-item"><span class="ag-rank rank-3">3</span><span class="ag-top-name">박지호</span><span class="ag-top-meta">FCR 76%</span><div class="ag-top-bar-wrap"><div class="ag-top-bar" style="width:92%;background:var(--purple)"></div></div><span class="ag-top-val">131건</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /pg-agents -->
+
+  <!-- ══ PAGE: 통계/분석 ══ -->
+  <div class="pg" id="pg-stats">
+    <div class="pg-head">
+      <div class="pg-head-title">통계 / 분석</div>
+      <div class="pg-head-right">
+        <div class="stat-tabs">
+          <div class="stat-tab active">오늘</div>
+          <div class="stat-tab">어제</div>
+          <div class="stat-tab">이번 주</div>
+          <div class="stat-tab">이번 달</div>
+        </div>
+        <div class="pg-time">2026년 5월 18일 기준</div>
+      </div>
+    </div>
+
+    <!-- KPI 카드 6개 -->
+    <div class="stat-kpi-grid">
+      <div class="stat-kpi"><div class="stat-kpi-icon" style="background:rgba(0,144,255,0.12);color:var(--blue)"><span class="material-icons" style="font-size:18px">call</span></div><div class="stat-kpi-body"><div class="stat-kpi-val">3,847<span class="stat-kpi-unit">건</span></div><div class="stat-kpi-lbl">오늘 총 통화</div><div class="stat-kpi-chg up">+12.3% vs 어제</div></div></div>
+      <div class="stat-kpi"><div class="stat-kpi-icon" style="background:rgba(96,165,250,0.12);color:var(--green)"><span class="material-icons" style="font-size:18px">check_circle</span></div><div class="stat-kpi-body"><div class="stat-kpi-val">96.2<span class="stat-kpi-unit">%</span></div><div class="stat-kpi-lbl">평균 응답률</div><div class="stat-kpi-chg up">+2.1%p vs 어제</div></div></div>
+      <div class="stat-kpi"><div class="stat-kpi-icon" style="background:rgba(255,140,90,0.12);color:var(--orange)"><span class="material-icons" style="font-size:18px">timer</span></div><div class="stat-kpi-body"><div class="stat-kpi-val">1:42<span class="stat-kpi-unit">분</span></div><div class="stat-kpi-lbl">평균 대기시간</div><div class="stat-kpi-chg dn">-8초 vs 어제</div></div></div>
+      <div class="stat-kpi"><div class="stat-kpi-icon" style="background:rgba(129,140,248,0.12);color:var(--purple)"><span class="material-icons" style="font-size:18px">verified</span></div><div class="stat-kpi-body"><div class="stat-kpi-val">98<span class="stat-kpi-unit">%</span></div><div class="stat-kpi-lbl">SLA 달성률</div><div class="stat-kpi-chg up">+1.3%p vs 어제</div></div></div>
+      <div class="stat-kpi"><div class="stat-kpi-icon" style="background:rgba(56,189,248,0.12);color:var(--cyan)"><span class="material-icons" style="font-size:18px">groups</span></div><div class="stat-kpi-body"><div class="stat-kpi-val">68<span class="stat-kpi-unit">명</span></div><div class="stat-kpi-lbl">활성 상담원</div><div class="stat-kpi-chg neu">총 80명 중</div></div></div>
+      <div class="stat-kpi"><div class="stat-kpi-icon" style="background:rgba(255,77,106,0.12);color:var(--red)"><span class="material-icons" style="font-size:18px">phone_missed</span></div><div class="stat-kpi-body"><div class="stat-kpi-val">170<span class="stat-kpi-unit">건</span></div><div class="stat-kpi-lbl">미처리</div><div class="stat-kpi-chg dn">포기율 5.9%</div></div></div>
+    </div>
+
+    <!-- 섹션 1: 통화량 분석 -->
+    <div class="stat-section">
+      <div class="stat-section-label" style="--sl-color:var(--blue)">통화량 분석</div>
+      <div class="pg-row">
+        <div class="pg-panel" style="flex:3;min-width:420px">
+          <div class="pg-panel-head">
+            <span class="pg-panel-title">시간대별 통화량 추이</span>
+            <div style="display:flex;gap:12px;">
+              <div class="cl-item"><div class="cl-dot" style="background:var(--blue)"></div>음성</div>
+              <div class="cl-item"><div class="cl-dot" style="background:var(--cyan)"></div>채팅</div>
+              <div class="cl-item"><div class="cl-dot" style="background:var(--orange)"></div>이메일</div>
+            </div>
+          </div>
+          <div class="stat-bar-chart">
+            <div class="sbc-bars" id="statBars"></div>
+            <div class="sbc-labels" id="statLabels"></div>
+          </div>
+        </div>
+        <div class="pg-panel" style="flex:1;min-width:300px">
+          <div class="pg-panel-head"><span class="pg-panel-title">통화 결과 분포</span></div>
+          <div class="donut-wrap">
+            <div class="donut" style="background:conic-gradient(var(--blue) 0% 55%,var(--cyan) 55% 83%,var(--orange) 83% 95%,var(--purple) 95% 100%)">
+              <div class="donut-hole"><div class="donut-hole-val">3,847</div><div class="donut-hole-lbl">총 통화</div></div>
+            </div>
+            <div class="donut-legend">
+              <div class="donut-leg-item"><div class="donut-leg-dot" style="background:var(--blue)"></div><span class="donut-leg-name">음성</span><span class="donut-leg-pct" style="color:var(--blue)">55%</span></div>
+              <div class="donut-leg-item"><div class="donut-leg-dot" style="background:var(--cyan)"></div><span class="donut-leg-name">채팅</span><span class="donut-leg-pct" style="color:var(--cyan)">28%</span></div>
+              <div class="donut-leg-item"><div class="donut-leg-dot" style="background:var(--orange)"></div><span class="donut-leg-name">이메일</span><span class="donut-leg-pct" style="color:var(--orange)">12%</span></div>
+              <div class="donut-leg-item"><div class="donut-leg-dot" style="background:var(--purple)"></div><span class="donut-leg-name">콜백</span><span class="donut-leg-pct" style="color:var(--purple)">5%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="pg-panel" style="flex:2;min-width:320px;overflow:hidden;">
+          <div class="pg-panel-head"><span class="pg-panel-title">SLA 달성률 7일 추이</span><span class="pg-panel-sub">목표 95%</span></div>
+          <div class="sla-chart" id="slaChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 섹션 2: 성과 분석 -->
+    <div class="stat-section">
+      <div class="stat-section-label" style="--sl-color:var(--cyan)">성과 분석</div>
+      <div class="pg-row">
+        <div class="pg-panel" style="flex:1;min-width:260px">
+          <div class="pg-panel-head"><span class="pg-panel-title">상담원 성과 TOP 5</span><span class="pg-panel-sub">FCR 기준</span></div>
+          <div class="top5-list">
+            <div class="top5-item"><span class="top5-rank">1</span><div class="top5-avatar" style="background:var(--blue)">민</div><span class="top5-name">김민준</span><div class="top5-bar-wrap"><div class="top5-bar" style="width:100%;background:var(--blue)"></div></div><span class="top5-meta">142건 · FCR 82%</span></div>
+            <div class="top5-item"><span class="top5-rank">2</span><div class="top5-avatar" style="background:var(--cyan)">서</div><span class="top5-name">이서연</span><div class="top5-bar-wrap"><div class="top5-bar" style="width:97%;background:var(--cyan)"></div></div><span class="top5-meta">138건 · FCR 79%</span></div>
+            <div class="top5-item"><span class="top5-rank">3</span><div class="top5-avatar" style="background:var(--purple)">지</div><span class="top5-name">박지호</span><div class="top5-bar-wrap"><div class="top5-bar" style="width:92%;background:var(--purple)"></div></div><span class="top5-meta">131건 · FCR 76%</span></div>
+            <div class="top5-item"><span class="top5-rank">4</span><div class="top5-avatar" style="background:var(--orange)">수</div><span class="top5-name">최수진</span><div class="top5-bar-wrap"><div class="top5-bar" style="width:88%;background:var(--orange)"></div></div><span class="top5-meta">125건 · FCR 73%</span></div>
+            <div class="top5-item"><span class="top5-rank">5</span><div class="top5-avatar" style="background:var(--green)">태</div><span class="top5-name">정태영</span><div class="top5-bar-wrap"><div class="top5-bar" style="width:83%;background:var(--green)"></div></div><span class="top5-meta">118건 · FCR 70%</span></div>
+          </div>
+        </div>
+        <div class="pg-panel" style="flex:2;min-width:340px">
+          <div class="pg-panel-head"><span class="pg-panel-title">대표번호별 일간 통계</span><span class="pg-panel-sub">오늘 누적</span></div>
+          <div style="overflow-x:auto">
+            <table class="rep-table">
+              <thead>
+                <tr><th>대표번호</th><th>서비스명</th><th>총 통화</th><th>응답</th><th>미처리</th><th>평균 대기</th><th>SLA</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="rep-num">1588-1234</td><td>고객지원</td><td>2,114</td><td>2,043</td><td>71</td><td>1:38</td><td class="rep-sla-good">98.5%</td></tr>
+                <tr><td class="rep-num">1599-5678</td><td>기술지원</td><td>987</td><td>961</td><td>26</td><td>2:12</td><td class="rep-sla-good">97.2%</td></tr>
+                <tr><td class="rep-num">1644-9012</td><td>영업센터</td><td>746</td><td>721</td><td>25</td><td>1:21</td><td class="rep-sla-good">97.4%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 섹션 3: 채널 현황 -->
+    <div class="stat-section">
+      <div class="stat-section-label" style="--sl-color:var(--purple)">채널 현황</div>
+      <div class="pg-row">
+        <div class="pg-panel">
+          <div class="pg-panel-head"><span class="pg-panel-title">채널별 인입 비율</span></div>
+          <div class="ch-stacked">
+            <div class="ch-stack-bar">
+              <div class="ch-seg" style="flex:55;background:var(--blue)">55%</div>
+              <div class="ch-seg" style="flex:28;background:var(--cyan)">28%</div>
+              <div class="ch-seg" style="flex:12;background:var(--orange)">12%</div>
+              <div class="ch-seg" style="flex:5;background:var(--purple)">5%</div>
+            </div>
+            <div class="ch-leg-grid">
+              <div class="ch-leg-item"><div class="ch-leg-dot" style="background:var(--blue)"></div><span class="ch-leg-name">음성</span><span class="ch-leg-pct">55%</span></div>
+              <div class="ch-leg-item"><div class="ch-leg-dot" style="background:var(--cyan)"></div><span class="ch-leg-name">채팅</span><span class="ch-leg-pct">28%</span></div>
+              <div class="ch-leg-item"><div class="ch-leg-dot" style="background:var(--orange)"></div><span class="ch-leg-name">이메일</span><span class="ch-leg-pct">12%</span></div>
+              <div class="ch-leg-item"><div class="ch-leg-dot" style="background:var(--purple)"></div><span class="ch-leg-name">콜백</span><span class="ch-leg-pct">5%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="pg-panel">
+          <div class="pg-panel-head"><span class="pg-panel-title">주간 피크타임 히트맵</span><span class="pg-panel-sub">통화량 기준</span></div>
+          <div class="bubble-wrap" id="bubbleWrap"></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /pg-stats -->
+  </div><!-- /page-wrap -->
+
+</div>
+
+<script>
+// ── 테마 lerp (p5 배경색 부드럽게) ──
+let themeLerp=0;     // 0=dark, 1=light
+let themeTarget=0;
+
+// ── 테마 토글 (CSS transition + 캔버스 fade) ──
+function toggleTheme(){
+  const canvases=[
+    document.querySelector('.canvas-wrap'),
+    document.querySelector('.rose-wrap'),
+    document.querySelector('.bubble-wrap')
+  ];
+  // 1) 캔버스 fade out
+  canvases.forEach(el=>{if(el)el.style.opacity='0';});
+
+  setTimeout(()=>{
+    // 2) 테마 전환 + themeLerp 즉시 snap (캔버스 숨겨진 동안이라 OK)
+    const isDark=document.documentElement.dataset.theme!=='light';
+    document.documentElement.dataset.theme=isDark?'light':'dark';
+    themeTarget=isDark?1:0;
+    themeLerp=themeTarget; // 바로 목표값으로
+    // p5 한 프레임 재렌더
+    [isoP5,roseP5,window._bmP5].forEach(inst=>{if(inst)inst.loop();});
+
+    setTimeout(()=>{
+      // 3) 재렌더 완료 후 fade in
+      [isoP5,roseP5,window._bmP5].forEach(inst=>{if(inst)inst.noLoop();});
+      canvases.forEach(el=>{if(el)el.style.opacity='1';});
+    },80);
+  },350);
+}
+
+// ── 시간 ──
+(function tick(){
+  const now=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  document.getElementById('liveTime').textContent=`${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+  setTimeout(tick,1000);
+})();
+
+// ── 테마 헬퍼 ──
+const isLight=()=>document.documentElement.dataset.theme==='light';
+
+// ── 글로벌 데이터 ──
+const CHART_DATA=[
+  {v:32,c:20,e:10},{v:44,c:28,e:15},
+  {v:60,c:40,e:24},{v:54,c:36,e:20},
+  {v:38,c:24,e:12},{v:30,c:18,e:8},
+  {v:36,c:22,e:12},{v:42,c:28,e:16},
+  {v:26,c:15,e:6},{v:20,c:8,e:0,now:true}
+];
+
+// ── 아이소메트릭 바 차트 ──
+const isoSketch=(p)=>{
+  const DATA=CHART_DATA;
+  const LABELS=['09','10','11','12','13','14','15','16','17','18'];
+  const MAX=64;
+  const CB=[0,144,255], CC=[56,189,248], CO=[255,140,90];
+  let prog=0;
+
+  p.setup=()=>{
+    p.pixelDensity(window.devicePixelRatio||1);
+    const el=document.getElementById('iso-wrap');
+    p.createCanvas(el.offsetWidth||100,el.offsetHeight||100).parent('iso-wrap');
+    p.noStroke();
+    // 컨테이너 크기 확정되면 자동 보정
+    new ResizeObserver(()=>{
+      if(el.offsetWidth>0&&el.offsetHeight>0)
+        p.resizeCanvas(el.offsetWidth,el.offsetHeight);
+    }).observe(el);
+  };
+
+  p.draw=()=>{
+    themeLerp+=(themeTarget-themeLerp)*0.09;
+    const bgR=Math.round(19+(255-19)*themeLerp);
+    const bgG=Math.round(24+(255-24)*themeLerp);
+    const bgB=Math.round(42+(255-42)*themeLerp);
+    p.background(bgR,bgG,bgB);
+    prog=Math.min(prog+0.016,1);
+    const ease=1-Math.pow(1-prog,3);
+
+    const W=p.width,H=p.height;
+    const PT=24,PB=28,PL=24,PR=16;
+    const cW=W-PL-PR, cH=H-PT-PB;
+    const slots=DATA.length, slotW=cW/slots;
+
+    // 그리드 라인
+    const tl=themeLerp;
+    p.stroke(Math.round(255*tl),Math.round(255*tl),Math.round(255*tl),Math.round(10+8*tl));p.strokeWeight(1);
+    [0.25,0.5,0.75,1].forEach(f=>{
+      const y=PT+cH*(1-f);
+      p.line(PL,y,W-PR,y);
+      p.fill(Math.round(255*tl),Math.round(255*tl),Math.round(255*tl),Math.round(22+33*tl));p.noStroke();
+      p.textAlign(p.RIGHT,p.CENTER);p.textSize(8);
+      p.text(Math.round(MAX*f),PL-4,y);
+    });
+
+    const BW=slotW*0.17;
+    const BD=slotW*0.09;
+    const GAP=slotW*0.03;
+    const groupW=(BW+BD)*3+GAP*2;
+
+    DATA.forEach((d,i)=>{
+      const alpha=d.now?0.28:1;
+      const sx=PL+i*slotW+(slotW-groupW)/2;
+      const baseY=PT+cH;
+
+      if(d.v){const h=(d.v/MAX)*cH*ease;bar3d(p,sx,baseY,BW,h,BD,CB,alpha);}
+      if(d.c){const h=(d.c/MAX)*cH*ease;bar3d(p,sx+BW+BD+GAP,baseY,BW,h,BD,CC,alpha);}
+      if(d.e){const h=(d.e/MAX)*cH*ease;bar3d(p,sx+(BW+BD+GAP)*2,baseY,BW,h,BD,CO,alpha);}
+
+      // NOW 마커
+      if(d.now){
+        const lx=PL+i*slotW+slotW/2;
+        p.stroke(75,158,255,160);p.strokeWeight(1);
+        p.drawingContext.setLineDash([3,3]);
+        p.line(lx,PT,lx,baseY);
+        p.drawingContext.setLineDash([]);
+        p.noStroke();
+        p.fill(75,158,255);p.rect(lx-13,PT,26,13,3);
+        p.fill(255);p.textAlign(p.CENTER,p.CENTER);p.textSize(7.5);p.textStyle(p.BOLD);
+        p.text('NOW',lx,PT+6.5);
+        p.textStyle(p.NORMAL);
+      }
+
+      // 시간 레이블
+      p.noStroke();p.fill(Math.round(255*tl),Math.round(255*tl),Math.round(255*tl),Math.round(50+40*tl));
+      p.textAlign(p.CENTER,p.TOP);p.textSize(9);
+      p.text(LABELS[i],PL+i*slotW+slotW/2,baseY+6);
+    });
+
+  };
+
+  p.windowResized=()=>{
+    const el=document.getElementById('iso-wrap');
+    p.resizeCanvas(el.offsetWidth,el.offsetHeight);
+  };
+};
+
+function bar3d(p,bx,baseY,bw,bh,bd,col,alpha){
+  if(bh<=0.5)return;
+  const [r,g,b]=col;
+  const a=Math.round(alpha*255);
+  p.noStroke();
+  // 앞면
+  p.fill(r,g,b,a);
+  p.rect(bx,baseY-bh,bw,bh);
+  // 윗면 (밝게)
+  const lr=Math.min(r*1.45,255),lg=Math.min(g*1.45,255),lb=Math.min(b*1.45,255);
+  p.fill(lr,lg,lb,a);
+  p.beginShape();
+  p.vertex(bx,baseY-bh);p.vertex(bx+bw,baseY-bh);
+  p.vertex(bx+bw+bd,baseY-bh-bd*0.5);p.vertex(bx+bd,baseY-bh-bd*0.5);
+  p.endShape(p.CLOSE);
+  // 오른면 (어둡게)
+  p.fill(r*0.52,g*0.52,b*0.52,a);
+  p.beginShape();
+  p.vertex(bx+bw,baseY);p.vertex(bx+bw+bd,baseY-bd*0.5);
+  p.vertex(bx+bw+bd,baseY-bh-bd*0.5);p.vertex(bx+bw,baseY-bh);
+  p.endShape(p.CLOSE);
+}
+
+// ── 3D 로즈 차트 (채널별 비중) ──
+const roseSketch=(p)=>{
+  const ROSE_DATA=[
+    {label:'음성',   val:55, color:'#0090ff'},
+    {label:'채팅',   val:28, color:'#38bdf8'},
+    {label:'이메일', val:12, color:'#ff8c5a'},
+    {label:'콜백',   val: 5, color:'#818cf8'},
+  ];
+  const total=ROSE_DATA.reduce((s,d)=>s+d.val,0);
+  const GAP=0.025;
+  const TILT=0.85;    // Y 압축 비율 (작을수록 더 눕혀 보임)
+  const DEPTH=25;     // 두께 (px)
+  const HOVER_BUMP=14;
+  const LERP=0.13;
+  let segments=[];
+  let hovered=-1;
+  let prog=0;
+
+  function hex2rgb(hex){
+    const r=parseInt(hex.slice(1,3),16);
+    const g=parseInt(hex.slice(3,5),16);
+    const b=parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+  }
+
+  // 타원 좌표 변환 (원근감용)
+  const ex=(CX,a,r)=>CX+Math.cos(a)*r;
+  const ey=(CY,a,r)=>CY+Math.sin(a)*r*TILT;
+  // 아래면 (depth 적용)
+  const bx=(CX,a,r)=>CX+Math.cos(a)*r;
+  const by=(CY,a,r)=>CY+Math.sin(a)*r*TILT+DEPTH;
+
+  function buildSegments(W,H){
+    const CX=W/2;
+    const CY=H*0.44;
+    const maxDim=Math.min(W,H-DEPTH)*1;
+    const MIN_R=maxDim*0.16;
+    const MAX_R=maxDim*0.46;
+    const maxVal=Math.max(...ROSE_DATA.map(d=>d.val));
+    const MIN_OUTER=MIN_R+(MAX_R-MIN_R)*0.48;
+    segments=[];
+    let startA=-Math.PI/2;
+    ROSE_DATA.forEach((d,i)=>{
+      const sweep=(d.val/total)*Math.PI*2;
+      const outerR=MIN_OUTER+(d.val/maxVal)*(MAX_R-MIN_OUTER);
+      segments.push({
+        ...d, i,
+        start:startA+GAP/2, end:startA+sweep-GAP/2,
+        mid:startA+sweep/2,
+        outerR, MIN_R, CX, CY,
+        currentR:outerR, currentAlpha:235,
+      });
+      startA+=sweep;
+    });
+  }
+
+  function drawWall(s, r, innerR, alpha){
+    const [rc,gc,bc]=hex2rgb(s.color);
+    const steps=Math.max(40,Math.round((s.end-s.start)/0.018));
+
+    // 바깥 원호 옆면
+    p.fill(rc*0.4, gc*0.4, bc*0.4, alpha);
+    p.noStroke();
+    p.beginShape();
+    for(let t=0;t<=steps;t++){
+      const a=p.lerp(s.start,s.end,t/steps);
+      p.vertex(ex(s.CX,a,r), ey(s.CY,a,r));
+    }
+    for(let t=steps;t>=0;t--){
+      const a=p.lerp(s.start,s.end,t/steps);
+      p.vertex(bx(s.CX,a,r), by(s.CY,a,r));
+    }
+    p.endShape(p.CLOSE);
+
+    // 왼쪽 측면
+    p.fill(rc*0.52, gc*0.52, bc*0.52, alpha);
+    p.beginShape();
+    p.vertex(ex(s.CX,s.start,innerR), ey(s.CY,s.start,innerR));
+    p.vertex(ex(s.CX,s.start,r),      ey(s.CY,s.start,r));
+    p.vertex(bx(s.CX,s.start,r),      by(s.CY,s.start,r));
+    p.vertex(bx(s.CX,s.start,innerR), by(s.CY,s.start,innerR));
+    p.endShape(p.CLOSE);
+
+    // 오른쪽 측면
+    p.fill(rc*0.46, gc*0.46, bc*0.46, alpha);
+    p.beginShape();
+    p.vertex(ex(s.CX,s.end,innerR), ey(s.CY,s.end,innerR));
+    p.vertex(ex(s.CX,s.end,r),      ey(s.CY,s.end,r));
+    p.vertex(bx(s.CX,s.end,r),      by(s.CY,s.end,r));
+    p.vertex(bx(s.CX,s.end,innerR), by(s.CY,s.end,innerR));
+    p.endShape(p.CLOSE);
+  }
+
+  function drawTop(s, r, innerR, alpha){
+    const [rc,gc,bc]=hex2rgb(s.color);
+    const steps=Math.max(40,Math.round((s.end-s.start)/0.018));
+
+    // 윗면
+    p.fill(rc,gc,bc,alpha); p.noStroke();
+    p.beginShape();
+    for(let t=0;t<=steps;t++){
+      const a=p.lerp(s.start,s.end,t/steps);
+      p.vertex(ex(s.CX,a,r), ey(s.CY,a,r));
+    }
+    for(let t=steps;t>=0;t--){
+      const a=p.lerp(s.start,s.end,t/steps);
+      p.vertex(ex(s.CX,a,innerR), ey(s.CY,a,innerR));
+    }
+    p.endShape(p.CLOSE);
+
+    // 윗면 하이라이트
+    p.fill(255,255,255,20);
+    p.beginShape();
+    for(let t=0;t<=steps;t++){
+      const a=p.lerp(s.start,s.end,t/steps);
+      p.vertex(ex(s.CX,a,r), ey(s.CY,a,r));
+    }
+    for(let t=steps;t>=0;t--){
+      const a=p.lerp(s.start,s.end,t/steps);
+      const mr=r*0.76+innerR*0.24;
+      p.vertex(ex(s.CX,a,mr), ey(s.CY,a,mr));
+    }
+    p.endShape(p.CLOSE);
+
+    // 호버 외곽선
+    const lineA=(alpha-235)/20*110;
+    if(lineA>3){
+      p.noFill(); p.stroke(255,255,255,lineA); p.strokeWeight(1.4);
+      p.beginShape();
+      for(let t=0;t<=steps;t++){const a=p.lerp(s.start,s.end,t/steps);p.vertex(ex(s.CX,a,r),ey(s.CY,a,r));}
+      for(let t=steps;t>=0;t--){const a=p.lerp(s.start,s.end,t/steps);p.vertex(ex(s.CX,a,innerR),ey(s.CY,a,innerR));}
+      p.endShape(p.CLOSE); p.noStroke();
+    }
+  }
+
+  p.setup=()=>{
+    p.pixelDensity(window.devicePixelRatio||1);
+    const el=document.getElementById('rose-wrap');
+    p.createCanvas(el.offsetWidth||100,el.offsetHeight||100).parent('rose-wrap');
+    // 컨테이너 크기 확정되면 자동 보정
+    new ResizeObserver(()=>{
+      if(el.offsetWidth>0&&el.offsetHeight>0){
+        p.resizeCanvas(el.offsetWidth,el.offsetHeight);
+        buildSegments(p.width,p.height);
+        p.loop(); prog=0;
+      }
+    }).observe(el);
+    // HTML 범례 생성
+    const legEl=document.getElementById('rose-legend');
+    if(legEl){
+      legEl.innerHTML=ROSE_DATA.map(d=>`
+        <div class="rose-leg-item">
+          <div class="rose-leg-dot" style="background:${d.color}"></div>
+          <span>${d.label}</span>
+          <span class="rose-leg-val" style="color:${d.color}">${d.val}%</span>
+        </div>`).join('');
+    }
+    p.angleMode(p.RADIANS);
+    p.textFont('system-ui');
+    buildSegments(p.width,p.height);
+  };
+
+  p.draw=()=>{
+    const bgR=Math.round(19+(255-19)*themeLerp);
+    const bgG=Math.round(24+(255-24)*themeLerp);
+    const bgB=Math.round(42+(255-42)*themeLerp);
+    p.background(bgR,bgG,bgB);
+    prog=Math.min(prog+0.024,1);
+    const ease=1-Math.pow(1-prog,3);
+
+    // 호버 감지 (타원 좌표계로 역변환)
+    hovered=-1;
+    segments.forEach((s,i)=>{
+      const dx=p.mouseX-s.CX;
+      const dy=(p.mouseY-s.CY)/TILT;  // TILT 역변환
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist>s.MIN_R && dist<s.outerR+HOVER_BUMP+6){
+        let a=Math.atan2(dy,dx);
+        const inRange=(angle,st,en)=>{
+          while(angle < st - 0.001) angle += Math.PI*2;
+          while(angle > en + 0.001) angle -= Math.PI*2;
+          return angle>=st && angle<=en;
+        };
+        if(inRange(a,s.start,s.end)) hovered=i;
+      }
+    });
+
+    // lerp
+    segments.forEach(s=>{
+      const isHov=hovered===s.i;
+      s.currentR+=((isHov?s.outerR+HOVER_BUMP:s.outerR)-s.currentR)*LERP;
+      s.currentAlpha+=((isHov?255:235)-s.currentAlpha)*LERP;
+    });
+
+    const re=s=>s.currentR*ease;
+    const ir=s=>s.MIN_R*Math.min(ease*2,1);
+
+    // 렌더링 순서: 아래쪽(sin 큰) 먼저
+    const order=[...segments].sort((a,b)=>Math.sin(b.mid)-Math.sin(a.mid));
+
+    // PASS 1: 옆면
+    order.forEach(s=>drawWall(s,re(s),ir(s),s.currentAlpha));
+
+    // 중앙 홀 옆면 커버
+    const hS=segments[0];
+    if(hS){
+      p.noStroke();
+      p.fill(bgR,bgG,bgB);
+      p.ellipse(hS.CX, hS.CY+DEPTH, (hS.MIN_R-3)*2, (hS.MIN_R-3)*2*TILT);
+    }
+
+    // PASS 2: 윗면
+    order.forEach(s=>drawTop(s,re(s),ir(s),s.currentAlpha));
+
+    // 중앙 홀 윗면 + 텍스트
+    if(hS){
+      p.noStroke();
+      p.fill(bgR,bgG,bgB);
+      p.ellipse(hS.CX, hS.CY, (hS.MIN_R-3)*2, (hS.MIN_R-3)*2*TILT);
+      const txtR=Math.round(226-(226-24)*themeLerp), txtG=Math.round(232-(232-24)*themeLerp), txtB=Math.round(240-(240-27)*themeLerp);
+      p.fill(txtR,txtG,txtB,150);
+      p.textSize(9);p.textStyle(p.NORMAL);p.textAlign(p.CENTER,p.CENTER);
+      p.text('채널',hS.CX,hS.CY-8);
+      p.fill(txtR,txtG,txtB);
+      p.textSize(15);p.textStyle(p.BOLD);
+      p.text(total+'%',hS.CX,hS.CY+7);
+    }
+
+    // % 라벨
+    if(ease>0.6){
+      segments.forEach(s=>{
+        const labelR=s.currentR*ease+16;
+        const lx=ex(s.CX,s.mid,labelR);
+        const ly=ey(s.CY,s.mid,labelR);
+        p.noStroke();
+        const [rc,gc,bc]=hex2rgb(s.color);
+        p.fill(rc,gc,bc, Math.min(s.currentAlpha+30,255));
+        p.textSize(10);p.textStyle(p.BOLD);p.textAlign(p.CENTER,p.CENTER);
+        p.text(s.val+'%',lx,ly);
+      });
+    }
+
+
+    if(prog>=1 && hovered===-1) p.noLoop();
+  };
+
+  p.mouseMoved=()=>{ if(prog>=1) p.loop(); };
+  p.mouseExited=()=>{ hovered=-1; };
+  p.windowResized=()=>{
+    const el=document.getElementById('rose-wrap');
+    p.resizeCanvas(el.offsetWidth,el.offsetHeight);
+    buildSegments(p.width,p.height);
+    p.loop(); prog=0;
+  };
+};
+
+// ── 슬롯 카운터 ──
+function slotSet(el, value, suffix=''){
+  const n=Math.round(value);
+  const formatted=n.toLocaleString('ko-KR');
+  const digits=formatted.replace(/\D/g,'');
+  const prevLen=el.dataset.slotLen||'';
+
+  if(prevLen!==String(digits.length)){
+    el.dataset.slotLen=digits.length;
+    el.innerHTML='';
+    el.style.letterSpacing='0';
+    for(const ch of formatted){
+      if(/\d/.test(ch)){
+        const wrap=document.createElement('span');
+        wrap.className='slot-wrap';
+        const inner=document.createElement('span');
+        inner.className='slot-inner';
+        inner.style.transition='none';
+        for(let i=0;i<=9;i++){const d=document.createElement('span');d.textContent=i;inner.appendChild(d);}
+        wrap.appendChild(inner);
+        el.appendChild(wrap);
+      } else {
+        const sep=document.createElement('span');
+        sep.className='slot-sep';sep.textContent=ch;
+        el.appendChild(sep);
+      }
+    }
+    if(suffix)el.insertAdjacentHTML('beforeend',suffix);
+  }
+
+  requestAnimationFrame(()=>{
+    const slots=el.querySelectorAll('.slot-inner');
+    const digs=formatted.replace(/\D/g,'').split('');
+    slots.forEach((inner,i)=>{
+      inner.style.transition='transform 0.52s cubic-bezier(.16,1,.3,1)';
+      inner.style.transform=`translateY(-${parseInt(digs[i]||0)*10}%)`;
+    });
+  });
+}
+
+// ── 슬롯 카운트업 ──
+function slotCountUp(el, target, dur, suffix=''){
+  const start=performance.now();
+  slotSet(el,0,suffix);
+  function tick(now){
+    const t=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-t,3);
+    slotSet(el,Math.round(target*ease),suffix);
+    if(t<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ── 카운트업 애니메이션 (레거시) ──
+function countUp(el,target,dur,fmt){
+  const start=performance.now();
+  function tick(now){
+    const t=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-t,3);
+    const v=target*ease;
+    el.innerHTML=fmt(v);
+    if(t<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ── 실시간 인입콜 카운터 ──
+let totalCalls=3847;
+function liveCallTick(){
+  const inc=Math.floor(Math.random()*3)+1;
+  totalCalls+=inc;
+  CHART_DATA[9].v=Math.min(CHART_DATA[9].v+1, 58);
+  slotSet(document.getElementById('mc-calls'), totalCalls);
+  slotSet(document.getElementById('hb-calls'), totalCalls, '<span class="hb-unit">건</span>');
+  setTimeout(liveCallTick, 1400+Math.random()*1600);
+}
+
+let isoP5, roseP5;
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    isoP5 = new p5(isoSketch);
+    roseP5 = new p5(roseSketch);
+
+    // 슬롯 카운트업
+    slotCountUp(document.getElementById('mc-calls'), 3847, 1400);
+    slotCountUp(document.getElementById('mc-wait'),  58,   1000);
+    slotCountUp(document.getElementById('mc-online'),68,   1000, '<small>명</small>');
+    slotCountUp(document.getElementById('mc-rate'),  96,   1200, '<small>%</small>');
+    slotCountUp(document.getElementById('hb-calls'), 3847, 1400, '<span class="hb-unit">건</span>');
+
+    // 카운트업 끝나고 라이브 카운터 시작
+    setTimeout(liveCallTick, 1600);
+  },60);
+});
+
+// ── 숫자 flash 헬퍼 ──
+function flashEl(el){
+  el.classList.remove('num-flash');
+  void el.offsetWidth;
+  el.classList.add('num-flash');
+}
+
+// ── mc-wait 실시간 변동 ──
+function liveWaitTick(){
+  const slots=document.getElementById('mc-wait').querySelectorAll('.slot-inner');
+  const cur=slots.length?parseInt([...slots].map(s=>s.style.transform.match(/[\d.]+/)?.[0]||0).reduce((a,v,i,arr)=>{
+    const d=Math.round(parseFloat(v)/10); return a+d*(Math.pow(10,arr.length-1-i));},0)):58;
+  const wait=Math.max(38,Math.min(98,cur+(Math.random()<0.5?1:-1)*Math.floor(Math.random()*4+1)));
+  slotSet(document.getElementById('mc-wait'),wait);
+  flashEl(document.getElementById('mc-wait'));
+  setTimeout(liveWaitTick, 2800+Math.random()*3500);
+}
+setTimeout(liveWaitTick, 2200);
+
+// ── mc-online 실시간 변동 ──
+function liveOnlineTick(){
+  const onlineEl=document.getElementById('mc-online');
+  const curOnline=parseInt(onlineEl.dataset.val||68);
+  const next=Math.max(60,Math.min(75,curOnline+(Math.random()<0.4?1:Math.random()<0.7?0:-1)));
+  onlineEl.dataset.val=next;
+  if(next!==curOnline){slotSet(onlineEl,next,'<small>명</small>');flashEl(onlineEl);}
+  setTimeout(liveOnlineTick, 5000+Math.random()*5000);
+}
+setTimeout(liveOnlineTick, 4000);
+
+// ── 카드 확장 콘텐츠 ──
+const HB_CONTENT = {
+  calls: {
+    label: '오늘 총 인입콜',
+    sub: '2026.05.15 · 실시간 기준',
+    numId: 'hb-calls',
+    detail: `
+      <div class="hbd-grid">
+        <div class="hbd-item"><div class="hbd-label">시간대 피크</div><div class="hbd-val">11~12시 <span class="hbd-unit">64건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">현재 대기</div><div class="hbd-val warn">58<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">평균 대기</div><div class="hbd-val">1:42<span class="hbd-unit">분</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">처리 완료</div><div class="hbd-val up">3,701<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">미처리</div><div class="hbd-val warn">170<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">처리율</div><div class="hbd-val up">96.2<span class="hbd-unit">%</span></div></div>
+      </div>
+      <div class="hbd-section">채널별</div>
+      <div class="hbd-channels">
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#4b9eff"></div>음성 <strong>55%</strong></div>
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#38bdf8"></div>채팅 <strong>28%</strong></div>
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#ff8c5a"></div>이메일 <strong>12%</strong></div>
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#818cf8"></div>콜백 <strong>5%</strong></div>
+      </div>
+      <div class="hbd-section">상담사 Top 3</div>
+      <div class="hbd-top">
+        <div class="hbd-top-item"><span class="hbd-top-rank">1</span><span class="hbd-top-name">김민준</span><span class="hbd-top-val">142건</span></div>
+        <div class="hbd-top-item"><span class="hbd-top-rank">2</span><span class="hbd-top-name">이서연</span><span class="hbd-top-val">138건</span></div>
+        <div class="hbd-top-item"><span class="hbd-top-rank">3</span><span class="hbd-top-name">박지호</span><span class="hbd-top-val">131건</span></div>
+      </div>`
+  },
+  voice: {
+    label: '음성 콜',
+    sub: '2026.05.15 · 음성채널 기준',
+    numId: null,
+    numHTML: '2,104<span style="font-size:1rem;font-weight:300;color:var(--sub);margin-left:3px">건</span>',
+    color: 'var(--cyan)',
+    detail: `
+      <div class="hbd-grid">
+        <div class="hbd-item"><div class="hbd-label">현재 통화중</div><div class="hbd-val up">38<span class="hbd-unit">명</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">대기</div><div class="hbd-val warn">12<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">평균 통화시간</div><div class="hbd-val">4:23<span class="hbd-unit">분</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">처리율</div><div class="hbd-val up">96<span class="hbd-unit">%</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">SLA 달성</div><div class="hbd-val up">98<span class="hbd-unit">%</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">FCR율</div><div class="hbd-val">71<span class="hbd-unit">%</span></div></div>
+      </div>
+      <div class="hbd-section">시간대별 인입 Top 3</div>
+      <div class="hbd-top">
+        <div class="hbd-top-item"><span class="hbd-top-rank">1</span><span class="hbd-top-name">11시</span><span class="hbd-top-val">28건</span></div>
+        <div class="hbd-top-item"><span class="hbd-top-rank">2</span><span class="hbd-top-name">12시</span><span class="hbd-top-val">24건</span></div>
+        <div class="hbd-top-item"><span class="hbd-top-rank">3</span><span class="hbd-top-name">10시</span><span class="hbd-top-val">18건</span></div>
+      </div>
+      <div class="hbd-section">상담사 상태</div>
+      <div class="hbd-channels">
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#60a5fa"></div>통화중 <strong>38</strong></div>
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#fbbf24"></div>후처리 <strong>12</strong></div>
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#4b9eff"></div>대기중 <strong>18</strong></div>
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#ff4d6a"></div>휴식 <strong>6</strong></div>
+      </div>`
+  },
+  channel: {
+    label: '채널별 현황',
+    sub: '2026.05.15 · 전채널 합산',
+    numId: null,
+    numHTML: '1,593<span style="font-size:1rem;font-weight:300;color:var(--sub);margin-left:3px">건</span>',
+    color: 'var(--purple)',
+    detail: `
+      <div class="hbd-grid">
+        <div class="hbd-item"><div class="hbd-label">채팅</div><div class="hbd-val">1,203<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">이메일 대기</div><div class="hbd-val warn">⚠ 41<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">콜백 미처리</div><div class="hbd-val warn">18<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">챗봇 자동</div><div class="hbd-val up">820<span class="hbd-unit">건</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">채팅 처리율</div><div class="hbd-val up">94<span class="hbd-unit">%</span></div></div>
+        <div class="hbd-item"><div class="hbd-label">이메일 처리율</div><div class="hbd-val warn">61<span class="hbd-unit">%</span></div></div>
+      </div>
+      <div class="hbd-section">평균 응답시간</div>
+      <div class="hbd-top">
+        <div class="hbd-top-item"><span class="hbd-top-name">채팅</span><span class="hbd-top-val">0:42분</span></div>
+        <div class="hbd-top-item"><span class="hbd-top-name">이메일</span><span class="hbd-top-val" style="color:var(--red)">2:18분 ⚠</span></div>
+        <div class="hbd-top-item"><span class="hbd-top-name">콜백</span><span class="hbd-top-val">1:05분</span></div>
+      </div>
+      <div class="hbd-section">챗봇 전환율</div>
+      <div class="hbd-channels">
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#38bdf8"></div>채팅 자동처리 <strong>68%</strong></div>
+        <div class="hbd-ch"><div class="hbd-ch-dot" style="background:#818cf8"></div>콜백 자동 <strong>42%</strong></div>
+      </div>`
+  }
+};
+
+// ── 카드 확장 ──
+const isMobile = ()=> window.innerWidth <= 640;
+
+function expandHb(hbEl, type){
+  const data   = HB_CONTENT[type];
+  const bg     = document.getElementById('hbExpandBg');
+  const card   = document.getElementById('hbExpandCard');
+  const detail = document.getElementById('hbDetail');
+  const numEl  = document.getElementById('hb-expand-num');
+
+  // 콘텐츠 세팅
+  card.querySelector('.sec-label').textContent = data.label;
+  card.querySelector('.hb-sub').textContent = data.sub || '';
+  const color = data.color || 'var(--blue)';
+  numEl.style.color = color;
+  numEl.innerHTML = data.numId
+    ? document.getElementById(data.numId).innerHTML
+    : data.numHTML;
+  detail.innerHTML = data.detail;
+  detail.classList.remove('show');
+  bg.classList.add('show');
+
+  if(isMobile()){
+    // ── 모바일: 중앙 페이드인 ──
+    card.style.cssText = 'opacity:0; pointer-events:all;';
+    requestAnimationFrame(()=>{
+      card.style.transition = 'opacity 0.25s ease';
+      card.style.opacity = '1';
+      setTimeout(()=>detail.classList.add('show'), 200);
+    });
+  } else {
+    // ── PC: FLIP 애니메이션 ──
+    const rect = hbEl.getBoundingClientRect();
+    card.style.cssText = `
+      top:${rect.top}px; left:${rect.left}px;
+      width:${rect.width}px; height:${rect.height}px;
+      border-radius:8px; transition:none; opacity:1; pointer-events:all;
+    `;
+    const expandW = Math.min(rect.width * 2.5, 540);
+    const expandH = 420;
+    const newLeft = window.innerWidth  / 2 - expandW / 2;
+    const newTop  = window.innerHeight / 2 - expandH / 2;
+    requestAnimationFrame(()=>{
+      card.style.transition = 'top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1), height .35s cubic-bezier(.4,0,.2,1), border-radius .35s';
+      card.style.top    = newTop  + 'px';
+      card.style.left   = newLeft + 'px';
+      card.style.width  = expandW + 'px';
+      card.style.height = expandH + 'px';
+      card.style.borderRadius = '12px';
+      setTimeout(()=>detail.classList.add('show'), 280);
+    });
+  }
+}
+
+function collapseHb(){
+  const bg   = document.getElementById('hbExpandBg');
+  const card = document.getElementById('hbExpandCard');
+  const detail = document.getElementById('hbDetail');
+  detail.classList.remove('show');
+  bg.classList.remove('show');
+  card.style.opacity = '0';
+  setTimeout(()=>{ card.style.pointerEvents='none'; }, 300);
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') collapseHb(); });
+
+// ── 오버레이 네비 ──
+function openNav(){
+  document.getElementById('overlayNav').classList.add('open');
+  document.getElementById('backdrop').classList.add('show');
+}
+function closeNav(){
+  document.getElementById('overlayNav').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+}
+
+// 오버레이 메뉴 아이템 active 전환
+document.querySelectorAll('.on-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.on-item').forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+    // 사이드바 아이콘도 동기화
+    const idx=[...document.querySelectorAll('.on-item')].indexOf(item);
+    document.querySelectorAll('.sb-item').forEach((s,i)=>{
+      s.classList.toggle('active', i===idx);
+    });
+    closeNav();
+  });
+});
+
+// 사이드바 아이콘 → 페이지 이동
+function sbNav(pageId, el){
+  showPage(pageId, document.querySelector(`.on-item[onclick*="${pageId}"]`));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+
+// ══ LOGIN / AI MODE TRANSITIONS ══
+
+function doLogin(){
+  const btn  = document.getElementById('loginBtn');
+  const card = document.getElementById('lcCard');
+  const vl   = document.getElementById('viewLogin');
+
+  btn.innerHTML = '<span class="lc-spinner"></span>로그인 중...';
+  btn.classList.add('loading');
+
+  // animation 중단 후 reflow → 180도 플립
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.transition = 'transform 0.82s cubic-bezier(.4,0,.2,1)';
+  requestAnimationFrame(()=>{
+    card.style.transform = 'rotateY(180deg)';
+  });
+
+  // 플립 완료(0.82s) 후 뒷면 잠깐 보여주다가 → 전체 페이드아웃
+  setTimeout(()=>{
+    vl.classList.add('lv-hidden');
+  }, 1350);
+
+  setTimeout(()=>{ vl.style.display = 'none'; }, 2100);
+}
+
+// ── 유저 팝업 ──
+function toggleUserMenu(trigger){
+  const menu = document.getElementById('userMenu');
+  if(menu.classList.contains('show')){ menu.classList.remove('show'); return; }
+  const r = trigger.getBoundingClientRect();
+  // 팝업을 트리거 위쪽에 띄우기
+  menu.style.left  = Math.max(8, r.left) + 'px';
+  menu.style.bottom = (window.innerHeight - r.top + 8) + 'px';
+  menu.style.top = 'auto';
+  menu.classList.add('show');
+}
+// 바깥 클릭 시 닫기
+document.addEventListener('click', e=>{
+  const menu = document.getElementById('userMenu');
+  if(!menu) return;
+  if(!menu.contains(e.target) && !e.target.closest('.sb-avatar') && !e.target.closest('.on-footer')){
+    menu.classList.remove('show');
+  }
+});
+
+function doLogout(){
+  closeNav();
+  const vl   = document.getElementById('viewLogin');
+  const card = document.getElementById('lcCard');
+
+  // 카드 원상복구 (앞면으로)
+  card.style.transition = 'none';
+  card.style.transform  = 'rotateY(0deg)';
+  card.style.animation  = 'none';
+  void card.offsetWidth;
+
+  // 로그인 버튼도 리셋
+  const btn = document.getElementById('loginBtn');
+  btn.innerHTML = '로그인';
+  btn.classList.remove('loading');
+
+  // 로그인 화면 페이드인
+  vl.style.display = 'flex';
+  void vl.offsetWidth;
+  vl.classList.remove('lv-hidden');
+
+  // 글로브 재시작
+  if(typeof THREE !== 'undefined' && !globeAnimId) initGlobe();
+}
+
+// ══ AI MODE ══
+let aiChatStarted = false;
+let aiSbCollapsed = false;
+let aiStatsOpen = false;
+let aiHistoryList = [];
+
+// ══ 페이지 전환 ══
+function showPage(pageId, triggerEl){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  // 네비 active
+  document.querySelectorAll('.on-item').forEach(i=>i.classList.remove('active'));
+  if(triggerEl) triggerEl.classList.add('active');
+  closeNav();
+  // 차트 렌더 — transition 끝난 후 (레이아웃 확정 타이밍)
+  if(pageId==='pg-stats') setTimeout(renderStatBars, 20);
+}
+
+// ── 통계 페이지 전체 렌더 ──
+function renderStatBars(){
+  // 1) 시간대별 바차트 — stats 전용 풍성한 데이터
+  const barsEl = document.getElementById('statBars');
+  const labelsEl = document.getElementById('statLabels');
+  if(barsEl && !barsEl.dataset.rendered){
+    barsEl.dataset.rendered = '1';
+    const STAT_BAR=[
+      {v:148,c:68,e:32},{v:224,c:112,e:58},
+      {v:387,c:198,e:94},{v:342,c:172,e:86},
+      {v:198,c:98,e:48},{v:156,c:78,e:36},
+      {v:212,c:108,e:52},{v:276,c:138,e:64},
+      {v:164,c:82,e:38},{v:98,c:48,e:0}
+    ];
+    const LABELS=['09','10','11','12','13','14','15','16','17','18'];
+    const MAX=Math.max(...STAT_BAR.map(d=>d.v+d.c+d.e));
+    STAT_BAR.forEach((d,i)=>{
+      const isNow=i===9;
+      const group=document.createElement('div');
+      group.className='sbc-bar-group';
+      group.style.cssText=`align-items:flex-end;flex:1;gap:2px;display:flex;${isNow?'opacity:0.55;':''}`;
+      const mkBar=(val,color)=>{
+        const b=document.createElement('div'); b.className='sbc-bar';
+        b.style.cssText=`flex:1;background:${color};height:0;border-radius:3px 3px 0 0;`;
+        group.appendChild(b);
+        setTimeout(()=>{
+          const ch=barsEl.offsetHeight||120;
+          b.style.height=(val/MAX*ch)+'px';
+          b.style.transition='height .5s cubic-bezier(.16,1,.3,1)';
+        },60+i*35);
+      };
+      mkBar(d.v,'var(--blue)'); mkBar(d.c,'var(--cyan)'); mkBar(d.e,'var(--orange)');
+      barsEl.appendChild(group);
+      const lbl=document.createElement('div'); lbl.className='sbc-label';
+      lbl.textContent=LABELS[i];
+      if(isNow) lbl.style.cssText='color:var(--blue);font-weight:700;';
+      labelsEl.appendChild(lbl);
+    });
+  }
+
+  // 2) SLA 7일 추이 — 드라마틱한 데이터 (장애 후 회복 스토리)
+  const slaEl = document.getElementById('slaChart');
+  if(slaEl && !slaEl.dataset.rendered){
+    slaEl.dataset.rendered = '1';
+    const SLA_DATA=[
+      {v:97,d:'5/12'},{v:94,d:'5/13'},{v:86,d:'5/14'},
+      {v:91,d:'5/15'},{v:95,d:'5/16'},{v:97,d:'5/17'},{v:98,d:'오늘'}
+    ];
+    const SLA_MIN=80, SLA_MAX=100;
+    const TARGET=95;
+    SLA_DATA.forEach((s,i)=>{
+      const col=document.createElement('div'); col.className='sla-col';
+      const valEl=document.createElement('div'); valEl.className='sla-bar-val';
+      valEl.textContent=s.v+'%';
+      const isBad=s.v<TARGET, isToday=s.d==='오늘';
+      if(isBad) valEl.style.color='var(--red)';
+      if(isToday) valEl.style.color='var(--blue)';
+      const bar=document.createElement('div'); bar.className='sla-bar';
+      const bg = isToday?'var(--blue)' : isBad?'var(--red)':'rgba(0,144,255,0.45)';
+      bar.style.cssText=`background:${bg};height:0;width:100%;`;
+      const dayEl=document.createElement('div'); dayEl.className='sla-bar-day';
+      dayEl.textContent=s.d;
+      if(isToday) dayEl.style.cssText='color:var(--blue);font-weight:700;border-top-color:var(--blue);';
+      col.append(valEl,bar,dayEl); slaEl.appendChild(col);
+      setTimeout(()=>{
+        const ch=slaEl.offsetHeight||120;
+        const footerH=28; // sla-bar-day + sla-bar-val 영역 제외
+        const available=Math.max(ch-footerH,40);
+        bar.style.height=((s.v-SLA_MIN)/(SLA_MAX-SLA_MIN)*available)+'px';
+        bar.style.transition='height .55s cubic-bezier(.16,1,.3,1)';
+      }, 80+i*55);
+    });
+    // 목표선 95%
+    const targetPct=((TARGET-SLA_MIN)/(SLA_MAX-SLA_MIN)*100).toFixed(1);
+    slaEl.style.position='relative';
+    const tl=document.createElement('div');
+    tl.style.cssText=`position:absolute;left:0;right:0;bottom:calc(${targetPct}% + 22px);border-top:1px dashed rgba(255,140,90,0.55);pointer-events:none;`;
+    slaEl.appendChild(tl);
+  }
+
+  // 3) 버블 매트릭스 히트맵
+  const bmEl=document.getElementById('bubbleWrap');
+  if(bmEl && !bmEl.dataset.rendered){
+    bmEl.dataset.rendered='1';
+    const BM_DAYS=['월','화','수','목','금'];
+    const BM_HOURS=['09','10','11','12','13','14','15','16','17','18'];
+    const BM_DATA=[
+      [28,52,78,64,42,34,38,55,32,18],
+      [35,61,88,72,54,45,50,68,41,22],
+      [30,58,82,69,48,38,44,61,36,20],
+      [26,48,74,61,44,32,40,52,30,16],
+      [32,55,70,58,40,30,36,48,44,28],
+    ];
+    const BM_ROWS=5, BM_COLS=10, BM_MAX=88;
+    let bmProg=0;
+
+    function bmColor(t){
+      if(t<0.5){const s=t*2;return[Math.round(30+(26-30)*s),Math.round(45+(127-45)*s),Math.round(110+(191-110)*s)];}
+      const s=(t-0.5)*2;return[Math.round(26+(0-26)*s),Math.round(127+(217-127)*s),Math.round(191+(198-191)*s)];
+    }
+
+    const bmSketch=(p)=>{
+      let padL,padT,cellW,cellH;
+      function layout(){
+        padL=46; padT=22;
+        cellW=(p.width-padL-16)/BM_COLS;
+        cellH=(p.height-padT-28)/BM_ROWS;
+      }
+      p.setup=()=>{
+        p.pixelDensity(window.devicePixelRatio||1);
+        const W=bmEl.offsetWidth||400, H=bmEl.offsetHeight||220;
+        p.createCanvas(W,H).parent('bubbleWrap');
+        p.frameRate(60);
+        layout();
+        // 부모 패널을 감시 (bmEl 자신 감시하면 캔버스 삽입→크기 변화→무한루프)
+        const panel=bmEl.closest('.pg-panel')||bmEl.parentElement;
+        new ResizeObserver(()=>{
+          const nw=bmEl.offsetWidth||400, nh=bmEl.offsetHeight||220;
+          if(nw>10 && nh>10){ p.resizeCanvas(nw,nh); layout(); bmProg=0; p.loop(); }
+        }).observe(panel);
+        p.loop();
+      };
+      p.draw=()=>{
+        const isDark=document.documentElement.dataset.theme!=='light';
+        if(isDark) p.background(19,24,42); else p.background(248,250,255);
+        bmProg=Math.min(bmProg+0.024,1);
+        const ease=1-Math.pow(1-bmProg,3);
+        const maxR=Math.min(cellW,cellH)*0.44;
+
+        // 그리드 — 가로
+        p.strokeWeight(1);
+        for(let r=0;r<=BM_ROWS;r++){
+          const y=padT+r*cellH;
+          const a=r===0||r===BM_ROWS?20:11;
+          if(isDark) p.stroke(255,255,255,a); else p.stroke(0,0,0,a-2);
+          p.line(padL,y,p.width-16,y);
+        }
+        // 그리드 — 세로
+        for(let c=0;c<=BM_COLS;c++){
+          const x=padL+c*cellW;
+          const a=c===0||c===BM_COLS?20:8;
+          if(isDark) p.stroke(255,255,255,a); else p.stroke(0,0,0,a-2);
+          p.line(x,padT,x,padT+BM_ROWS*cellH);
+        }
+
+        // 버블
+        for(let r=0;r<BM_ROWS;r++){
+          for(let c=0;c<BM_COLS;c++){
+            const v=BM_DATA[r][c];
+            const t=v/BM_MAX;
+            const cx=padL+(c+0.5)*cellW;
+            const cy=padT+(r+0.5)*cellH;
+            const radius=maxR*Math.sqrt(t)*ease;
+            const [red,grn,blu]=bmColor(t);
+            // 글로우
+            p.noStroke();
+            for(let lyr=3;lyr>=0;lyr--){
+              p.fill(red,grn,blu,Math.round((14-lyr*3)*ease));
+              p.ellipse(cx,cy,(radius*(1+lyr*0.5))*2,(radius*(1+lyr*0.5))*2);
+            }
+            // 메인
+            p.fill(red,grn,blu,Math.round(195*ease));
+            p.ellipse(cx,cy,radius*2,radius*2);
+            // 하이라이트
+            if(radius>5){
+              p.fill(255,255,255,Math.round(75*ease));
+              p.ellipse(cx-radius*0.27,cy-radius*0.27,radius*0.42,radius*0.42);
+            }
+            // 값 레이블
+            if(radius>maxR*0.5){
+              p.noStroke();
+              p.fill(255,255,255,Math.round(210*ease));
+              p.textAlign(p.CENTER,p.CENTER);
+              p.textSize(10);
+              p.textStyle(p.BOLD);
+              p.text(v,cx,cy+1);
+              p.textStyle(p.NORMAL);
+            }
+          }
+        }
+
+        // 요일 라벨
+        p.noStroke();
+        p.textAlign(p.RIGHT,p.CENTER);
+        p.textSize(12);
+        for(let r=0;r<BM_ROWS;r++){
+          if(isDark) p.fill(255,255,255,175); else p.fill(0,0,0,160);
+          p.text(BM_DAYS[r],padL-8,padT+(r+0.5)*cellH);
+        }
+        // 시간 라벨
+        p.noStroke();
+        p.textAlign(p.CENTER,p.TOP);
+        p.textSize(10);
+        for(let c=0;c<BM_COLS;c++){
+          if(isDark) p.fill(255,255,255,115); else p.fill(0,0,0,110);
+          p.text(BM_HOURS[c],padL+(c+0.5)*cellW,padT+BM_ROWS*cellH+6);
+        }
+        if(bmProg>=1)p.noLoop();
+      };
+    };
+    window._bmP5 = new p5(bmSketch);
+  }
+}
+
+function showAiMode(){
+  closeNav();
+  // 글로브 캔버스 → aiSpaceBg로 이동
+  const spaceBg = document.getElementById('aiSpaceBg');
+  const loginEl = document.getElementById('viewLogin');
+  const canvas = loginEl && loginEl.querySelector('canvas');
+  if(canvas && spaceBg) spaceBg.appendChild(canvas);
+  spaceBg.classList.add('show');
+  document.getElementById('viewAi').classList.add('show');
+  // renderer 사이즈 동기화
+  window.dispatchEvent(new Event('resize'));
+  // 웰컴 화면으로 초기화
+  document.getElementById('aimWelcome').style.display = '';
+  document.getElementById('aimChatLayout').style.display = 'none';
+}
+
+function hideAiMode(){
+  document.getElementById('viewAi').classList.remove('show');
+  // 캔버스 → viewLogin으로 복귀
+  const spaceBg = document.getElementById('aiSpaceBg');
+  const loginEl = document.getElementById('viewLogin');
+  const canvas = spaceBg && spaceBg.querySelector('canvas');
+  if(canvas && loginEl) loginEl.insertBefore(canvas, loginEl.firstChild);
+  spaceBg.classList.remove('show');
+}
+
+function aimToggleSb(){
+  aiSbCollapsed = !aiSbCollapsed;
+  document.getElementById('aimSb').classList.toggle('collapsed', aiSbCollapsed);
+}
+
+function aimToggleStats(){
+  aiStatsOpen = !aiStatsOpen;
+  document.getElementById('aimStats').classList.toggle('open', aiStatsOpen);
+}
+
+function aimNewChat(){
+  aiChatStarted = false;
+  document.getElementById('aimWelcome').style.display = '';
+  document.getElementById('aimChatLayout').style.display = 'none';
+  document.getElementById('aimScroll').innerHTML = '';
+  document.getElementById('aimWelcomeInput').value = '';
+  aiStatsOpen = false;
+  document.getElementById('aimStats').classList.remove('open');
+}
+
+function aimSendFromWelcome(){
+  const ta = document.getElementById('aimWelcomeInput');
+  const text = ta.value.trim();
+  if(!text) return;
+  ta.value = '';
+  aimStartChat(text);
+}
+
+function aimSample(text){
+  aimStartChat(text);
+}
+
+function aimStartChat(text){
+  aiChatStarted = true;
+  document.getElementById('aimWelcome').style.display = 'none';
+  document.getElementById('aimChatLayout').style.display = '';
+  // 히스토리 추가
+  const now = new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  aiHistoryList.unshift({title: text.length > 22 ? text.slice(0,22)+'…' : text, time: now});
+  aimRenderHistory();
+  aimAppendUserMsg(text);
+  aimRespond(text);
+  if(!aiStatsOpen){ aiStatsOpen=true; document.getElementById('aimStats').classList.add('open'); }
+}
+
+function aimSend(){
+  const ta = document.getElementById('aimChatInput');
+  const text = ta.value.trim();
+  if(!text) return;
+  ta.value = '';
+  ta.style.height = '';
+  aimAppendUserMsg(text);
+  aimRespond(text);
+}
+
+function aimAppendUserMsg(text){
+  const scroll = document.getElementById('aimScroll');
+  const now = new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  const div = document.createElement('div');
+  div.className = 'aim-msg-user';
+  div.innerHTML = `<div class="aim-msg-user-bubble">${text}<div class="aim-msg-time">${now}</div></div><div class="aim-msg-user-av">JY</div>`;
+  scroll.appendChild(div);
+  scroll.scrollTop = scroll.scrollHeight;
+}
+
+const AIM_RESP = {
+  '오늘 대기열 현황 분석해줘':     '현재 전체 대기는 <strong>58건</strong>입니다.<br><br><strong>채널별 현황:</strong><br>• 이메일: <span class="hw">41건 ⚠ 임계치 근접</span><br>• 음성: 12건 (정상)<br>• 채팅: 5건 (정상)<br><br>평균 대기시간 <strong>1:42분</strong>으로, 이메일 채널 집중 대응이 필요합니다.',
+  '현재 SLA 위반 리스크 알려줘':   '<span class="hw">⚠ 이메일 채널 SLA 위반 위험 높음</span><br><br>현재 대기 41건, 평균 응답시간 2:18분으로 SLA 기준(2분) 초과 중입니다.<br>이메일 처리 상담원 <strong>2명 추가 배치</strong>를 즉시 권장합니다.',
+  '상담원 성과 분석해줘':           '오늘 상담원 성과를 분석했습니다.<br><br><strong>Top 3 상담원:</strong><ol><li>김민준 — 142건, FCR 82%</li><li>이서연 — 138건, FCR 79%</li><li>박지호 — 131건, FCR 76%</li></ol>평균 통화시간 4:23분, SLA 달성률 <span class="hg">98%</span>로 전반적으로 우수합니다.',
+  '인력 최적화 방안 추천해줘':      '현재 인력 배치 분석:<br><br>• 음성 채널: <span class="hg">충분 (38명 활동 중)</span><br>• 채팅 채널: 정상<br>• 이메일 채널: <span class="hw">부족 — 2명 추가 필요</span><br><br>음성→이메일 전환 시 예상 처리율: <span class="hg">61% → 85%</span>',
+  '오늘 상담원 성과 분석해줘':      '오늘 상담원 성과를 분석했습니다.<br><br><strong>Top 3 상담원:</strong><ol><li>김민준 — 142건, FCR 82%</li><li>이서연 — 138건, FCR 79%</li><li>박지호 — 131건, FCR 76%</li></ol>평균 통화시간 4:23분, SLA 달성률 <span class="hg">98%</span>로 전반적으로 우수합니다.',
+  'SLA 위반 리스크 분석해줘':       '<span class="hw">⚠ 이메일 채널 SLA 위반 위험 높음</span><br><br>현재 대기 41건, 평균 응답시간 2:18분으로 SLA 기준(2분) 초과 중입니다.<br>이메일 처리 상담원 <strong>2명 추가 배치</strong>를 즉시 권장합니다.',
+  '인력 최적화 방안 알려줘':        '현재 인력 배치 분석:<br><br>• 음성 채널: <span class="hg">충분 (38명 활동 중)</span><br>• 채팅 채널: 정상<br>• 이메일 채널: <span class="hw">부족 — 2명 추가 필요</span><br><br>음성→이메일 전환 시 예상 처리율: <span class="hg">61% → 85%</span>',
+  '이상 패턴 감지 결과는?':         '오늘 <strong>2건의 이상 패턴</strong>이 감지됐습니다.<br><br>1. 10~11시 이메일 급증 (+340%) — 마케팅 발송 연관 추정<br>2. 콜백 미처리 18건 — 전일 대비 +6건<br><br>내일 같은 시간대 이메일 인력 <strong>사전 배치</strong>를 권장합니다.'
+};
+
+function aimRespond(text){
+  const scroll = document.getElementById('aimScroll');
+  const thinking = document.createElement('div');
+  thinking.className = 'aim-msg-ai'; thinking.id = 'aimThinking';
+  thinking.innerHTML = `<div class="aim-ai-av">✦</div><div class="aim-ai-bubble"><div class="aim-thinking"><div class="aim-t-dot"></div><div class="aim-t-dot"></div><div class="aim-t-dot"></div></div></div>`;
+  scroll.appendChild(thinking);
+  scroll.scrollTop = scroll.scrollHeight;
+  const delay = 700 + Math.random()*400;
+  setTimeout(()=>{
+    const th = document.getElementById('aimThinking');
+    if(th) th.remove();
+    const now = new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+    const resp = AIM_RESP[text] || '해당 질문을 분석 중입니다. 현재 데이터를 기반으로 최적의 답변을 준비하겠습니다.';
+    const div = document.createElement('div');
+    div.className = 'aim-msg-ai';
+    div.innerHTML = `<div class="aim-ai-av">✦</div><div><div class="aim-ai-bubble">${resp}</div><div class="aim-ai-time">${now}</div></div>`;
+    scroll.appendChild(div);
+    scroll.scrollTop = scroll.scrollHeight;
+  }, delay);
+}
+
+function aimRenderHistory(){
+  const hist = document.getElementById('aimHist');
+  hist.innerHTML = '';
+  if(aiHistoryList.length === 0){
+    hist.innerHTML = '<div class="aim-sb-empty" id="aimHistEmpty">아직 대화 기록이 없습니다.<br>새 대화를 시작해보세요.</div>';
+    return;
+  }
+  aiHistoryList.forEach(h=>{
+    const div = document.createElement('div');
+    div.className = 'aim-sb-item';
+    div.innerHTML = `<div class="aim-sb-item-title">${h.title}</div><div class="aim-sb-item-meta">${h.time}</div>`;
+    hist.appendChild(div);
+  });
+}
+
+// ══ THREE.JS GLOBE (CDN, online only) ══
+let globeAnimId;
+
+function initGlobe(){
+  const loginEl = document.getElementById('viewLogin');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 16); camera.lookAt(0,0,0);
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x080818, 1);
+  renderer.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;opacity:0;';
+  loginEl.insertBefore(renderer.domElement, loginEl.firstChild);
+  // 몇 프레임 렌더 후 천천히 페이드인
+  let frameCount = 0;
+  const waitFade = ()=>{
+    if(++frameCount > 6){
+      renderer.domElement.style.opacity = '1';
+    } else {
+      requestAnimationFrame(waitFade);
+    }
+  };
+  requestAnimationFrame(waitFade);
+
+  // Nebula bg
+  const bc=document.createElement('canvas'); bc.width=512; bc.height=512;
+  const bx=bc.getContext('2d');
+  const bg=bx.createLinearGradient(0,0,512,512);
+  bg.addColorStop(0,'#1a0a38'); bg.addColorStop(.4,'#0d0a28'); bg.addColorStop(1,'#070520');
+  bx.fillStyle=bg; bx.fillRect(0,0,512,512);
+  // 성운 — 더 진하고 넓게
+  [
+    [80, 80, 320,'rgba(130,55,230,0.44)','rgba(90,35,180,0.20)'],
+    [430,420,280,'rgba(45,80,230,0.36)','rgba(35,60,200,0.16)'],
+    [400,100,200,'rgba(50,100,210,0.28)','rgba(30,70,180,0.10)'],
+    [250,260,180,'rgba(100,40,200,0.16)','rgba(0,0,0,0)'],
+  ].forEach(([x,y,r,c1,c2])=>{
+    const g=bx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,c1); g.addColorStop(.55,c2); g.addColorStop(1,'rgba(0,0,0,0)');
+    bx.fillStyle=g; bx.fillRect(0,0,512,512);
+  });
+  const bgM=new THREE.Mesh(new THREE.PlaneGeometry(90,56),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(bc)}));
+  bgM.position.z=-12; scene.add(bgM);
+
+  // Stars — 크기/밝기/수량 올리기
+  const STAR_COUNT = 2200;
+  const spos=new Float32Array(STAR_COUNT*3);
+  for(let i=0;i<STAR_COUNT;i++){spos[i*3]=(Math.random()-.5)*130;spos[i*3+1]=(Math.random()-.5)*130;spos[i*3+2]=(Math.random()-.5)*22-8;}
+  const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.BufferAttribute(spos,3));
+  // 밝은 별 레이어
+  scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xccccff,size:.07,transparent:true,opacity:.30})));
+  // 희미한 별 레이어 (깊이감)
+  const spos2=new Float32Array(1400*3);
+  for(let i=0;i<1400;i++){spos2[i*3]=(Math.random()-.5)*130;spos2[i*3+1]=(Math.random()-.5)*130;spos2[i*3+2]=(Math.random()-.5)*22-8;}
+  const sg2=new THREE.BufferGeometry(); sg2.setAttribute('position',new THREE.BufferAttribute(spos2,3));
+  scene.add(new THREE.Points(sg2,new THREE.PointsMaterial({color:0x8888cc,size:.035,transparent:true,opacity:.25})));
+
+  const GLOBE_R=5.5;
+  function ll2v(lat,lon,r){const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta));}
+  function angD(a,b){const d=Math.abs(a-b)%360;return d>180?360-d:d;}
+
+  const grp=new THREE.Group(); scene.add(grp);
+  const allLines=[];
+  function addLine(pts,lons,op){
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
+    const col=new Float32Array(pts.length*3);
+    for(let i=0;i<pts.length;i++){col[i*3]=0.18;col[i*3+1]=0.18;col[i*3+2]=0.62;}
+    geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+    grp.add(new THREE.Line(geo,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:op})));
+    allLines.push({geo,lons});
+  }
+  for(let lat=-75;lat<=75;lat+=15){const p=[],l=[];for(let lon=0;lon<=360;lon+=3){p.push(ll2v(lat,lon,GLOBE_R));l.push(lon);}addLine(p,l,.75);}
+  for(let lon=0;lon<360;lon+=15){const p=[],l=[];for(let lat=-90;lat<=90;lat+=3){p.push(ll2v(lat,lon,GLOBE_R));l.push(lon);}addLine(p,l,.75);}
+  {const p=[],l=[];for(let lon=0;lon<=360;lon+=2){p.push(ll2v(0,lon,GLOBE_R));l.push(lon);}addLine(p,l,.95);}
+
+  grp.add(new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R*.98,32,32),new THREE.MeshBasicMaterial({color:0x6366f1,transparent:true,opacity:.04})));
+  grp.add(new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R*1.08,32,32),new THREE.MeshBasicMaterial({color:0x818cf8,transparent:true,opacity:.05,side:THREE.BackSide})));
+
+  const regions=[[37.5,127.0,true],[35.7,139.7,false],[1.3,103.8,false],[-33.9,151.2,false],[19.1,72.9,false],[53.3,-6.3,false],[51.5,-0.1,false],[50.1,8.7,false],[38.9,-77.0,false],[45.5,-122.7,false],[43.7,-79.4,false]];
+  regions.forEach(([lat,lon,isHub])=>{
+    const pos=ll2v(lat,lon,GLOBE_R);
+    const n=new THREE.Mesh(new THREE.SphereGeometry(isHub?.10:.062,10,10),new THREE.MeshBasicMaterial({color:isHub?0xffffff:0xa5b4fc}));n.position.copy(pos);
+    const g=new THREE.Mesh(new THREE.SphereGeometry(isHub?.30:.18,10,10),new THREE.MeshBasicMaterial({color:isHub?0x818cf8:0x6366f1,transparent:true,opacity:isHub?.45:.22}));g.position.copy(pos);
+    if(isHub){const p=new THREE.Mesh(new THREE.SphereGeometry(.52,12,12),new THREE.MeshBasicMaterial({color:0x818cf8,transparent:true,opacity:.08}));p.position.copy(pos);grp.add(p);}
+    grp.add(n);grp.add(g);
+  });
+
+  function addArc(r1,r2,col,op){
+    const v1=ll2v(r1[0],r1[1],GLOBE_R),v2=ll2v(r2[0],r2[1],GLOBE_R);
+    const mid=new THREE.Vector3().addVectors(v1,v2).multiplyScalar(.5);
+    mid.normalize().multiplyScalar(GLOBE_R+v1.distanceTo(v2)*.30);
+    const curve=new THREE.QuadraticBezierCurve3(v1,mid,v2);
+    grp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(60)),new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op})));
+    return curve;
+  }
+  const ac0=addArc(regions[0],regions[1],0xa5b4fc,.60);
+  const ac1=addArc(regions[0],regions[2],0x818cf8,.50);
+  const ac2=addArc(regions[0],regions[8],0x6366f1,.45);
+  const ac4=addArc(regions[1],regions[2],0x818cf8,.35);
+  const ac5=addArc(regions[2],regions[3],0x6366f1,.35);
+  const ac7=addArc(regions[5],regions[6],0xa5b4fc,.45);
+  const ac8=addArc(regions[6],regions[7],0x818cf8,.40);
+  const ac9=addArc(regions[8],regions[9],0x818cf8,.45);
+  const ac11=addArc(regions[8],regions[5],0x6366f1,.38);
+
+  const arcT=[];
+  function addArcT(steps,t0,spd,col){
+    const m=new THREE.Mesh(new THREE.SphereGeometry(.032,8,8),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.30}));
+    m.add(new THREE.Mesh(new THREE.SphereGeometry(.09,8,8),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.06})));
+    grp.add(m); arcT.push({mesh:m,steps,idx:0,t:t0,speed:spd});
+  }
+  addArcT([{c:ac0,fwd:true},{c:ac4,fwd:false},{c:ac1,fwd:false}],0.0,0.003,0xffffff);
+  addArcT([{c:ac2,fwd:true},{c:ac11,fwd:true},{c:ac7,fwd:true},{c:ac7,fwd:false},{c:ac11,fwd:false},{c:ac2,fwd:false}],0.3,0.002,0xa5b4fc);
+  addArcT([{c:ac4,fwd:true},{c:ac5,fwd:true},{c:ac5,fwd:false},{c:ac4,fwd:false}],0.6,0.0025,0x818cf8);
+  addArcT([{c:ac7,fwd:true},{c:ac8,fwd:true},{c:ac8,fwd:false},{c:ac7,fwd:false}],0.8,0.003,0xc7d2fe);
+  addArcT([{c:ac9,fwd:true},{c:ac9,fwd:false}],0.2,0.003,0x818cf8);
+
+  const wires=[];
+  function addWire(type,fv,t0,spd,col){
+    const m=new THREE.Mesh(new THREE.SphereGeometry(.028,8,8),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.28}));
+    m.add(new THREE.Mesh(new THREE.SphereGeometry(.08,8,8),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.05})));
+    grp.add(m); wires.push({mesh:m,type,fv,t0,spd});
+  }
+  addWire('lat',30,0.0,8,0xa5b4fc); addWire('lat',-30,2.4,6,0x818cf8); addWire('lat',0,4.8,9,0xc7d2fe);
+  addWire('lon',60,1.2,5,0xa5b4fc); addWire('lon',195,3.6,7,0x818cf8);
+
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then(r=>r.json()).then(world=>{
+      if(typeof topojson==='undefined') return;
+      topojson.mesh(world,world.objects.countries).coordinates.forEach(line=>{
+        if(line.length<2) return;
+        const pts=line.map(([lon,lat])=>ll2v(lat,lon,GLOBE_R+0.008));
+        grp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x7c85d4,transparent:true,opacity:0.28})));
+      });
+    }).catch(()=>{});
+
+  let mx=0,my=0,cx=0,cy=0;
+  window.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2;});
+
+  let gt=0;
+  function gloop(){
+    globeAnimId=requestAnimationFrame(gloop);
+    gt+=.004; cx+=(mx-cx)*.04; cy+=(my-cy)*.04;
+    camera.position.x=cx*1.2; camera.position.y=.3-cy*.6; camera.lookAt(0,0,0);
+    grp.rotation.y=gt*.15; grp.rotation.x=Math.sin(gt*.3)*.04;
+    const p1=(gt*45)%360;
+    allLines.forEach(({geo,lons})=>{
+      const ca=geo.attributes.color;
+      for(let i=0;i<lons.length;i++){const b=Math.pow(Math.max(0,1-angD(lons[i],p1)/38),3.5);ca.array[i*3]=0.18+0.14*b;ca.array[i*3+1]=0.18+0.11*b;ca.array[i*3+2]=0.50+0.15*b;}
+      ca.needsUpdate=true;
+    });
+    arcT.forEach(at=>{
+      at.t+=at.speed; if(at.t>=1){at.t=0;at.idx=(at.idx+1)%at.steps.length;}
+      const s=at.steps[at.idx]; at.mesh.position.copy(s.c.getPoint(s.fwd?at.t:1-at.t));
+    });
+    wires.forEach(w=>{
+      let pos;
+      if(w.type==='lat'){const lon=((gt+w.t0)*w.spd)%360;pos=ll2v(w.fv,lon,GLOBE_R);}
+      else{const lat=-85+(((gt+w.t0)*w.spd)%170);pos=ll2v(lat,w.fv,GLOBE_R);}
+      w.mesh.position.copy(pos);
+    });
+    renderer.render(scene,camera);
+  }
+  gloop();
+
+  window.addEventListener('resize',()=>{
+    camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+  });
+}
+
+window.addEventListener('load',()=>{
+  if(typeof THREE !== 'undefined') initGlobe();
+});
+
+</script>
+
+<!-- 유저 팝업 -->
+<div class="user-menu" id="userMenu">
+  <div class="ump-header">
+    <div class="ump-avatar">JY</div>
+    <div>
+      <div class="ump-name">장유석</div>
+      <div class="ump-role">관리자 · 서울센터</div>
+    </div>
+  </div>
+  <div class="ump-divider"></div>
+  <div class="ump-item"><span class="material-icons">person</span>내 프로필</div>
+  <div class="ump-item"><span class="material-icons">settings</span>환경설정</div>
+  <div class="ump-divider"></div>
+  <div class="ump-item logout" onclick="doLogout()"><span class="material-icons">logout</span>로그아웃</div>
+</div>
+
+<!-- ══ AI MODE OVERLAY ══ -->
+<div id="viewAi">
+
+  <!-- ── 왼쪽 사이드바 ── -->
+  <aside class="aim-sb" id="aimSb">
+    <div class="aim-sb-logo">
+      <div class="aim-sb-logo-inner">
+        <span style="font-size:15px">✦</span>
+        <span class="aim-sb-logo-text">AI 어시스턴트</span>
+      </div>
+      <div class="aim-sb-collapse" onclick="aimToggleSb()" title="사이드바 접기">
+        <span class="material-icons" style="font-size:16px">chevron_left</span>
+      </div>
+    </div>
+    <div class="aim-sb-actions">
+      <div class="aim-sb-newchat" onclick="aimNewChat()">
+        <span class="material-icons" style="font-size:16px">add</span>
+        새 대화
+      </div>
+    </div>
+    <div class="aim-sb-sec">대화 기록</div>
+    <div class="aim-sb-hist" id="aimHist">
+      <div class="aim-sb-empty" id="aimHistEmpty">아직 대화 기록이 없습니다.<br>새 대화를 시작해보세요.</div>
+    </div>
+    <div class="aim-sb-footer" onclick="hideAiMode()">
+      <span class="material-icons" style="font-size:17px">dashboard</span>
+      대시보드로 돌아가기
+    </div>
+  </aside>
+
+  <!-- ── 메인 ── -->
+  <div class="aim-main" id="aimMain">
+
+    <!-- 헤더 -->
+    <div class="aim-header">
+      <div class="aim-h-toggle" onclick="aimToggleSb()">
+        <span class="material-icons" style="font-size:17px">menu</span>
+      </div>
+      <div class="aim-h-title">
+        <span class="aim-h-star">✦</span>
+        AI Mode
+      </div>
+      <div class="mini-theme-toggle" onclick="toggleTheme()" title="테마 전환" style="margin-right:6px;"></div>
+      <div class="aim-h-back" onclick="hideAiMode()">
+        <span class="material-icons" style="font-size:16px">arrow_back</span>
+        대시보드
+      </div>
+    </div>
+
+    <!-- 웰컴 화면 -->
+    <div class="aim-welcome" id="aimWelcome">
+      <span class="aim-welcome-star">✦</span>
+      <div class="aim-welcome-title">무엇을 도와드릴까요?</div>
+      <div class="aim-iw">
+        <div class="aim-iw-inner">
+          <textarea class="aim-ta" id="aimWelcomeInput" rows="1"
+            placeholder="오늘 현황을 분석해줘..."
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aimSendFromWelcome();}"></textarea>
+          <button class="aim-send-btn" onclick="aimSendFromWelcome()">
+            <span class="material-icons" style="font-size:17px">send</span>
+          </button>
+        </div>
+        <div class="aim-iw-hint">
+          <span class="aim-kbd">Enter</span> 전송 &nbsp;·&nbsp;
+          <span class="aim-kbd">Shift+Enter</span> 줄바꿈
+        </div>
+      </div>
+      <div class="aim-samples">
+        <div class="aim-sample" onclick="aimSample('오늘 대기열 현황 분석해줘')"><span class="aim-sample-dot">›</span>오늘 대기열 현황 분석해줘</div>
+        <div class="aim-sample" onclick="aimSample('현재 SLA 위반 리스크 알려줘')"><span class="aim-sample-dot">›</span>현재 SLA 위반 리스크 알려줘</div>
+        <div class="aim-sample" onclick="aimSample('상담원 성과 분석해줘')"><span class="aim-sample-dot">›</span>상담원 성과 분석해줘</div>
+        <div class="aim-sample" onclick="aimSample('인력 최적화 방안 추천해줘')"><span class="aim-sample-dot">›</span>인력 최적화 방안 추천해줘</div>
+      </div>
+    </div>
+
+    <!-- 채팅 화면 -->
+    <div class="aim-chat-layout" id="aimChatLayout" style="display:none">
+      <div class="aim-msgs-col">
+        <div class="aim-scroll" id="aimScroll"></div>
+        <div class="aim-chat-bottom">
+          <div class="aim-chat-input-row">
+            <textarea id="aimChatInput" rows="1"
+              placeholder="메시지를 입력하세요..."
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aimSend();}"></textarea>
+            <button class="aim-send-btn" onclick="aimSend()">
+              <span class="material-icons" style="font-size:17px">send</span>
+            </button>
+          </div>
+          <div class="aim-chat-hint">Enter 전송 · Shift+Enter 줄바꿈</div>
+        </div>
+      </div>
+
+      <!-- 스탯 패널 -->
+      <div class="aim-stats" id="aimStats">
+        <div class="aim-stats-inner">
+          <div class="aim-stats-hd">
+            <span class="aim-stats-title">📊 실시간 현황</span>
+            <span class="aim-stats-close material-icons" onclick="aimToggleStats()" style="font-size:16px">close</span>
+          </div>
+          <div class="aim-stats-body">
+            <div class="aim-kpi-row">
+              <div class="aim-kpi"><div class="aim-kpi-val" style="color:var(--red)">58</div><div class="aim-kpi-lbl">현재 대기</div></div>
+              <div class="aim-kpi"><div class="aim-kpi-val" style="color:var(--green)">96.2%</div><div class="aim-kpi-lbl">처리율</div></div>
+              <div class="aim-kpi"><div class="aim-kpi-val" style="color:var(--blue)">98%</div><div class="aim-kpi-lbl">SLA 달성</div></div>
+              <div class="aim-kpi"><div class="aim-kpi-val" style="color:var(--orange)">18</div><div class="aim-kpi-lbl">콜백 미처리</div></div>
+            </div>
+            <div class="aim-stat-row">
+              <div class="aim-stat-item">
+                <div class="aim-stat-item-hd"><span class="aim-stat-item-label">이메일 대기</span><span class="aim-stat-item-val" style="color:var(--red)">41건 ⚠</span></div>
+                <div class="aim-bar"><div class="aim-bar-fill" style="width:82%;background:var(--red)"></div></div>
+              </div>
+              <div class="aim-stat-item">
+                <div class="aim-stat-item-hd"><span class="aim-stat-item-label">음성 대기</span><span class="aim-stat-item-val">12건</span></div>
+                <div class="aim-bar"><div class="aim-bar-fill" style="width:24%;background:var(--blue)"></div></div>
+              </div>
+              <div class="aim-stat-item">
+                <div class="aim-stat-item-hd"><span class="aim-stat-item-label">채팅 대기</span><span class="aim-stat-item-val">5건</span></div>
+                <div class="aim-bar"><div class="aim-bar-fill" style="width:10%;background:var(--cyan)"></div></div>
+              </div>
+              <div class="aim-stat-item">
+                <div class="aim-stat-item-hd"><span class="aim-stat-item-label">총 인입콜</span><span class="aim-stat-item-val">3,871건</span></div>
+                <div class="aim-bar"><div class="aim-bar-fill" style="width:77%;background:var(--purple)"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>희랑 — Journey 프로토타입</title>
+<style>
+  @font-face{font-family:"Pretendard";src:url("../assets/fonts/PretendardVariable.woff2") format("woff2-variations");font-weight:100 900;font-display:swap}
+
+  /* ═══════════════════════════════════════════════════════════════
+     여정 프로토타입 — "길을 지나가듯, 하나씩 찾아간다"
+       · 세로 스크롤 = 가로로 걷기. .road 가 화면에 고정되고 .world 가 왼쓸으로 흐른다
+       · 오브젝트(인트로의 빨강)는 화면 왼쪽 22% 에 서서 걷는다(스크롤 속도에 따라 흔들림·기울기)
+       · 풍경은 5겹: 하늘 · 구름 · 먼 산 · 언덕 · 길+풀 (각기 다른 속도)
+       · 정거장에 가까워지면 하늘이 그 장소의 색으로 물들고, 캡션이 뜬다
+     ═══════════════════════════════════════════════════════════════ */
+  :root{
+    --vw:100vw;
+    --world:420;                       /* 세계 폭 (vw 단위 숫자) */
+    --sky1:#b9dcf2; --sky2:#f4ecd9;    /* 하늘 위/지평 */
+    --far:#9fb9cc; --hill1:#7fb56a; --hill2:#5f9a55; --hill3:#4a7f47;
+    --road:#dccaa2; --road2:#c8b283; --grass:#6fa85c;
+    --ink:#2b2a26; --ink2:rgba(43,42,38,.6); --paper:rgba(255,252,246,.92);
+    --ease:cubic-bezier(.4,.05,.2,1);
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:auto}
+  body{font-family:"Pretendard","Malgun Gothic",system-ui,sans-serif;color:var(--ink);background:var(--sky2);
+    height:calc((var(--world) - 100) * 1vw + 100vh)}   /* 스크롤 길이 = 세계 폭 - 화면 폭 */
+
+  .road{position:sticky;top:0;height:100vh;overflow:hidden}
+  .sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 72%);transition:background 1.6s var(--ease)}
+  /* 정거장 색: 하늘이 물든다 */
+  body[data-stop="01"] .sky{background:linear-gradient(180deg,#5b7fd6 0%,#c9d8f0 70%)}
+
+  .layer{position:absolute;left:0;bottom:0;height:100%;width:calc(var(--world) * 1vw);will-change:transform}
+  .layer svg{position:absolute;left:0;bottom:0;width:100%;height:100%;display:block;overflow:visible}
+
+  /* 태양 */
+  .sun{position:absolute;right:10vw;top:9vh;width:9vw;height:9vw;border-radius:50%;background:radial-gradient(circle at 45% 42%,#fff7d6,#ffd98a 60%,rgba(255,217,138,0) 61%);
+    filter:blur(.3px);opacity:.9}
+
+  /* 구름: 둥근 덩어리들. 각자 아주 느리게 떠간다 */
+  .cloud{position:absolute;width:14vw;height:5vw;opacity:.95;filter:drop-shadow(0 6px 10px rgba(80,90,110,.12))}
+  .cloud::before,.cloud::after,.cloud i{content:"";position:absolute;background:#fff;border-radius:50%}
+  .cloud::before{left:8%;bottom:0;width:48%;height:120%}
+  .cloud::after{left:38%;bottom:0;width:58%;height:150%}
+  .cloud i{left:0;bottom:0;width:100%;height:60%;border-radius:999px}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(3vw)}}
+  .cloud{animation:drift 14s ease-in-out infinite alternate}
+
+  /* 풀: 길 앞쪽에 살짝 흔들리는 잎 */
+  .grass{position:absolute;bottom:0;left:0;width:calc(var(--world) * 1vw);height:12vh;pointer-events:none}
+  .grass i{position:absolute;bottom:6vh;width:.5vw;height:3.2vh;background:linear-gradient(180deg,#a5d484,#4f8a47);border-radius:60% 60% 0 0/100% 100% 0 0;
+    transform-origin:bottom center;animation:sway 2.8s ease-in-out infinite alternate}
+  @keyframes sway{from{transform:rotate(-7deg)}to{transform:rotate(9deg)}}
+
+  /* 정거장 (세계 좌표에 놓임) */
+  .stop{position:absolute;bottom:22vh;transform:translateX(-50%)}
+  .sign{position:absolute;left:-16vw;bottom:0;width:1.1vw;height:20vh;background:#8b6a3f;border-radius:3px}
+  .sign::before{content:attr(data-no);position:absolute;top:-1vh;left:-.7vw;padding:.9vh 1.4vw;background:var(--paper);color:var(--ink);
+    font-size:1.1vw;letter-spacing:.3em;font-weight:500;border-radius:4px;box-shadow:0 4px 10px rgba(40,40,30,.15);white-space:nowrap}
+  .sign::after{content:"";position:absolute;bottom:-2vh;left:-1.4vw;width:4vw;height:2.2vh;background:rgba(60,60,40,.18);border-radius:50%;filter:blur(3px)}
+
+  /* 길가에 선 커다란 창문 = 실물 */
+  .frame{width:46vw;border-radius:1.2vw;overflow:hidden;background:#0d1117;
+    border:.35vw solid #f7f3ea;box-shadow:0 2.4vh 5vh rgba(40,50,80,.35),0 0 0 .1vw rgba(0,0,0,.08);
+    transform:translateY(3vh) scale(.98);opacity:0;transition:transform 1.2s var(--ease),opacity 1.2s var(--ease)}
+  body[data-stop="01"] .frame{transform:none;opacity:1}
+  .frame iframe{display:block;width:100%;aspect-ratio:16/10;border:0}
+  .frame::after{content:"";position:absolute;left:8%;right:8%;bottom:-4vh;height:4vh;background:rgba(40,50,60,.22);border-radius:50%;filter:blur(8px);z-index:-1}
+  .stop .legs{position:absolute;left:50%;bottom:-16vh;transform:translateX(-50%);display:flex;gap:30vw}
+  .stop .legs i{width:1vw;height:16vh;background:#8b6a3f;border-radius:3px}
+
+  /* 캡션: 화면 고정, 정거장 도착 시 */
+  .cap{position:fixed;left:6vw;top:12vh;width:26vw;opacity:0;transform:translateY(14px);transition:opacity 1s var(--ease) .3s,transform 1s var(--ease) .3s;pointer-events:none}
+  body[data-stop="01"] .cap-01{opacity:1;transform:none}
+  .cap .no{font-size:11px;letter-spacing:.32em;color:var(--ink2);margin-bottom:14px}
+  .cap h2{font-size:clamp(28px,3.4vw,52px);font-weight:200;letter-spacing:-.02em;line-height:1.05}
+  .cap p{margin-top:12px;font-size:clamp(12px,.95vw,15px);line-height:1.8;color:var(--ink2);font-weight:300}
+  body[data-stop="01"] .cap{color:#fff} body[data-stop="01"] .cap .no,body[data-stop="01"] .cap p{color:rgba(255,255,255,.72)}
+
+  /* 3D 주인공 */
+  #c{position:fixed;inset:0;z-index:5;pointer-events:none}
+  .shadow{position:fixed;left:22vw;bottom:15.5vh;width:9vw;height:2.2vh;transform:translateX(-50%);background:rgba(50,60,40,.28);border-radius:50%;filter:blur(6px);z-index:4}
+
+  .hint{position:fixed;right:3vw;bottom:3vh;font-size:11px;letter-spacing:.28em;color:var(--ink2);z-index:9}
+  .hint b{display:block;font-weight:300;font-size:22px;letter-spacing:0;margin-top:4px;color:var(--ink)}
+</style>
+</head>
+<body data-stop="">
+<div class="road" id="road">
+  <div class="sky"></div>
+  <div class="sun"></div>
+
+  <!-- 구름: 속도 0.18 -->
+  <div class="layer" data-speed=".18" id="L-cloud">
+    <div class="cloud" style="left:12vw;top:14vh;width:16vw;height:5.5vw;animation-delay:-3s"><i></i></div>
+    <div class="cloud" style="left:58vw;top:9vh;width:11vw;height:4vw;animation-delay:-8s"><i></i></div>
+    <div class="cloud" style="left:120vw;top:18vh;width:19vw;height:6vw;animation-delay:-1s"><i></i></div>
+    <div class="cloud" style="left:190vw;top:11vh;width:13vw;height:4.6vw;animation-delay:-11s"><i></i></div>
+    <div class="cloud" style="left:265vw;top:16vh;width:17vw;height:5.8vw;animation-delay:-5s"><i></i></div>
+    <div class="cloud" style="left:340vw;top:8vh;width:12vw;height:4.2vw;animation-delay:-9s"><i></i></div>
+  </div>
+  <!-- 먼 산: 0.32 -->
+  <div class="layer" data-speed=".32"><svg id="far" preserveAspectRatio="none"></svg></div>
+  <!-- 언덕: 0.55 -->
+  <div class="layer" data-speed=".55"><svg id="hill" preserveAspectRatio="none"></svg></div>
+  <!-- 길 + 정거장: 1.0 -->
+  <div class="layer" data-speed="1">
+    <svg id="ground" preserveAspectRatio="none"></svg>
+    <div class="grass" id="grass"></div>
+
+    <!-- 판정 지점은 250vw(주인공이 화면 22%에 서므로), 창문은 그보다 40vw 오른쪽 = 화면 62% 에 오게 -->
+    <div class="stop" style="left:290vw">
+      <div class="sign" data-no="01"></div>
+      <div class="frame"><iframe src="../work/blue-horizon/live.html" loading="lazy" title="Blue Horizon"></iframe></div>
+      <div class="legs"><i></i><i></i></div>
+    </div>
+  </div>
+</div>
+
+<div class="cap cap-01">
+  <div class="no">01 — INTERFACE</div>
+  <h2>Blue Horizon</h2>
+  <p>클라우드 컨택센터 운영 플랫폼. 슈퍼바이저가 한 화면에서 보고, 판단하고, 조치한다. 디자인을 코드로 냈고, 실제 제품에 얹혔다.</p>
+</div>
+
+<div class="shadow" id="shadow"></div>
+<canvas id="c"></canvas>
+<div class="hint">SCROLL<b id="pct">0%</b></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ── 손그림 결의 언덕: 사인 몇 개를 겹쳐 울퉁불퉁하게 ── */
+const WORLD = 420;  // vw
+function ridge(svg, base, amp, freqs, color, seed, stroke){
+  const W = 1000*WORLD/100, H = 1000;               // viewBox 는 (WORLD*10) x 1000
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  let d = `M0 ${H} L0 ${base}`;
+  const N = 220;
+  for(let i=0;i<=N;i++){
+    const x = i/N*W;
+    let y = base;
+    freqs.forEach((f,k)=>{ y -= amp*(k===0?1:.45/k)*Math.sin(x/W*Math.PI*2*f + seed*(k+1)*1.7); });
+    d += ` L${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  d += ` L${W} ${H} Z`;
+  svg.innerHTML = `<path d="${d}" fill="${color}" stroke="${stroke||'none'}" stroke-width="2"/>`;
+}
+ridge(document.getElementById('far'),  560, 120, [1.3, 3.1, 7.2], 'var(--far)', 2.0);
+ridge(document.getElementById('hill'), 660, 95,  [2.2, 5.3, 9.1], 'var(--hill1)', 5.0);
+// 땅: 풀밭 + 흙길(가로 띠)
+(function(){
+  const svg = document.getElementById('ground'), W = 1000*WORLD/100, H = 1000;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  // 풀밭
+  let d = `M0 ${H} L0 760`; const N=260;
+  for(let i=0;i<=N;i++){ const x=i/N*W; const y = 760 - 26*Math.sin(x/W*Math.PI*2*3.7+1.2) - 12*Math.sin(x/W*Math.PI*2*11.3); d += ` L${x.toFixed(1)} ${y.toFixed(1)}`; }
+  d += ` L${W} ${H} Z`;
+  // 흙길: 위아래 가장자리가 살짝 흔들리는 띠
+  let r = `M0 815`; for(let i=0;i<=N;i++){ const x=i/N*W; r += ` L${x.toFixed(1)} ${(815-7*Math.sin(x/W*Math.PI*2*6.1)).toFixed(1)}`; }
+  for(let i=N;i>=0;i--){ const x=i/N*W; r += ` L${x.toFixed(1)} ${(880+6*Math.sin(x/W*Math.PI*2*5.3+2)).toFixed(1)}`; } r += ' Z';
+  // 자갈
+  let pebbles=''; for(let i=0;i<160;i++){ const x=Math.random()*W, y=825+Math.random()*48, rr=2+Math.random()*3; pebbles+=`<ellipse cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" rx="${rr.toFixed(1)}" ry="${(rr*.6).toFixed(1)}" fill="var(--road2)" opacity=".7"/>`; }
+  svg.innerHTML = `<path d="${d}" fill="var(--grass)"/><path d="${r}" fill="var(--road)"/>${pebbles}`;
+})();
+// 풀잎
+(function(){ const g=document.getElementById('grass'); let h=''; for(let i=0;i<180;i++){ h+=`<i style="left:${(Math.random()*WORLD).toFixed(2)}vw;height:${(2+Math.random()*2.4).toFixed(1)}vh;animation-delay:${(-Math.random()*3).toFixed(2)}s;animation-duration:${(2.2+Math.random()*1.4).toFixed(2)}s"></i>`; } g.innerHTML=h; })();
+
+/* ── 스크롤 → 가로 이동. 레이어별 속도 ── */
+const layers = [...document.querySelectorAll('.layer')];
+const stops = [{id:'01', at:250, range:34}];     // 세계 x(vw) 와 도착 판정 폭
+let progress = 0, targetProgress = 0, px = 0, lastPx = 0, walkV = 0;
+function maxScroll(){ return document.body.scrollHeight - innerHeight; }
+addEventListener('scroll', ()=>{ targetProgress = scrollY / maxScroll(); }, {passive:true});
+
+/* ── 주인공 ── */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.outputEncoding = THREE.sRGBEncoding;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, .1, 100); camera.position.set(0, 0.2, 20);
+const prof = [[0,-4.6],[1.0,-4.5],[1.55,-3.9],[1.65,-3.1],[1.35,-2.35],[0.85,-1.75],[0.7,-1.35],[0.95,-0.75],[1.15,-0.05],[0.95,0.55],[0.68,1.05],[0.66,1.55],[1.2,2.0],[2.15,2.35],[2.35,2.62],[2.1,2.85],[0,2.9]];
+const curve = new THREE.SplineCurve(prof.map(p=>new THREE.Vector2(p[0],p[1])));
+const lathe = new THREE.LatheGeometry(curve.getPoints(90), 96); lathe.computeVertexNormals();
+const mat = new THREE.MeshStandardMaterial({color:new THREE.Color(0xb8182e), roughness:.72, metalness:0});
+const bodyM = new THREE.Mesh(lathe, mat);
+const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.position.y = 4.15;
+const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
+scene.add(new THREE.HemisphereLight(0xfff4e0, 0x6f8f5a, .8));
+const key = new THREE.DirectionalLight(0xfff1cc, .95); key.position.set(6, 8, 6); scene.add(key);
+
+let baseScale=1, vwW=1, vhW=1;
+function place(){
+  renderer.setSize(innerWidth, innerHeight, false); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  vhW = 2*Math.tan(camera.fov*Math.PI/360)*camera.position.z; vwW = vhW*camera.aspect;
+  baseScale = vhW*0.30/9.43;                                   // 작은 존재: 화면 세로의 30%
+  group.scale.setScalar(baseScale);
+  group.position.x = (0.22-0.5)*vwW;                           // 화면 22% 지점
+  group.position.y = -(0.5-0.5)*vhW - ( (0.84-0.5)*vhW ) + 4.6*baseScale;   // 바닥(y=-4.6)이 화면 84% 높이에
+}
+addEventListener('resize', place); place();
+
+const easeOut = x=>1-Math.pow(1-x,3);
+function frame(){
+  requestAnimationFrame(frame);
+  // 부드럽게 따라가는 진행도
+  progress += (targetProgress - progress)*.07;
+  px = progress*(WORLD-100);                                   // 세계 이동량 (vw)
+  layers.forEach(L=>{ L.style.transform = `translateX(${(-px*parseFloat(L.dataset.speed)).toFixed(3)}vw)`; });
+  const v = px - lastPx; lastPx = px;                          // 이번 프레임 걷는 속도
+  walkV += (v - walkV)*.15;
+
+  // 걷기: 속도에 비례해 앞으로 기울고, 위아래로 통통, 살짝 돌아본다
+  const now = performance.now()/1000;
+  const stride = Math.min(Math.abs(walkV)*6, 1);
+  group.rotation.z = -walkV*1.6;
+  group.rotation.y = now*.3 + walkV*3;
+  group.position.y = -(0.84-0.5)*vhW + 4.6*baseScale + Math.abs(Math.sin(now*7))*stride*0.55*baseScale;
+  ball.position.y = 4.15 + Math.sin(now*1.6)*.12 + stride*Math.abs(Math.sin(now*7+.6))*.5;
+  ball.position.x = -walkV*3;
+  document.getElementById('shadow').style.transform = `translateX(-50%) scale(${(1-stride*.25).toFixed(3)})`;
+
+  // 정거장 판정: 주인공(화면 22%) 이 서 있는 세계 좌표 = px + 22
+  const here = px + 22; let at = '';
+  for(const s of stops){ if(Math.abs(here - s.at) < s.range) at = s.id; }
+  if(document.body.dataset.stop !== at) document.body.dataset.stop = at;
+  document.getElementById('pct').textContent = Math.round(progress*100)+'%';
+
+  renderer.render(scene, camera);
+}
+frame();
+</script>
+</body>
+</html>

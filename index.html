@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>희랑 — Portfolio</title>
+<style>
+  @font-face{font-family:"Pretendard";src:url("assets/fonts/PretendardVariable.woff2") format("woff2-variations");font-weight:100 900;font-display:swap}
+
+  /* ═══════════════════════════════════════════════════════════════
+     차원을 지나가는 여정
+       · 모든 섹션은 인트로와 같은 편집 체계(번호·큰 타이포·점 라인·띠·본문·실물 프레임). 색과 배경만 바뀐다
+       · 섹션들은 전부 sticky 로 같은 자리에 겹쳐 있고, 스크롤하면 다음 차원이
+         "오브젝트 자리에서 원형으로 열리며" 이전 차원을 덮는다 (인트로 3막의 번짐 = 차원 이동)
+       · 오브젠트는 차원마다 자리·크기·색을 바꿔 앉는다. 색은 원이 열리기 전에 먼저 바뀐다 (색의 원천)
+     ═══════════════════════════════════════════════════════════════ */
+  :root{
+    --ox:72.5%; --oy:52.5%;
+    --m-paper:#ffffff; --m-type:#111111; --m-dot:#c9c9c9; --m-band:#3a3a3a; --m-tri:#c2c2c2;
+    --m-bottom:#050505; --m-body:#e6e6e6; --m-mark:#111111; --m-year:#ffffff;
+    --c-type:#8a0f78; --c-band1:#3fae7a; --c-band2:#12b3b9; --c-band3:#1f8fd6;
+    --c-tri:#6fc28f; --c-bottom1:#8a9a2a; --c-bottom2:#8d4a86; --c-body:#f4d54a; --c-mark:#b7a56b;
+    --red:#c0203a;
+    --ease:cubic-bezier(.4,.05,.2,1); --in:cubic-bezier(.2,.7,.2,1); --dur:1.9s; --spread:2.3s;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{background:#070a12}
+  body{font-family:"Pretendard","Malgun Gothic",-apple-system,system-ui,sans-serif;color:var(--m-type);cursor:default}
+  body.locked{overflow:hidden}
+
+  /* 모든 차원(인트로 포함)은 같은 자리에 sticky 로 쌓인다. 문서 높이는 .track 이 만든다 */
+  .track{position:relative}
+  /* isolation 으로 각 차원이 자기 stacking context 를 갖고, z-index 없이 형제 순서대로 쌓인다(뒤 차원이 위) */
+  .dim{position:sticky;top:0;height:100vh;overflow:hidden;margin-top:-100vh;isolation:isolate}
+  .dim:first-child{margin-top:0}
+  .dim.next{clip-path:circle(0% at var(--px,50%) var(--py,50%))}      /* 열리기 전: 안 보임 */
+
+  /* ───────────── 인트로 (차원 0) ───────────── */
+  .intro{background:var(--m-paper)}
+  .stage{position:absolute;inset:0;display:grid;grid-template-rows:59% 9% 32%}
+  .veil{position:absolute;inset:0;background:var(--red);z-index:5;pointer-events:none;clip-path:circle(140% at var(--ox) var(--oy));transition:clip-path 1.7s cubic-bezier(.65,0,.25,1)}
+  body.act1 .veil{clip-path:circle(0% at var(--ox) var(--oy))}
+  .type small,.mark,.year,.dots i{opacity:0;transform:translateY(22px);transition:opacity .9s var(--in),transform 1.1s var(--in),color var(--dur) var(--ease)}
+  .dots i{transform:translateY(10px)}
+  body.act2 .type small,body.act2 .mark,body.act2 .year,body.act2 .dots i{opacity:1;transform:none}
+  body.act2 .type small:nth-child(1){transition-delay:0s,0s,var(--cd,0s)}
+  body.act2 .type small:nth-child(2){transition-delay:.28s,.28s,var(--cd,0s)}
+  body.act2 .mark{transition-delay:.95s,.95s,var(--cd,0s)}
+  body.act2 .year{transition-delay:1.1s,1.1s,var(--cd,0s)}
+  .intro .body{clip-path:inset(0 0 100% 0);transition:clip-path 1.3s var(--in) 1.25s,color var(--dur) var(--ease) var(--cd,0s)}
+  body.act2 .intro .body{clip-path:inset(0 0 0 0)}
+  .dots{position:absolute;left:27.5%;right:1.2%;top:4.6%;display:flex;justify-content:space-between;z-index:3}
+  .dots i{width:.85vw;height:.85vw;min-width:8px;min-height:8px;border-radius:50%;background:var(--m-dot);transition:opacity .7s var(--in),transform .9s var(--in),background 1.4s var(--ease)}
+  body.act2 .intro .dots i{transition-delay:var(--ad),var(--ad),var(--cd)}
+  body.color .intro .dots i{background:var(--dc)}
+  body.flow .intro .dots i{transition:none}
+  .type{position:absolute;left:3.4%;top:2.5%;line-height:.86;font-size:clamp(90px,17.6vw,262px);letter-spacing:-.03em;font-weight:200;color:var(--m-type);z-index:3;user-select:none}
+  .type small{display:block}
+  body.color .type small{color:var(--c-type);--cd:1.3s}
+  .band{grid-row:2;position:relative;background:var(--m-band);z-index:1}
+  .tri{position:absolute;left:0;bottom:0;width:16%;height:155%;background:linear-gradient(135deg,var(--m-tri),#8a8a8a);clip-path:polygon(0 0,100% 100%,0 100%);z-index:2;overflow:hidden}
+  .tri::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--c-tri),#9fd7a5);opacity:0;transition:opacity 1.2s var(--ease) 1.5s}
+  body.color .tri::after{opacity:1}
+  .year{position:absolute;right:2%;bottom:6%;font-weight:300;letter-spacing:.02em;font-size:clamp(20px,3vw,46px);color:var(--m-year);z-index:3}
+  .band::after,.bottom::after{content:"";position:absolute;inset:0;clip-path:circle(0% at var(--cx,72%) var(--cy,50%));transition:clip-path var(--spread) var(--ease)}
+  .band::after{background:linear-gradient(90deg,var(--c-band1) 0%,var(--c-band2) 55%,var(--c-band3) 100%);transition-delay:.15s}
+  .bottom::after{background:linear-gradient(90deg,var(--c-bottom1) 0%,#6f7a3a 55%,var(--c-bottom2) 100%);transition-delay:.3s}
+  body.color .band::after,body.color .bottom::after{clip-path:circle(160% at var(--cx,72%) var(--cy,50%))}
+  .bottom .body,.band .year{position:absolute;z-index:1}
+  .mark{position:absolute;right:2.2%;top:47%;width:clamp(44px,6vw,90px);color:var(--m-mark);z-index:3}
+  .mark svg{width:100%;height:auto;display:block}
+  body.color .mark{color:var(--c-mark);--cd:.4s}
+  .bottom{grid-row:3;position:relative;background:var(--m-bottom);z-index:1}
+  .intro .body{position:absolute;left:1.6%;top:8%;width:59%;font-weight:300;font-size:clamp(11px,.95vw,15px);line-height:2.35;letter-spacing:.01em;color:var(--m-body);text-align:justify}
+  body.color .intro .body{color:var(--c-body);--cd:1.0s}
+  .hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:6;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.7);opacity:0;transition:opacity 1s var(--ease) 2.4s;cursor:pointer;background:none;border:0;font-family:inherit}
+  body.color .hint{opacity:1}
+  .hint i{display:block;width:1px;height:22px;margin:8px auto 0;background:rgba(255,255,255,.5);animation:drop 1.6s ease-in-out infinite}
+  @keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+  body.snap *,body.snap *::after{transition-duration:0s !important;transition-delay:0s !important}
+  .ctl{position:fixed;left:18px;bottom:16px;z-index:40;display:flex;gap:8px;opacity:.5}
+  .ctl:hover{opacity:1}
+  .ctl button{font:11px/1 system-ui,sans-serif;letter-spacing:.2em;padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.18);background:rgba(255,255,255,.7);color:#333;cursor:pointer}
+
+  /* ───────────── 차원 공통 편집 체계 ───────────── */
+  .dim{--paper:#0b1020;--ink:#e8ecf4;--ink2:rgba(232,236,244,.62);--ink3:rgba(232,236,244,.38);--line:rgba(232,236,244,.12);--acc:#4b6cff;--acc2:#8ea0ff;--band-c:#16204a}
+  .dim .sheet{position:absolute;inset:0;background:var(--paper);color:var(--ink)}
+  .dim .no{position:absolute;left:3.6%;top:5.2%;font-size:12px;letter-spacing:.34em;color:var(--ink3)}
+  .dim .title{position:absolute;left:3.4%;top:9.5%;font-size:clamp(56px,9.4vw,150px);font-weight:200;letter-spacing:-.03em;line-height:.9;color:var(--ink)}
+  .dim .title small{display:block}
+  .dim .ddots{position:absolute;left:3.6%;right:52%;top:44%;display:flex;justify-content:space-between}
+  .dim .ddots i{width:.55vw;height:.55vw;min-width:5px;min-height:5px;border-radius:50%;background:var(--acc);opacity:.55}
+  .dim .ddots i:nth-child(3n){opacity:1}
+  .dim .sub{position:absolute;left:3.6%;top:49%;width:40%;font-size:clamp(13px,1.1vw,17px);color:var(--ink2);font-weight:300}
+  .dim .facts{position:absolute;left:3.6%;top:57%;width:40%;display:grid;gap:12px;padding-top:18px;border-top:1px solid var(--line)}
+  .dim .facts p{font-size:clamp(12px,.95vw,14px);line-height:1.75;color:var(--ink2);font-weight:300}
+  .dim .facts p b{color:var(--ink);font-weight:500}
+  .dim .try{position:absolute;left:3.6%;bottom:7%;font-size:12px;letter-spacing:.18em;color:var(--acc2)}
+  .dim .try::before{content:"";display:inline-block;width:18px;height:1px;background:currentColor;vertical-align:middle;margin-right:10px}
+  .dim .dband{position:absolute;right:0;bottom:0;width:58%;height:9%;background:var(--band-c)}
+  .dim .dyear{position:absolute;right:2%;bottom:2.4%;font-weight:300;font-size:clamp(18px,2.4vw,36px);color:var(--ink);letter-spacing:.02em}
+  /* 실물 프레임 */
+  .dim .frame{position:absolute;right:4%;top:11%;width:56%;border-radius:14px;overflow:hidden;background:#0d1117;border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 30px 80px rgba(0,0,0,.5);transform:translateY(24px);opacity:0;transition:transform 1s var(--in),opacity 1s var(--in)}
+  .dim.in .frame{transform:none;opacity:1}
+  .dim .frame .bar{height:34px;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.07);background:#0b0f18}
+  .dim .frame .bar i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
+  .dim .frame .bar span{margin-left:12px;font-size:11px;letter-spacing:.08em;color:var(--ink3)}
+  .dim .frame iframe{display:block;width:100%;aspect-ratio:16/10;border:0;background:#0d1117}
+  /* 01: 데스크톱 프레임을 왼쪽으로 당기고, 폰이 우하단에 겹쳐 선다 */
+  #d01 .frame{right:16%;top:9%;width:48%}
+  #d01 .title{font-size:clamp(50px,7vw,116px)}     /* HORIZON 7글자가 프레임 왼쪽(36%) 안에 들어오게 */
+  .phone{position:absolute;right:4%;bottom:13%;width:12.6vw;min-width:150px;aspect-ratio:9/19.5;border-radius:2.2vw;background:#05070d;
+    border:.28vw solid #1b2130;box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 .08vw rgba(255,255,255,.08);overflow:hidden;
+    transform:translateY(30px);opacity:0;transition:transform 1s var(--in) .25s,opacity 1s var(--in) .25s}
+  .dim.in .phone{transform:none;opacity:1}
+  .phone::before{content:"";position:absolute;left:50%;top:1.1vw;transform:translateX(-50%);width:32%;height:.9vw;border-radius:999px;background:#0b0e16;z-index:2}
+  .phone .view{position:absolute;left:0;top:0;width:390px;height:844px;transform-origin:0 0}   /* 진짜 폰 뷰포트. JS 가 scale 로 프레임에 맞춘다 */
+  .phone .view iframe{width:390px;height:844px;border:0;display:block;background:#0d1117}
+  .phone .tag{position:absolute;left:50%;top:-3.4vh;transform:translateX(-50%);white-space:nowrap;font-size:11px;letter-spacing:.24em;color:var(--acc2)}
+
+  /* 고정 뷰포트(1440×900)로 렌더한 뒤 프레임에 맞춰 축소하는 프레임 — 반응형이 없는 옛 화면용 */
+  .frame.scaled .view{position:relative;width:1440px;height:900px;transform-origin:0 0}
+  .frame.scaled .view iframe{width:1440px;height:900px;border:0;display:block;background:#fff}
+  .frame .label{position:absolute;left:0;top:-3.2vh;font-size:11px;letter-spacing:.24em;color:var(--acc2);white-space:nowrap}
+  /* 02: 옛집(2023) 작게 위, 새집(2026) 크게 아래에 겹쳐 */
+  #d02 .frame{background:#fff;border-color:rgba(22,21,15,.12);box-shadow:0 24px 60px rgba(40,30,10,.18)}
+  #d02 .frame .bar{background:#f1ede4;border-color:rgba(22,21,15,.08)} #d02 .frame .bar i{background:rgba(22,21,15,.14)} #d02 .frame .bar span{color:var(--ink3)}
+  #d02 .f2023{right:34%;top:12%;width:30%}
+  #d02 .f2026{right:4%;top:30%;width:46%;transition-delay:.25s}
+  #d02 .arrow{position:absolute;right:31%;top:41%;width:6vw;height:1px;background:var(--acc);opacity:0;transition:opacity 1s var(--in) .7s}
+  #d02 .arrow::after{content:"";position:absolute;right:0;top:-3px;border:3.5px solid transparent;border-left:7px solid var(--acc)}
+  #d02.in .arrow{opacity:1}
+  /* 등장: 차원이 60% 열리면 */
+  .dim .no,.dim .title small,.dim .sub,.dim .facts,.dim .try,.dim .ddots i,.dim .dyear{opacity:0;transform:translateY(16px);transition:opacity .8s var(--in),transform 1s var(--in)}
+  .dim.in .no,.dim.in .title small,.dim.in .sub,.dim.in .facts,.dim.in .try,.dim.in .ddots i,.dim.in .dyear{opacity:1;transform:none}
+  .dim.in .title small:nth-child(2){transition-delay:.18s}
+  .dim.in .sub{transition-delay:.4s} .dim.in .facts{transition-delay:.55s} .dim.in .try{transition-delay:.8s} .dim.in .dyear{transition-delay:.6s}
+  .dim.in .ddots i{transition-delay:calc(.3s + var(--i) * .03s)}
+
+  /* 차원별 팔레트 */
+  #d01{--paper:#0b1020;--acc:#4b6cff;--acc2:#9fb0ff;--band-c:#151d3f}
+  #d02{--paper:#f5f2ea;--ink:#16150f;--ink2:rgba(22,21,15,.62);--ink3:rgba(22,21,15,.4);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band-c:#e9dcc6}
+  #d03{--paper:#0f1412;--acc:#2fd3a0;--acc2:#8ff0cf;--band-c:#14241e}
+
+  /* 오브젝트 캔버스: 모든 차원 위에 */
+  #c{position:fixed;inset:0;z-index:30;pointer-events:none}
+
+  @media (max-width:900px){
+    :root{--ox:78%}
+    .stage{grid-template-rows:56% 8% 36%}
+    .type{font-size:clamp(70px,19vw,140px)}
+    .intro .body{width:92%;font-size:11px;line-height:2}
+    .dots{left:40%}
+    .dim .frame{width:92%;right:4%;top:auto;bottom:12%}
+    .dim .facts,.dim .sub{width:88%}
+  }
+</style>
+</head>
+<body class="act0 locked">
+
+<div class="track" id="track">
+
+  <!-- ═══ 차원 0 · 인트로 ═══ -->
+  <section class="dim intro" id="intro">
+    <div class="stage">
+      <div class="dots" id="dots"></div>
+      <div class="type" id="type"><small>HEE</small><small>RANG</small></div>
+      <div class="band" id="band"><div class="tri"></div><div class="year">.UX Engineer</div></div>
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4"><path d="M8 40 L50 8 L92 40"/><path d="M22 40 H78"/><circle cx="50" cy="66" r="26"/><path d="M50 40 V92 M24 66 H76"/></svg>
+      </div>
+      <div class="bottom" id="bottom">
+        <p class="body" id="body">화면을 만들던 사람이 시스템을 만들게 됐다. 상담 화면에 창과 작업표시줄을 넣어 OS처럼 굴린 것이 2023년, 그 관점이 관리자 도구 전체로 번진 것이 2026년이다. 그 사이에 AI 여럿과 한 프로젝트를 석 달 동안 이어서 일하는 방식을 설계했고, 그 방식으로 내 말투를 배우는 로컬 모델을 키웠다. 보기 좋은 디자인과 옳은 디자인은 다르다고 믿는다. 이 포트폴리오는 그 둘 사이에서 내가 어디에 서 있는지를 순서대로 보여준다.</p>
+      </div>
+    </div>
+    <div class="veil"></div>
+    <button class="hint" id="hint">SCROLL<i></i></button>
+  </section>
+
+  <!-- ═══ 차원 1 · Blue Horizon ═══ -->
+  <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
+  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff">
+    <div class="sheet">
+      <div class="no">01 — INTERFACE</div>
+      <div class="title"><small>BLUE</small><small>HORIZON</small></div>
+      <div class="ddots"></div>
+      <p class="sub">클라우드 컨택센터 운영 플랫폼 · 디자인 리뉴얼 · 2026</p>
+      <div class="facts">
+        <p><b>관리자가 자리에 없어도 본다.</b> 같은 대시보드가 폰에서 그대로 접힌다. 컨택센터 관리 화면은 늘 데스크톱 전용이었다. 그 전제를 깼다.</p>
+        <p><b>한 화면에서 보고, 판단하고, 조치한다.</b> 실시간 KPI·상담원 상태·채널 대기열을 하나의 흐름으로.</p>
+        <p><b>디자인을 코드로 냈다.</b> 프레임워크 없는 단일 HTML. Three.js 지구본 로그인, p5 차트, 다크·라이트, AI Mode. 표면은 내가, 배선은 개발팀이.</p>
+      </div>
+      <div class="try">둘 다 진짜입니다 · 로그인해 보세요 · admin</div>
+      <div class="frame"><div class="bar"><i></i><i></i><i></i><span>blue-horizon / desktop</span></div>
+        <iframe src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon desktop"></iframe></div>
+      <div class="phone" id="phone01">
+        <div class="view"><iframe src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon mobile"></iframe></div>
+        <div class="tag">MOBILE · 390px</div>
+      </div>
+      <div class="dband"></div><div class="dyear">.2026</div>
+    </div>
+  </section>
+
+  <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
+  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e">
+    <div class="sheet">
+      <div class="no">02 — SYSTEM</div>
+      <div class="title"><small>OS</small><small>UI</small></div>
+      <div class="ddots"></div>
+      <p class="sub">상담 화면을 OS처럼 · 같은 관점을 3년 두 번</p>
+      <div class="facts">
+        <p><b>2023 · 상담사 화면.</b> 상담사는 창을 여러 개 띄워 일하는 사람이었다. 그래서 화면 대신 창·최소화·작업표시줄을 줬다. 페이지가 아니라 책상.</p>
+        <p><b>2026 · 관리자 OS.</b> 같은 관점이 관리자 도구 전체로 번졌다. 드래그·리사이즈·스냅·시작메뉴·바탕화면. 화면이 아니라 작업 공간을 설계했다.</p>
+        <p><b>화려해 보이지만 구조 얘기다.</b> 사용자가 여러 일을 동시에 하면, UI는 하나의 페이지이길 그만둬야 한다.</p>
+      </div>
+      <div class="try">둘 다 진짜입니다 · 창을 끌어보세요</div>
+      <div class="frame scaled f2023"><div class="label">2023 · 상담사 화면</div>
+        <div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
+        <div class="view"><iframe src="work/os-ui/2023/main.html" loading="lazy" title="Counseling OS 2023"></iframe></div></div>
+      <div class="arrow"></div>
+      <div class="frame f2026"><div class="label">2026 · 관리자 OS</div>
+        <div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
+        <iframe src="work/os-ui/2026/index.html" loading="lazy" title="Admin OS 2026"></iframe></div>
+      <div class="dband"></div><div class="dyear">.2023 → 2026</div>
+    </div>
+  </section>
+
+  <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
+  <section class="dim next" id="d03" data-obj="0.50,0.56,0.62,#2fd3a0">
+    <div class="sheet">
+      <div class="no">03 — METHOD</div>
+      <div class="title"><small>WORKING</small><small>WITH AI</small></div>
+      <div class="ddots"></div>
+      <p class="sub">AI 여럿과 한 프로젝트를 석 달 이어서 일한 방법</p>
+      <div class="facts">
+        <p><b>기억을 사람 밖에, 파일로 두었다.</b> 역할별 AI가 읽고 쓰며 서로 인계한다. 사람은 방향만 준다.</p>
+        <p><b>실측이 구조를 바꿨다.</b> 평균 3.4일 간격, 한 번에 8분. 대화 단위를 턴에서 시간으로 재설계했다.</p>
+      </div>
+      <div class="try">도식 · 준비 중</div>
+      <div class="dband"></div><div class="dyear">.2026</div>
+    </div>
+  </section>
+
+</div>
+
+<canvas id="c"></canvas>
+<div class="ctl"><button id="replay">REPLAY</button><button id="skip">SKIP</button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const B = document.body, intro = document.getElementById('intro');
+const dims = [...document.querySelectorAll('.dim')];          // [intro, d01, d02, d03]
+const N = dims.length;
+/* 문서 높이: 차원 수 × 100vh + 마지막 차원에 머무는 여유 */
+document.getElementById('track').style.height = `calc(${N}00vh + 40vh)`;
+
+/* 차원별 점 라인 */
+document.querySelectorAll('.ddots').forEach(w=>{ for(let i=0;i<22;i++){ const d=document.createElement('i'); d.style.setProperty('--i',i); w.appendChild(d);} });
+
+/* ── 인트로 점 라인 ── */
+const dots = document.getElementById('dots');
+const DOTS = 36, HUE0 = 50, HUE_SPAN = 230, dotEls = [];
+const dotHue = i => HUE0 - (i/(DOTS-1))*HUE_SPAN;
+for(let i=0;i<DOTS;i++){
+  const d = document.createElement('i'); dotEls.push(d);
+  d.style.setProperty('--dc', `hsl(${(dotHue(i)+360)%360} 72% 52%)`);
+  d.style.setProperty('--ad', (0.55 + i*0.022)+'s'); d.style.setProperty('--cd', (0.35 + (DOTS-1-i)*0.028)+'s');
+  dots.appendChild(d);
+}
+function setSpreadCenters(){
+  const R = intro.getBoundingClientRect();
+  const ox = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ox'))/100*R.width + R.left;
+  const oy = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--oy'))/100*R.height + R.top;
+  for(const id of ['band','bottom']){ const el=document.getElementById(id), r=el.getBoundingClientRect();
+    el.style.setProperty('--cx', ((ox-r.left)/r.width*100).toFixed(1)+'%'); el.style.setProperty('--cy', ((oy-r.top)/r.height*100).toFixed(1)+'%'); }
+}
+
+/* ── 3D 오브젠트 ── */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.outputEncoding = THREE.sRGBEncoding;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, .1, 100); camera.position.set(0, 0, 20);
+const prof = [[0,-4.6],[1.0,-4.5],[1.55,-3.9],[1.65,-3.1],[1.35,-2.35],[0.85,-1.75],[0.7,-1.35],[0.95,-0.75],[1.15,-0.05],[0.95,0.55],[0.68,1.05],[0.66,1.55],[1.2,2.0],[2.15,2.35],[2.35,2.62],[2.1,2.85],[0,2.9]];
+const curve = new THREE.SplineCurve(prof.map(p=>new THREE.Vector2(p[0],p[1])));
+const lathe = new THREE.LatheGeometry(curve.getPoints(90), 96); lathe.computeVertexNormals();
+const RED = new THREE.Color(0x9c0a18);
+const mat = new THREE.MeshStandardMaterial({color:RED.clone(), roughness:.7, metalness:0});
+const bodyM = new THREE.Mesh(lathe, mat);
+const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.position.y = 4.15;
+const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x333333, .55));
+const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(-4, 6, 8); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, .25); rim.position.set(5, -2, -6); scene.add(rim);
+
+let baseScale=1, vwW=1, vhW=1;
+function place(){
+  renderer.setSize(innerWidth, innerHeight, false); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  vhW = 2*Math.tan(camera.fov*Math.PI/360)*camera.position.z; vwW = vhW*camera.aspect;
+  baseScale = Math.min(vhW*0.81/9.43, vwW/20);
+  setSpreadCenters();
+}
+addEventListener('resize', place); place();
+
+/* 고정 뷰포트 프레임: 진짜 크기(폰 390×844 / 데스크톱 1440×900)로 렌더한 뒤 프레임 폭에 맞춰 축소 */
+function fitViews(){
+  document.querySelectorAll('.phone').forEach(p=>{
+    const s = p.clientWidth/390; const v = p.querySelector('.view');
+    v.style.transform = `scale(${s.toFixed(4)})`; v.style.height = (p.clientHeight/s)+'px'; v.querySelector('iframe').style.height = (p.clientHeight/s)+'px';
+  });
+  document.querySelectorAll('.frame.scaled').forEach(f=>{
+    const s = f.clientWidth/1440; const v = f.querySelector('.view');
+    v.style.transform = `scale(${s.toFixed(4)})`; v.style.marginBottom = (900*s - 900)+'px';   /* 스케일로 줄어든 만큼 자리도 줄인다 */
+  });
+}
+addEventListener('resize', fitViews); fitViews(); setTimeout(fitViews, 600);
+
+/* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
+const S = dims.map((d,i)=>{
+  if(i===0) return {x:.725, y:.525, s:1, c:RED.clone()};
+  const [x,y,s,c] = d.dataset.obj.split(',');
+  return {x:+x, y:+y, s:+s, c:new THREE.Color(c.trim())};
+});
+function worldXY(x,y){ return [ (x-0.5)*vwW, -(y-0.5)*vhW - 0.115*baseScale ]; }
+
+/* ── 인트로 타임라인 ── */
+const T = { act1:0.55, act2:2.25, color:4.05, flow:4.05+0.35+(DOTS-1)*0.028+1.4 };
+const SHRINK = 1.7;
+let t0 = performance.now()/1000, fired = {}, skipped = false, flowStart = 0;
+const easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+const clamp01 = x => Math.min(Math.max(x,0),1);
+function flowDots(now){ const hs=(now-flowStart)*38; for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now-flowStart)*2.2-i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
+function unlock(){ B.classList.remove('locked'); }
+function reset(){ scrollTo(0,0); B.classList.add('snap','locked'); B.classList.remove('act1','act2','color','flow'); B.classList.add('act0'); dotEls.forEach(d=>d.style.background=''); fired={}; skipped=false; t0=performance.now()/1000; requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
+function skip(){ if(skipped) return; skipped=true; B.classList.add('snap','act1','act2','color','flow'); fired={act1:1,act2:1,color:1,flow:1}; flowStart=performance.now()/1000; unlock(); requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
+document.getElementById('replay').onclick = reset;
+document.getElementById('skip').onclick = skip;
+document.getElementById('hint').onclick = ()=> scrollTo({top:innerHeight*1.0, behavior:'smooth'});
+addEventListener('wheel', ()=>{ if(!fired.flow) skip(); }, {passive:true});
+intro.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON' && !fired.flow) skip(); });
+
+const mouse={x:0,y:0}, sm={x:0,y:0}, vel={x:0,y:0}; let spin=0;
+addEventListener('pointermove', e=>{ mouse.x=e.clientX/innerWidth-.5; mouse.y=e.clientY/innerHeight-.5; });
+
+/* ── 프레임 ── */
+let prog = 0;                       // 부드럽게 따라가는 스크롤 진행도 (차원 단위: 0=인트로 … N-1=마지막)
+const tmpC = new THREE.Color();
+function frame(){
+  requestAnimationFrame(frame);
+  const now = performance.now()/1000, t = now - t0;
+  for(const k in T){ if(!fired[k] && t>=T[k]){ fired[k]=1; B.classList.add(k); if(k==='act1') B.classList.remove('act0'); if(k==='flow'){ flowStart=now; unlock(); } } }
+  if(fired.flow && prog<0.9) flowDots(now);
+
+  /* 스크롤 → 차원 진행도 */
+  const target = Math.min(scrollY/innerHeight, N-1);
+  prog += (target - prog)*.09;
+  const k = Math.min(Math.floor(prog), N-2);          // 지금 열리는 중인 차원 = k+1
+  const o = easeIO(clamp01((prog - k)/0.82));         // 열림 진행도 (스크롤 82% 구간에서 완전히 열림)
+  const oc = clamp01((prog - k)/0.45);                // 색은 먼저 바뀐다
+
+  /* 오브젝트: 상태 S[k] → S[k+1] 보간 */
+  const a = S[k], b = S[k+1] || a;
+  const ox = a.x + (b.x-a.x)*o, oy = a.y + (b.y-a.y)*o, os = a.s + (b.s-a.s)*o;
+  tmpC.copy(a.c).lerp(b.c, easeIO(oc)); mat.color.copy(tmpC);
+
+  /* 인트로 응축 */
+  const s = skipped ? 1 : easeIO(clamp01((t - T.act1)/SHRINK));
+  const sc = baseScale * os * (1 + (1-s)*3.2);
+  group.scale.setScalar(sc);
+  const [wx, wy] = worldXY(ox, oy); group.position.set(wx, wy, 0);
+
+  /* 각 차원의 문(원) — 중심은 오브젝트의 현재 화면 위치 */
+  for(let i=1;i<N;i++){
+    const d = dims[i];
+    let r;
+    if(i < k+1) r = 170; else if(i === k+1) r = o*170; else r = 0;
+    d.style.clipPath = `circle(${r.toFixed(2)}% at ${(ox*100).toFixed(2)}% ${(oy*100).toFixed(2)}%)`;
+    d.classList.toggle('in', r > 100);
+  }
+
+  /* 마우스 */
+  const live = s;
+  vel.x = (mouse.x - sm.x)*.085; vel.y = (mouse.y - sm.y)*.085; sm.x += vel.x; sm.y += vel.y; spin += vel.x*2.2; spin *= .965;
+  group.rotation.y = now*.16 + (sm.x*1.4 + spin)*live; group.rotation.x = -sm.y*.42*live; group.rotation.z = -sm.x*.28*live;
+  ball.position.x = sm.x*1.6*live; ball.position.z = -sm.y*1.2*live; ball.position.y = 4.15 + Math.sin(now*1.3)*.12 + Math.abs(sm.x)*.35*live;
+  key.position.set(-4 + sm.x*14*live, 6 - sm.y*10*live, 8); rim.intensity = .25 + Math.abs(sm.x)*.5*live;
+  renderer.render(scene, camera);
+}
+frame();
+</script>
+</body>
+</html>

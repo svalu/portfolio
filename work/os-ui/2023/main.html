@@ -1,0 +1,1968 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>Counseling OS · 2023</title>
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <script type="text/javascript" src="./js/jquery-1.6.2.min.js"></script>
+
+    <!--    드래그 소스-->
+    <link rel="stylesheet" type="text/css" href="./css/jquery-ui.css">
+    <script type="text/javascript" src="./js/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui.js"></script>
+</head>
+
+<body class="body_size logo_canter">
+    <!--alert-->
+    <div class="popup_alert_wrap drag_oj ">
+        <div class="popup_alert_title_1">Logout</div>
+        <div class="popup_bu_right_wrap">
+            <button class="popup_bu_icon esc"></button>
+        </div>
+        <div class="popup_con_text_1">로그아웃 시 진행중인 상담 또는 프로그램이 강제 종료됩니다.<br>
+            로그아웃을 진행 하시겠습니까?</div>
+        <div class="popup_buttom_bu_wrap">
+            <button class="popup_bu color_1">확 인</button>
+            <button class="popup_bu color_2">취 소</button>
+        </div>
+    </div>
+    <!--접근사유-->
+    <div class="popup_alert_wrap  drag_oj">
+        <div class="popup_alert_title_2">접근 사유 작성</div>
+        <div class="popup_bu_right_wrap">
+            <button class="popup_bu_icon esc"></button>
+        </div>
+        <div class="popup_con_text_1">※ 개인정보를 포함하고 있는 메뉴 입니다.<br> 접근 사유를 작성해 주세요.
+        </div>
+        <textarea class="textarea_style bg_color_1"></textarea>
+        <div class="popup_buttom_bu_wrap">
+            <button class="popup_bu color_1">저 장</button>
+            <button class="popup_bu color_2">취 소</button>
+        </div>
+    </div>
+    <!-----------------------------------2차------------------------------------------>
+    <!--    상담채팅_체팅-사이드바 용 -->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">상담채팅</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="after_treatment_wrap">
+                <div class="side_bar">
+                    <span>▶</span>
+                </div>
+                <div class="popup_subtitle_line border_0">
+                    <div class="popup_top_line mode_2">
+                        <div class="con_title_text_1">후처리</div>
+                    </div>
+                </div>
+                <div class="workspace">
+                    <div class="work_line_2 border_t_l">
+                        <div class="oj_flex">
+                            <div class="con_name">상담분류</div>
+                            <div class="con_name">:</div>
+                            <div class="con_name">채팅</div>
+                        </div>
+                    </div>
+                    <div class="work_line_2 border_t_l">
+                        <div class="oj_flex">
+                            <div class="con_name">상담분류</div>
+                            <div class="con_name">:</div>
+                            <select class="input_style">
+                                <option>대분류</option>
+                            </select>
+                            <select class="input_style">
+                                <option>중분류</option>
+                            </select>
+                            <select class="input_style">
+                                <option>소분류</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="work_line_2">
+                        <textarea class="textarea_style size_1 " placeholder="제목을 입력해 주세요"></textarea>
+                    </div>
+                    <div class="work_line_2 margin_t_10">
+                        <textarea class="textarea_style " placeholder="내용을 입력해 주세요"></textarea>
+                    </div>
+                    <button class="menu_bu size_w_f margin_t_10">저 장</button>
+                </div>
+            </div>
+
+
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>신규 취소</span>
+                    </div>
+                </div>
+                <div class="setting_line_oj_right">
+                    <div class="chat_info_text_wrap">
+                        <span class="chat_info_text">비회원</span>
+                        <span class="chat_info_text">(11:23)</span>
+                        <span class="chat_info_text">+13</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace chat">
+                <div class="old_chatign_wrap">
+                    <div class="old_chatign_unfold_bu"><span>이 전 채팅 내역 보기</span><span>▼</span></div>
+                    <div class="old_chatign_view">
+                        <div class="chating_left_wrap">
+                            <div class="chat_balloon left">안녕하세요.</div>
+                            <div class="chat_balloon_text_wrap">
+                                <span class="chat_balloon_text">오전 11시 51분</span>
+                            </div>
+                        </div>
+                        <div class="chating_right_wrap">
+                            <div class="chat_balloon right">안녕하세요.</div>
+                            <div class="chat_balloon_text_wrap">
+                                <span class="chat_balloon_text">오전 11시 51분</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="chat_view_wrap">
+                    <div class="chat_system_line">
+                        <span class="chat_system_text_1">2023-07-13 11:23</span>
+                    </div>
+                    <div class="chating_left_wrap">
+                        <div class="chat_balloon left">안녕하세요.</div>
+                        <div class="chat_balloon_text_wrap">
+                            <span class="chat_balloon_text">오전 11시 51분</span>
+                        </div>
+                    </div>
+                    <div class="chating_right_wrap">
+                        <div class="chat_balloon right">안녕하세요.</div>
+                        <div class="chat_balloon_text_wrap">
+                            <span class="chat_balloon_text">오전 11시 51분</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chating_text_input_wrap">
+                    <div class="popup_function_line padding_l_r_0">
+                        <div class="popup_inline left_wrap">
+                            <div class="oj_flex">
+                                <select class="input_style">
+                                    <option>상용구</option>
+                                    <option>상용구</option>
+                                    <option>상용구</option>
+                                    <option>상용구</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea class="chating_textarea"></textarea>
+                    <button class="menu_bu size_w_f margin_t_10">보내기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--    상담채팅_체팅_ 인팝업 -->
+    <div class="popup_wrap drag_oj  ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">상담채팅</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="iframe_in_layer">
+                <div class="iframe_in_container padding_0 gap_0 display_none">
+                    <div class="popup_subtitle_line border_0">
+                        <div class="popup_top_line mode_2">
+                            <div class="popup_inline left_wrap">
+                                <div class="con_title_text_1">후처리</div>
+                                <div class="oj_flex">
+                                <div class="con_name">상담분류</div>
+                                <div class="con_name">:</div>
+                                <div class="con_name">채팅</div>
+                            </div>
+                            </div>
+                            <div class="popup_inline right_wrap">
+                                <button class="popup_bu_icon esc"></button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="workspace padding_t_0">
+                        <div class="work_line_2">
+                            <div class="oj_flex">
+                                <div class="con_name">상담분류</div>
+                                <div class="con_name">:</div>
+                                <select class="input_style">
+                                    <option>대분류</option>
+                                </select>
+                                <select class="input_style">
+                                    <option>중분류</option>
+                                </select>
+                                <select class="input_style">
+                                    <option>소분류</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="work_line_2">
+                            <textarea class="textarea_style hight_40" placeholder="제목을 입력해 주세요"></textarea>
+                        </div>
+                        <div class="work_line_2 margin_t_10">
+                            <textarea class="textarea_style hight_40" placeholder="내용을 입력해 주세요"></textarea>
+                        </div>
+                        <button class="menu_bu size_w_f margin_t_10">저 장</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>신규 취소</span>
+                    </div>
+                </div>
+                <div class="setting_line_oj_right">
+                    <div class="chat_info_text_wrap">
+                        <span class="chat_info_text">비회원</span>
+                        <span class="chat_info_text">(11:23)</span>
+                        <span class="chat_info_text">+13</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace chat">
+                <div class="old_chatign_wrap">
+                    <div class="old_chatign_unfold_bu"><span>이 전 채팅 내역 보기</span><span>▼</span></div>
+                    <div class="old_chatign_view">
+                        <div class="chating_left_wrap">
+                            <div class="chat_balloon left">안녕하세요.</div>
+                            <div class="chat_balloon_text_wrap">
+                                <span class="chat_balloon_text">오전 11시 51분</span>
+                            </div>
+                        </div>
+                        <div class="chating_right_wrap">
+                            <div class="chat_balloon right">안녕하세요.</div>
+                            <div class="chat_balloon_text_wrap">
+                                <span class="chat_balloon_text">오전 11시 51분</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="chat_view_wrap">
+                    <div class="chat_system_line">
+                        <span class="chat_system_text_1">2023-07-13 11:23</span>
+                    </div>
+                    <div class="chating_left_wrap">
+                        <div class="chat_balloon left">안녕하세요.</div>
+                        <div class="chat_balloon_text_wrap">
+                            <span class="chat_balloon_text">오전 11시 51분</span>
+                        </div>
+                    </div>
+                    <div class="chating_right_wrap">
+                        <div class="chat_balloon right">안녕하세요.</div>
+                        <div class="chat_balloon_text_wrap">
+                            <span class="chat_balloon_text">오전 11시 51분</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chating_text_input_wrap">
+                    <div class="popup_function_line padding_l_r_0">
+                        <div class="popup_inline left_wrap">
+                            <div class="oj_flex">
+                                <select class="input_style">
+                                    <option>상용구</option>
+                                    <option>상용구</option>
+                                    <option>상용구</option>
+                                    <option>상용구</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea class="chating_textarea"></textarea>
+                    <button class="menu_bu size_w_f margin_t_10">보내기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--    공지사항_신규-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">공지사항</div>
+                <div class="contour_col"></div>
+                <div class="con_title_text_2">신규</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>저장</span>
+                        <span>취소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace ">
+                <div class="work_line_2 ">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <div class="con_name">공지상태</div>
+                            <div class="con_name">:</div>
+                            <select class="input_style">
+                                <option>임시</option>
+                                <option>공지</option>
+                            </select>
+                        </div>
+                        <div class="contour_col"></div>
+                    </div>
+                    <div class="oj_flex">
+                        <div class="con_name">상단고정</div>
+                        <div class="con_name">:</div>
+                        <input type="checkbox">
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">등록자</div>
+                        <div class="con_name">:</div>
+                        <input class="input_style" placeholder="택스트 입력">
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">등록일시</div>
+                        <div class="con_name">:</div>
+                        <input class="input_style readonly" value="2024-05-07" readonly>
+                    </div>
+                </div>
+                <div class="work_line_2">
+                    <input class="input_style title width_fill " type="text" placeholder="제목을 입력해주세요.">
+                </div>
+                <div class="work_line_2">
+                    <textarea class="textarea_style" placeholder="내용을 입력해주세요."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--    공지사항_상세내용-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">공지사항</div>
+                <div class="contour_col"></div>
+                <div class="con_title_text_2">상세내용</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3"></div>
+            </div>
+
+            <div class="workspace ">
+                <div class="work_line_2 border_b_l border_t_l">
+                    <div class="text_style.title">상담시스템 구축 협조요청</div>
+                </div>
+                <div class="work_line_2">
+                    <div class="oj_flex">
+                        <div class="con_name type_2">공지상태</div>
+                        <div class="con_name type_2">:</div>
+                        <div class="con_name type_2">공지중</div>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name type_2">등록자</div>
+                        <div class="con_name type_2">:</div>
+                        <div class="con_name type_2">박시연</div>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name type_2">등록일시</div>
+                        <div class="con_name type_2">:</div>
+                        <div class="con_name type_2">2024-12-30</div>
+                    </div>
+                </div>
+                <div class="work_line_2">
+                    <textarea class="textarea_style" placeholder="택스트에디터 적용시 이곳에다가 ㄱㄱ"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!----------------------------------------------------------------------------->
+
+
+
+
+    <!--개인상용구-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">개인 상용구 관리</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>신규 취소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="work_grid_wrap">
+                <div class="workspace per_boilerplate">
+                    <div class="na_flex_row">
+                        <div class="table_style per_boilerplate">
+                            <table>
+                                <tr class="table_title_line">
+                                    <td class="text_c">상용구 명</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l mouse_right_targat">첫 인사
+                                        <!--마우스 오른쪽버튼 위치-->
+                                        <div class="mouse_right_bu_wrap display_none">
+                                            <div class="mouse_right_oj active">수정</div>
+                                            <div class="mouse_right_oj active">삭제</div>
+                                            <div class="mouse_right_oj inactive">취소</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l"><input type="text" class="input_correction" value="종료 인사"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">지연 메시지</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="contour_col_type_2"></div>
+                        <div class="work_bord">
+                            <textarea class="textarea_style per_boilerplate" placeholder="텍스트를 입력해주세요"></textarea>
+                            <button class="menu_bu size_w_f margin_t_10">저 장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--메시지 관리-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">메시지 관리</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                </div>
+            </div>
+            <div class="work_grid_wrap">
+                <div class="workspace per_boilerplate">
+                    <div class="na_flex_row">
+                        <div class="table_style per_boilerplate">
+                            <table>
+                                <tr class="table_title_line">
+                                    <td class="text_c">
+                                        <span>메시지 목록</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text_c">
+                                        <div class="oj_flex">
+                                            <span>상담시작 메시지</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text_c">
+                                        <div class="oj_flex">
+                                            <span>자동종료 메시지</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text_c">
+                                        <div class="oj_flex">
+                                            <span>상담대기 메시지</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text_c">
+                                        <div class="oj_flex">
+                                            <span>상담종료 메시지</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text_c">
+                                        <div class="oj_flex">
+                                            <span>건수초과 메시지</span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="contour_col_type_2"></div>
+                        <div class="work_bord">
+                            <div class="popup_function_line">
+                                <div class="popup_inline left_wrap">
+                                    <div class="oj_flex">
+                                        <div class="con_subtitle_text">사용여부</div>
+                                        <div class="con_subtitle_text">:</div>
+                                        <div class="switch_container on">
+                                            <div class="switch_bu_wrap">
+                                                <div class="switch_text text_1">ON</div>
+                                                <div class="switch_oj"></div>
+                                                <div class="switch_text text_2">OFF</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="contour_col"></div>
+                                    <div class="oj_flex">
+                                        <div class="con_name">시간설정</div>
+                                        <div class="con_name">:</div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <div class="con_name">분</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="con_info_text_1">※ 상담 시작을 알리는 첫 메시지 입니다. 보통 간결하게 회사 소개 또는 상담 서비스 안내를 권장합니다.
+                            </p>
+                            <textarea class="textarea_style per_boilerplate" placeholder="텍스트를 입력해주세요"></textarea>
+                            <button class="menu_bu size_w_f margin_t_10">저 장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--권한관리-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">권한 관리</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="iframe_in_popup">
+                <div class="iframe_in_container">
+                    <div class="iframe_in_popup_text_1">알림</div>
+                    <div class="iframe_in_popup_text_2">삭제하시겠습니까</div>
+                    <div class="popup_buttom_bu_wrap">
+                        <button class="popup_bu color_1">확 인</button>
+                        <button class="popup_bu color_2">취 소</button>
+                    </div>
+                </div>
+            </div>
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>신규 취소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="work_grid_wrap">
+                <div class="workspace ">
+                    <div class="na_flex_row">
+                        <div class="table_style permission_setting">
+                            <table>
+                                <tr class="table_title_line">
+                                    <td class="text_c">권한명</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">시스템 관리자
+                                        <div class="mouse_right_bu_wrap">
+                                            <div class="mouse_right_oj active">수정</div>
+                                            <div class="mouse_right_oj active">복사</div>
+                                            <div class="mouse_right_oj active">삭제</div>
+                                            <div class="mouse_right_oj inactive">취소</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">일반</td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">운영자</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="contour_col_type_2"></div>
+
+                        <div class="table_style permission_setting_2">
+
+                            <table>
+                                <tr class="table_title_line">
+                                    <td class="text_c">관리분류</td>
+                                    <td class="text_c">관리목록</td>
+                                    <td class="text_c">
+                                        <div class="oj_flex">
+                                            <input type="checkbox"><span>권한선택</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="5" class="text_l">운영관리</td>
+                                    <td class="text_l">계정관리</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">조직관리</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">권한설정</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">전체실적관리</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">운영시간관리</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="3" class="text_l">상담관리</td>
+                                    <td class="text_l">분류 및 지정관리</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">자동메시지 관리</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">상담건수 관라</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_l">기타관리</td>
+                                    <td class="text_l">금칙어관리</td>
+                                    <td class=""><input type="checkbox"></td>
+                                </tr>
+
+                            </table>
+                            <button class="menu_bu size_w_f margin_t_10">저 장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--메모장-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">메모장</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>신규 취소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="work_grid_wrap">
+                <div class="workspace per_boilerplate">
+                    <div class="na_flex_row">
+                        <div class="table_style per_boilerplate">
+                            <table>
+                                <tr class="table_title_line">
+                                    <td class="text_c">제목</td>
+                                </tr>
+                                <tr class="">
+                                    <td>내일 할 일
+                                        <div class="mouse_right_bu_wrap display_none">
+                                            <div class="mouse_right_oj">수정</div>
+                                            <div class="mouse_right_oj">삭제</div>
+                                            <div class="mouse_right_oj inactive">취소</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="">
+                                    <td>체크사항</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="contour_col_type_2"></div>
+                        <div class="work_bord">
+                            <textarea class="textarea_style per_boilerplate" placeholder="텍스트를 입력해주세요"></textarea>
+                            <button class="menu_bu size_w_f margin_t_10">저 장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--사용자 관리-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">사용자 조회</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>다운로드</span>
+                        <span>그룹설정</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace user_inquiry">
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text"> • 사용자 관리</div>
+                </div>
+                <div class="popup_function_line">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <div class="con_name">그룹선택</div>
+                            <div class="con_name">:</div>
+                            <select class="input_style">
+                                <option>전체</option>
+                            </select>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">권한선택</div>
+                            <div class="con_name">:</div>
+                            <select class="input_style">
+                                <option>전체</option>
+                            </select>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">조회조건</div>
+                            <div class="con_name">:</div>
+                            <select class="input_style">
+                                <option>전체</option>
+                            </select>
+                            <input class="input_style" placeholder="택스트 입력">
+                        </div>
+                        <div class="oj_flex">
+                            <button class="menu_bu">조 회</button>
+                        </div>
+                        <div class="oj_flex">
+                            <button class="menu_bu">초기화</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text"> • 사용자 목록</div>
+                </div>
+                <div class="con_line">
+                    <div class="con_text_2">(총 : 3명)</div>
+                </div>
+                <div class="table_style user_inquiry">
+                    <table>
+                        <tr class="table_title_line ">
+                            <td>No.</td>
+                            <td>이름
+                                <div class="td_sort_wrap">
+                                    <button>▴</button>
+                                    <button>▾</button>
+                                </div>
+                            </td>
+                            <td>권한</td>
+                            <td>계정</td>
+                            <td>그룹</td>
+                            <td>사번</td>
+                            <td>내선번호</td>
+                            <td>휴대전화</td>
+                            <td>이메일</td>
+                            <td>임시비밀번호 발송</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>박시연</td>
+                            <td>관리자</td>
+                            <td>svalu</td>
+                            <td>디자인팀</td>
+                            <td>12315</td>
+                            <td>154</td>
+                            <td>010-4121-4874</td>
+                            <td>sye@naver.com</td>
+                            <td>
+                                <div class="table_icon email"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>박시연</td>
+                            <td>관리자</td>
+                            <td>svalu</td>
+                            <td>디자인팀</td>
+                            <td>12315</td>
+                            <td>154</td>
+                            <td>010-4121-4874</td>
+                            <td>sye@naver.com</td>
+                            <td>
+                                <div class="table_icon email"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>박시연</td>
+                            <td>관리자</td>
+                            <td>svalu</td>
+                            <td>디자인팀</td>
+                            <td>12315</td>
+                            <td>154</td>
+                            <td>010-4121-4874</td>
+                            <td>sye@naver.com</td>
+                            <td>
+                                <div class="table_icon email"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>박시연</td>
+                            <td>관리자</td>
+                            <td>svalu</td>
+                            <td>디자인팀</td>
+                            <td>12315</td>
+                            <td>154</td>
+                            <td>010-4121-4874</td>
+                            <td>sye@naver.com</td>
+                            <td>
+                                <div class="table_icon email"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>박시연</td>
+                            <td>관리자</td>
+                            <td>svalu</td>
+                            <td>디자인팀</td>
+                            <td>12315</td>
+                            <td>154</td>
+                            <td>010-4121-4874</td>
+                            <td>sye@naver.com</td>
+                            <td>
+                                <div class="table_icon email"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="pageing_wrap">
+                        <div class="page_oj_icon">◀◀</div>
+                        <div class="page_oj_icon">◀</div>
+                        <div class="page_oj">1</div>
+                        <div class="page_oj">2</div>
+                        <div class="page_oj">3</div>
+                        <div class="page_oj_icon">▶</div>
+                        <div class="page_oj_icon">▶▶</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--상담채팅-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">상담채팅</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">상담중</span>
+                </div>
+            </div>
+            <div class="workspace user_inquiry">
+                <div class="na_flex_row c_s_chat">
+                    <div class="c_s_chat_left">
+                        <div class="c_s_chat_oj">
+                            <div class="c_s_chat_icon icon_1"></div>
+                            <div class="c_s_chat_text">고객상담</div>
+                        </div>
+                        <div class="contour_row"></div>
+                        <div class="c_s_chat_oj">
+                            <div class="c_s_chat_icon icon_2 active"></div>
+                            <div class="c_s_chat_text">직원목록</div>
+                        </div>
+                        <div class="contour_row "></div>
+                        <div class="c_s_chat_oj">
+                            <div class="c_s_chat_icon icon_3 blinker"></div>
+                            <div class="c_s_chat_text">예약상담</div>
+                        </div>
+                    </div>
+                    <div class="contour_col_type_2"></div>
+                    <div class="c_s_chat_rignt">
+                        <div class="oj_group_wrap target_4_4">
+                            <div class="oj_group_top target_4">
+                                <span class="oj_group_top_text_1">상담중 고객</span>
+                                <span class="oj_group_top_text_1">(3명)</span>
+                                <div class="oj_group_icon balloon"><span>2</span></div>
+                                <div class="oj_group_top_triangle">▼</div>
+                            </div>
+                            <div class="oj_group_middle_wrap">
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="oj_group_wrap target_5_5">
+                            <div class="oj_group_top target_5">
+                                <span class="oj_group_top_text_1">배정된 고객</span>
+                                <span class="oj_group_top_text_1">(3명)</span>
+                                <div class="oj_group_icon balloon"><span>2</span></div>
+                                <div class="oj_group_top_triangle">▼</div>
+                            </div>
+                            <div class="oj_group_middle_wrap">
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="oj_group_wrap target_6_6">
+                            <div class="oj_group_top target_6">
+                                <span class="oj_group_top_text_1">상담대기 고객</span>
+                                <span class="oj_group_top_text_1">(3명)</span>
+                                <div class="oj_group_icon balloon"><span>2</span></div>
+                                <span class="oj_group_top_text_2">⭐</span>
+                                <div class="oj_group_top_triangle">▼</div>
+                            </div>
+                            <div class="oj_group_middle_wrap">
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                                <div class="oj_group_middle">
+                                    <span class="oj_group_middle_text_1">비회원</span>
+                                    <span class="oj_group_middle_text_1">(11:23)</span>
+                                    <span class="oj_group_middle_text_1">+13분</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <!--    금지어 관리-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">금지어 관리</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj">
+
+                </div>
+            </div>
+            <div class="workspace">
+                <div class="popup_function_line">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <input class="input_style" placeholder="택스트 입력">
+                            <button class="menu_bu">추 가</button>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <input class="input_style" placeholder="택스트 입력">
+                            <button class="menu_bu">조회</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="work_line_1">
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">아이언맨</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">세글자이상</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">듀글</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">욕이막들어감</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">다섯글자이상</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                    <div class="bad_word_oj_wrap">
+                        <div class="bad_word_oj">금지어</div>
+                        <div class="bad_word_icon esc"></div>
+                    </div>
+                </div>
+                <div class="pageing_wrap">
+                    <div class="page_oj_icon">◀◀</div>
+                    <div class="page_oj_icon">◀</div>
+                    <div class="page_oj">1</div>
+                    <div class="page_oj">2</div>
+                    <div class="page_oj">3</div>
+                    <div class="page_oj_icon">▶</div>
+                    <div class="page_oj_icon">▶▶</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    공지사항 관리-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">공지사항 관리</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace ">
+                <div class="popup_function_line">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <div class="con_name">제목</div>
+                            <div class="con_name">:</div>
+                            <input class="input_style" placeholder="택스트 입력">
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">조회기간</div>
+                            <div class="con_name">:</div>
+                            <input class="input_style" type="date">
+                            <div class="con_name">~</div>
+                            <input class="input_style" type="date">
+                        </div>
+                        <div class="oj_flex">
+                            <button class="menu_bu">조 회</button>
+                        </div>
+                        <div class="oj_flex">
+                            <button class="menu_bu">초기화</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text"> • 공지사항 목록</div>
+                </div>
+                <div class="table_style user_inquiry">
+                    <table>
+                        <tr class="table_title_line ">
+                            <td>No.</td>
+                            <td>공지상태</td>
+                            <td>제목</td>
+                            <td>등록자</td>
+                            <td>등록일시</td>
+                            <td>수정자</td>
+                            <td>수정일시</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>공지중</td>
+                            <td>상담시스템 구축 협조 요청</td>
+                            <td>박시연</td>
+                            <td>2020.10.06(10:20)</td>
+                            <td>김혜수</td>
+                            <td>2020.11.11(12:30)</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>공지중</td>
+                            <td>상담시스템 구축 협조 요청</td>
+                            <td>박시연</td>
+                            <td>2020.10.06(10:20)</td>
+                            <td>김혜수</td>
+                            <td>2020.11.11(12:30)</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>공지중</td>
+                            <td>상담시스템 구축 협조 요청</td>
+                            <td>박시연</td>
+                            <td>2020.10.06(10:20)</td>
+                            <td>김혜수</td>
+                            <td>2020.11.11(12:30)</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>공지중</td>
+                            <td>상담시스템 구축 협조 요청</td>
+                            <td>박시연</td>
+                            <td>2020.10.06(10:20)</td>
+                            <td>김혜수</td>
+                            <td>2020.11.11(12:30)</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>공지중</td>
+                            <td>상담시스템 구축 협조 요청</td>
+                            <td>박시연</td>
+                            <td>2020.10.06(10:20)</td>
+                            <td>김혜수</td>
+                            <td>2020.11.11(12:30)</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>공지중</td>
+                            <td>상담시스템 구축 협조 요청</td>
+                            <td>박시연</td>
+                            <td>2020.10.06(10:20)</td>
+                            <td>김혜수</td>
+                            <td>2020.11.11(12:30)</td>
+                        </tr>
+                    </table>
+                    <div class="pageing_wrap">
+                        <div class="page_oj_icon">◀◀</div>
+                        <div class="page_oj_icon">◀</div>
+                        <div class="page_oj">1</div>
+                        <div class="page_oj">2</div>
+                        <div class="page_oj">3</div>
+                        <div class="page_oj_icon">▶</div>
+                        <div class="page_oj_icon">▶▶</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--사용자 관리-  그룹설정-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">사용자 관리</div>
+                <div class="contour_col"></div>
+                <div class="con_title_text_2">그룹설정</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>수정</span>
+                        <span>저장</span>
+                        <span>취소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace">
+                <div class="con_line">
+                    <div class="con_text_2">(총 : 3명)</div>
+                </div>
+                <div class="table_style">
+                    <table>
+                        <tr class="table_title_line">
+                            <td>No.</td>
+                            <td>그룹</td>
+                            <td>명수</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>미배정</td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><input class="input_correction" type="text" value="cs팀"> </td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>cs팀</td>
+                            <td>20</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--사용자 관리_신규 -->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">사용자 조회</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>저장</span>
+                        <span>취소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace">
+                <div class="table_style user_lookup">
+                    <table>
+                        <tr>
+                            <td class="td_title_1">이름 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">사번</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">계정 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">등록일</td>
+                            <td class="text_l">2023-05-04</td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">이메일 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">휴대전화 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">내선번호</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">권한</td>
+                            <td class="text_l"><select class="input_style">
+                                    <option>전체</option>
+                                </select></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">그룹</td>
+                            <td class="text_l"><select class="input_style">
+                                    <option>전체</option>
+                                </select></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    운영시간 관리-->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">운영시간 관리</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>저장</span>
+                        <span>취소</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace operator_time_management">
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text"> • 평일</div>
+                </div>
+                <div class="table_style ">
+                    <table>
+                        <tr>
+                            <td class="td_title_1">운영시간</td>
+                            <td class="text_l">
+                                <div class="oj_flex">
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                    <span>~</span>
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">점심시간</td>
+                            <td class="text_l">
+                                <div class="oj_flex">
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                    <span>~</span>
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="popup_subtitle_line margin_t_10">
+                    <div class="con_subtitle_text"> • 주말</div>
+                </div>
+                <div class="table_style ">
+                    <table>
+                        <tr>
+                            <td class="td_title_1">운영시간</td>
+                            <td class="text_l">
+                                <div class="oj_flex">
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                    <span>~</span>
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">점심시간</td>
+                            <td class="text_l">
+                                <div class="oj_flex">
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                    <span>~</span>
+                                    <div>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>시</span>
+                                        <select class="input_style">
+                                            <option>--</option>
+                                        </select>
+                                        <span>분</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="popup_subtitle_line margin_t_10">
+                    <div class="con_subtitle_text_2">미운영 안내메시지</div>
+                </div>
+                <textarea class="textarea_style"></textarea>
+                <div class="popup_subtitle_line margin_t_10">
+                    <div class="con_subtitle_text_2">점심시간 안내메시지</div>
+                </div>
+                <textarea class="textarea_style"></textarea>
+            </div>
+        </div>
+    </div>
+    <!--사용자 그룹설정 -->
+    <div class="popup_wrap drag_oj ">
+        <div class="popup_top_line">
+            <div class="popup_inline left_wrap">
+                <div class="con_title_text_1">사용자 관리</div>
+                <div class="contour_col"></div>
+                <div class="con_title_text_2">그룹설정</div>
+            </div>
+            <div class="popup_inline right_wrap">
+                <!--                <button class="popup_bu_icon plus"></button>-->
+                <button class="popup_bu_icon minus"></button>
+                <button class="popup_bu_icon esc"></button>
+            </div>
+        </div>
+        <div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3">
+                    <span class="">메뉴</span>
+                    <div class="setting_line_oj_item_wrap">
+                        <span>신규</span>
+                        <span>수정</span>
+                        <span>저장</span>
+                        <span>수정</span>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace user_inquiry">
+
+                <div class="table_style user_lookup">
+                    <table>
+                        <tr>
+                            <td class="td_title_1">이름 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">사번</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">계정 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">등록일</td>
+                            <td class="text_l">2023-05-04</td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">이메일 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">휴대전화 *</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">내선번호</td>
+                            <td><input class="input_correction"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">권한</td>
+                            <td class="text_l"><select class="input_style">
+                                    <option>전체</option>
+                                </select></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">그룹</td>
+                            <td class="text_l"><select class="input_style">
+                                    <option>전체</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!--   작업줄 / 메뉴 시작-->
+    <div class="top_work_line">
+        <div class="menu_container">
+            <div class="main_menu_bu"></div>
+            <div class="cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face left"></div>
+                <div class="face right"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+            </div>
+            <div class="main_menu_wrap">
+                <div class="menu_user_line">
+                    <div class="menu_left_wrap">
+                        <div class="menu_icon user"></div>
+                        <div class="menu_name">김혜수</div>
+                    </div>
+                    <div class="menu_right_wrap">
+                        <div class="menu_text">Logout</div>
+                        <div class="menu_icon logout"></div>
+                    </div>
+                </div>
+                <div class="category_wrap target_1_1">
+                    <div class="main_category target_1">운영자 관리
+                        <div class="menu_triangle">▼</div>
+                    </div>
+                    <div class="middle_wrap target_1_1">
+                        <div class="middle_category_oj">· 사용자 관리</div>
+                        <div class="middle_category_oj">· 권한 관리</div>
+                        <div class="middle_category_oj">· 운영시간 관리</div>
+                        <div class="middle_category_oj">· 전체실적 통계</div>
+                        <div class="middle_category_oj">· 감사로그</div>
+                    </div>
+                </div>
+                <div class="category_wrap target_2_2">
+                    <div class="main_category target_2">운영자 관리
+                        <div class="menu_triangle">▼</div>
+                    </div>
+                    <div class="middle_wrap">
+                        <div class="middle_category_oj">· 사용자 관리</div>
+                        <div class="middle_category_oj">· 권한 관리</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wrok_line_wrap">
+            <button class="wrok_line_oj">
+                <div class="wrok_line_icon icon_1"></div>
+                <div class="wrok_line_text_1">채팅상담</div>
+            </button>
+            <button class="wrok_line_oj inactive">
+                <div class="wrok_line_icon icon_1"></div>
+                <div class="wrok_line_text_1">채팅상담</div>
+            </button>
+            <button class="wrok_line_oj blinker">
+                <div class="wrok_line_icon icon_1"></div>
+                <div class="wrok_line_text_1">채팅상담</div>
+            </button>
+        </div>
+        <div class="work_line_time_wrap">
+            <div class="icon_20 clock"></div>
+            <div class="time_oj_wrap">
+                <div class="time_oj_1">오전 11:00</div>
+                <div class="time_oj_2">2023-11-24</div>
+            </div>
+        </div>
+    </div>
+    <div class="bg_icon_container">
+        <div class="bg_icon_wrap">
+            <div class="bg_icon dashboard"></div>
+            <div class="bg_icon_text">대시보드</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon operation"></div>
+            <div class="bg_icon_text">운영관리</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon consultation"></div>
+            <div class="bg_icon_text">상담관리</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon performance"></div>
+            <div class="bg_icon_text">개인실적</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon consultation_history"></div>
+            <div class="bg_icon_text">상담이력</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon notepad"></div>
+            <div class="bg_icon_text">메모장</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon chatting"></div>
+            <div class="bg_icon_text">채팅상담</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon template"></div>
+            <div class="bg_icon_text">공용템플릿</div>
+        </div>
+        <div class="bg_icon_wrap">
+            <div class="bg_icon personal_template"></div>
+            <div class="bg_icon_text">개인템플릿</div>
+        </div>
+    </div>
+    <div class="work_body logo_right_bottom">
+
+    </div>
+</body>
+
+<!--메인메뉴 활성화   -->
+<script>
+    $('.target_1').click(function() {
+        $(this).toggleClass('active');
+        $('.target_1_1').toggleClass('active');
+    });
+    $('.target_2').click(function() {
+        $(this).toggleClass('active');
+        $('.target_2_2').toggleClass('active');
+    });
+    $('.target_3').click(function() {
+        $(this).toggleClass('active');
+    });
+</script>
+
+<script>
+    $('.mouse_right_targat').click(function() {
+        $('.mouse_right_bu_wrap').removeClass('display_none');
+    });
+</script>
+
+<!--상담채팅 이 전 채팅내용보기 활성-->
+<script>
+    $('.old_chatign_unfold_bu').click(function() {
+        $('.old_chatign_wrap').toggleClass('active');
+    });
+</script>
+
+
+
+<!--채팅 활성화-->
+<script>
+    $('.target_4').click(function() {
+        $(this).toggleClass('active');
+        $('.target_4_4').toggleClass('active');
+    });
+    $('.target_5').click(function() {
+        $(this).toggleClass('active');
+        $('.target_5_5').toggleClass('active');
+    });
+    $('.target_6').click(function() {
+        $(this).toggleClass('active');
+        $('.target_6_6').toggleClass('active');
+    });
+</script>
+
+
+<!--메뉴버튼 큐브 인테렉션-->
+<script>
+    $('.main_menu_bu').click(function() {
+        $('.cube').toggleClass('active');
+        $('.main_menu_wrap').toggleClass('active');
+    });
+</script>
+<!--스위치 버튼 (메시지관리)   -->
+<script>
+    $('.switch_container').click(function() {
+        $(this).toggleClass('off');
+    });
+</script>
+
+<!--작업창 닫기-->
+<script>
+    $('.popup_bu_icon.esc').click(function() {
+        $(this).parents('div.popup_wrap').addClass('display_none');
+    });
+
+    $('.popup_bu_icon.esc').click(function() {
+        $(this).parents('div.popup_wrap').addClass('display_none');
+    });
+
+    $('.popup_bu_icon.esc').click(function() {
+        $(this).parents('div.popup_alert_wrap').addClass('display_none');
+    });
+</script>
+
+<!--작업창 드래그-->
+<script>
+    $(function() {
+        $(".drag_oj").draggable({
+            containment: '#content',
+            cursor: 'move',
+            snap: '#content'
+        });
+
+    });
+    $(function() {
+        $(".bg_icon_wrap").draggable({
+            containment: '#content',
+            cursor: 'move',
+            snap: '#content'
+        });
+    });
+</script>
+
+<!--작업창 z-index-->
+<script>
+    const list = document.querySelectorAll('div.drag_oj')
+
+    list.forEach((el, index) => {
+        el.style.zIndex = index
+        el.addEventListener('mousedown', function() {
+
+            let maxNum = Math.max(...zIndexArray)
+            let maxIndex = zIndexArray.findIndex(arr => arr === maxNum)
+            console.log(index)
+            console.log(maxNum, maxIndex)
+            zIndexArray = zIndexArray.map(arr => {
+                if (arr > zIndexArray[index]) {
+                    return arr - 1
+                } else {
+                    return arr
+                }
+            })
+
+            zIndexArray[index] = maxNum
+
+            array.forEach((el, index) => {
+                el.style.zIndex = zIndexArray[index]
+            })
+        })
+    })
+
+    let array = [...list]
+    let zIndexArray = array.map(arr => Number(arr.style.zIndex))
+</script>
+
+
+<script>
+    $('.side_bar').click(function() {
+        $(this).parent('div.after_treatment_wrap').toggleClass('active');
+    });
+</script>

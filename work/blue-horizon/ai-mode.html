@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blue Horizon — AI Mode</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>@font-face{font-family:"Pretendard";src:url("../../assets/fonts/PretendardVariable.woff2") format("woff2-variations");font-weight:100 900;font-display:swap}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f4f4f6; --navy:#18181b; --navy2:#27272a;
+  --dark2:#3f3f46;
+  --blue:#4f46e5;
+  --cyan:#0e9e8e;
+  --orange:#d98c0a;
+  --red:#ef4444;
+  --green:#16a34a;
+  --white:#ffffff;
+  --ink:#18181b; --ink2:#3f3f46; --ink3:#a1a1aa;
+  --border:#e4e4e7;
+  --col-left:190px; --col-right:260px;
+}
+html{font-size:14px;}
+
+/* ══ 스크롤바 ══ */
+/* Firefox */
+*{ scrollbar-width:thin; scrollbar-color:transparent transparent; }
+*:hover{ scrollbar-color:rgba(0,0,0,0.18) transparent; }
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar{ width:4px; height:4px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{
+  background:transparent;
+  border-radius:100px;
+  transition:background .2s ease;
+}
+*:hover::-webkit-scrollbar-thumb{ background:rgba(0,0,0,0.18); }
+body{width:100%;height:100vh;overflow:hidden;
+  background:var(--bg);color:var(--ink);
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+}
+
+@keyframes star-spin-ai{0%{transform:rotate(0deg) scale(1)}25%{transform:rotate(90deg) scale(.78)}50%{transform:rotate(180deg) scale(1.22)}75%{transform:rotate(270deg) scale(.78)}100%{transform:rotate(360deg) scale(1)}}
+
+/* ═══════════════════════════════════════════
+   BG LAYERS
+   ═══════════════════════════════════════════ */
+.bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg-layer{position:absolute;inset:0;}
+.bg-light{background:rgba(245,247,250,0.82);}
+
+/* ═══════════════════════════════════════════
+   APP SHELL (login + AI mode 공통 변수)
+   ═══════════════════════════════════════════ */
+.ov-app{
+  --sbg:#F5F7FA;--sidebar-bg:#FFFFFF;--sidebar-bdr:#E2E8F0;
+  --header-bg:#FFFFFF;--header-bdr:#E2E8F0;
+  --search-bg:#F8FAFC;--search-bdr:#E2E8F0;
+  --t1:#0F172A;--t2:#64748B;--t3:#94A3B8;
+  --nav-active-bg:#EEF2FF;--nav-active-c:#4F46E5;--nav-hover:#F8FAFC;
+  --glass-bg:#FFFFFF;--glass-bg-2:#F8FAFC;--glass-border:#E2E8F0;
+  --glass-shadow:0 1px 3px rgba(15,23,42,0.05),0 4px 16px rgba(15,23,42,0.06);
+  --qa-bg:#F8FAFC;--qa-bdr:#E2E8F0;
+  --ai-bubble-bg:#FFFFFF;--user-bubble:#4F46E5;
+  --ai-avatar-bg:#EEF2FF;--ai-avatar-bdr:#C7D2FE;
+  --kbd-bdr:#E2E8F0;--kbd-c:#94A3B8;
+  font-family:'Pretendard','Apple SD Gothic Neo',system-ui,sans-serif;
+}
+/* ── AI MODE ── */
+.ai-overlay{position:fixed;inset:0;z-index:100;display:flex;opacity:0;pointer-events:none;transition:opacity .28s ease;}
+.ai-overlay.active{opacity:1;pointer-events:all;}
+.ai-sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-bdr);overflow:hidden;transition:width .35s cubic-bezier(.4,0,.2,1);}
+.ai-sidebar>*{white-space:nowrap;transition:opacity .15s ease;}
+.ai-sidebar.collapsed{width:0;border-right:none;}
+.ai-sidebar.collapsed>*{opacity:0;transition:opacity 0s;}
+.sdb-logo{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 14px 18px;border-bottom:1px solid var(--sidebar-bdr);}
+.sdb-logo-inner{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.sdb-collapse{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t3);}
+.sdb-collapse:hover{background:var(--nav-hover);color:var(--t1);}
+.sdb-actions{display:flex;flex-direction:column;gap:2px;padding:10px 10px 6px;}
+.sdb-action{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--t2);cursor:pointer;white-space:nowrap;}
+.sdb-action:hover{background:var(--nav-hover);color:var(--t1);}
+.sdb-section{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);padding:10px 18px 3px;}
+.sdb-hist{flex:1;overflow-y:auto;padding:0 8px;}
+.sdb-hist-empty{font-size:11.5px;color:var(--t3);text-align:center;padding:20px 12px;line-height:1.5;}
+.sdb-item{padding:8px 10px;border-radius:7px;cursor:pointer;margin-bottom:2px;}
+.sdb-item:hover{background:var(--nav-hover);}
+.sdb-item-title{font-size:11.5px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sdb-item-meta{font-size:10px;color:var(--t3);margin-top:2px;}
+.sdb-footer{padding:12px 18px;border-top:1px solid var(--sidebar-bdr);display:flex;align-items:center;gap:9px;font-size:12px;color:var(--t2);cursor:pointer;white-space:nowrap;}
+.sdb-footer:hover{color:var(--nav-active-c);}
+.ai-main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;background:transparent;}
+.ai-header{height:52px;display:flex;align-items:center;gap:10px;padding:0 22px;background:var(--header-bg);border-bottom:1px solid var(--header-bdr);flex-shrink:0;}
+.h-toggle-sb{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:var(--qa-bg);border:1px solid var(--qa-bdr);color:var(--t2);cursor:pointer;}
+.h-toggle-sb:hover{color:var(--t1);}
+.ai-h-title{font-size:13px;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:8px;flex:1;}
+.ai-h-star{color:var(--nav-active-c);font-size:15px;}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;gap:28px;}
+.welcome-title{display:flex;align-items:center;gap:10px;font-size:26px;font-weight:700;color:var(--t1);animation:slideup .4s ease both;}
+.welcome-star{font-size:28px;color:var(--nav-active-c);animation:star-spin-ai 4s ease-in-out infinite;display:inline-block;transform-origin:center;}
+@keyframes slideup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.ai-input-wrap{width:100%;max-width:640px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;box-shadow:var(--glass-shadow);overflow:hidden;}
+.ai-input-wrap:focus-within{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.12);}
+.ai-input-inner{display:flex;align-items:flex-end;gap:8px;padding:12px 14px 10px;}
+.chat-ta{flex:1;background:none;border:none;outline:none;font-family:inherit;font-size:13.5px;color:var(--t1);resize:none;min-height:22px;max-height:120px;line-height:1.55;}
+.chat-ta::placeholder{color:var(--t3);}
+.send-btn{width:34px;height:34px;border-radius:10px;border:none;background:#4F46E5;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(79,70,229,.35);}
+.send-btn:hover{background:#4338CA;}
+.ai-input-hint{font-size:10.5px;color:var(--t3);padding:0 14px 10px;display:flex;align-items:center;gap:5px;}
+.kbd{font-size:9.5px;padding:1px 5px;border:1px solid var(--kbd-bdr);border-radius:4px;color:var(--kbd-c);background:var(--qa-bg);}
+.ai-samples{display:flex;flex-direction:column;gap:7px;width:100%;max-width:640px;}
+.ai-sample{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--t2);cursor:pointer;padding:4px 0;line-height:1.4;}
+.ai-sample:hover{color:var(--nav-active-c);}
+.ai-sample-dot{color:var(--nav-active-c);font-size:14px;flex-shrink:0;margin-top:1px;}
+.chat-layout{flex:1;display:flex;overflow:hidden;}
+.messages-col{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.messages-scroll{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px;}
+.msg-user{display:flex;justify-content:flex-end;align-items:flex-end;gap:10px;}
+.msg-user-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0;order:2;}
+.msg-user-bubble{max-width:480px;padding:10px 14px;background:var(--user-bubble);color:#fff;border-radius:14px 14px 4px 14px;font-size:13px;line-height:1.5;}
+.msg-time{font-size:10px;color:var(--t3);margin-top:4px;text-align:right;}
+.msg-ai-row{display:flex;align-items:flex-start;gap:10px;}
+.ai-avatar{width:28px;height:28px;border-radius:50%;background:var(--ai-avatar-bg);border:1.5px solid var(--ai-avatar-bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--nav-active-c);font-size:13px;}
+.msg-ai-card{background:var(--ai-bubble-bg);border:1px solid var(--glass-border);border-radius:4px 14px 14px 14px;padding:10px 14px;box-shadow:var(--glass-shadow);font-size:13px;color:var(--t1);line-height:1.55;max-width:520px;}
+.msg-ai-time{font-size:10px;color:var(--t3);margin-top:4px;padding-left:38px;}
+.thinking{display:flex;gap:4px;align-items:center;padding:2px 0;}
+.t-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);animation:bounce .9s ease-in-out infinite;}
+.t-dot:nth-child(2){animation-delay:.18s;}.t-dot:nth-child(3){animation-delay:.36s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+.chat-bottom{padding:12px 24px 16px;border-top:1px solid var(--header-bdr);background:var(--header-bg);}
+.chat-input-row{display:flex;align-items:flex-end;gap:8px;background:var(--search-bg);border:1px solid var(--search-bdr);border-radius:12px;padding:10px 12px 8px;}
+.chat-input-row:focus-within{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.12);}
+.chat-input-row textarea{flex:1;background:none;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--t1);resize:none;min-height:20px;max-height:100px;line-height:1.5;}
+.chat-input-row textarea::placeholder{color:var(--t3);}
+.chat-input-hint{font-size:10px;color:var(--t3);margin-top:6px;text-align:center;}
+.stats-panel{width:0;overflow:hidden;border-left:0px solid var(--header-bdr);background:var(--qa-bg);transition:width .42s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;flex-shrink:0;will-change:width;}
+.stats-panel.open{width:460px;border-left-width:1px;}
+.stats-inner{width:460px;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.stats-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:var(--header-bg);border-bottom:1px solid var(--header-bdr);flex-shrink:0;}
+.stats-title{font-size:12.5px;font-weight:600;color:var(--t1);}
+.stats-actions{display:flex;align-items:center;gap:4px;}
+.s-act{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--t3);cursor:pointer;transition:background .15s,color .15s;}
+.s-act:hover{background:var(--nav-hover);color:var(--t1);}
+.stats-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.stat-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.stat-kpi{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px 10px;box-shadow:var(--glass-shadow);}
+.stat-kpi-val{font-size:20px;font-weight:700;line-height:1;margin-bottom:4px;letter-spacing:-.02em;}
+.stat-kpi-lbl{font-size:9.5px;color:var(--t3);}
+.stat-mid-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat-mid{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:14px;box-shadow:var(--glass-shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+.stat-mid.warm{background:linear-gradient(135deg,rgba(251,191,36,0.12),var(--glass-bg));border-color:rgba(251,191,36,0.28);}
+.stat-mid-icon{font-size:22px;margin-bottom:2px;}
+.stat-mid-val{font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1;}
+.stat-mid-desc{font-size:11px;color:var(--t2);text-align:center;}
+.stat-mid-sub{font-size:10px;color:var(--t3);text-align:center;}
+.chart-section-title{font-size:10.5px;color:var(--t3);font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+.chart-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:14px;box-shadow:var(--glass-shadow);}
+.chart-title{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:10px;}
+.chart-legend{display:flex;gap:14px;margin-bottom:10px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--t2);}
+.legend-line{width:16px;height:2px;border-radius:1px;}
+.chart-grid-line{stroke:var(--glass-border);}
+.chart-axis-text{fill:var(--t3);font-family:'Pretendard',sans-serif;}
+.chart-dot{fill:var(--glass-bg);}
+
+/* ── 800px: AI 사이드바 접기 ── */
+@media(max-width:800px){
+  .ai-sidebar{width:0!important;border-right:none!important;}
+  .ai-sidebar>*{opacity:0;transition:opacity 0s;}
+}
+</style>
+</head>
+<body>
+
+<!-- WAVE -->
+<canvas id="wave-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity 0.8s ease;"></canvas>
+<div class="bg-wrap">
+  <div class="bg-layer bg-light" id="bgLight" style="opacity:1;"></div>
+</div>
+
+<!-- AI MODE OVERLAY -->
+<div id="aimode-overlay" class="ov-app ai-overlay active">
+  <aside class="ai-sidebar" id="aiSidebar">
+    <div class="sdb-logo">
+      <div class="sdb-logo-inner">
+        <svg viewBox="0 0 20 20" fill="none" width="20" height="20" style="color:#4F46E5;flex-shrink:0">
+          <polygon points="10,1.5 17.4,5.75 17.4,14.25 10,18.5 2.6,14.25 2.6,5.75" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="10" cy="10" r="1.2" fill="currentColor"/>
+          <line x1="10" y1="10" x2="10" y2="1.5" stroke="currentColor" stroke-width="0.9" opacity="0.5"/>
+          <line x1="10" y1="10" x2="17.4" y2="14.25" stroke="currentColor" stroke-width="0.9" opacity="0.5"/>
+          <line x1="10" y1="10" x2="2.6" y2="14.25" stroke="currentColor" stroke-width="0.9" opacity="0.5"/>
+        </svg>
+        <span style="font-size:14px;font-weight:700;color:var(--t1);white-space:nowrap;">Blue Horizon</span>
+      </div>
+      <div class="sdb-collapse" onclick="toggleAISidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </div>
+    </div>
+    <div class="sdb-actions">
+      <div class="sdb-action" onclick="newAIChat()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        새 대화
+      </div>
+    </div>
+    <div class="sdb-section">대화 내역</div>
+    <div class="sdb-hist" id="aiHistory"><div class="sdb-hist-empty">대화 기록이 없습니다</div></div>
+  </aside>
+  <div class="ai-main">
+    <header class="ai-header">
+      <div class="h-toggle-sb" id="aiSbToggleBtn" style="display:none;" onclick="toggleAISidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+      <div class="ai-h-title"><span class="ai-h-star">✦</span>AI Mode</div>
+    </header>
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <!-- 웰컴 -->
+      <div class="welcome" id="aiWelcome">
+        <div class="welcome-title"><span class="welcome-star">✦</span>admin님, 무엇을 도와드릴까요?</div>
+        <div class="ai-input-wrap">
+          <div class="ai-input-inner">
+            <textarea class="chat-ta" placeholder="무엇이든 물어보세요" rows="1" id="aiWelcomeInput"
+              oninput="autoResize(this)" onkeydown="aiKeyDown(event,'welcome')"></textarea>
+            <button class="send-btn" onclick="sendAI(document.getElementById('aiWelcomeInput').value)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            </button>
+          </div>
+          <div class="ai-input-hint"><span class="kbd">Enter</span>&nbsp;전송</div>
+        </div>
+        <div class="ai-samples" id="aiSamples"></div>
+      </div>
+      <!-- 채팅 -->
+      <div class="chat-layout" id="aiChat" style="display:none;">
+        <div class="messages-col">
+          <div class="messages-scroll" id="aiMessages"></div>
+          <div class="chat-bottom">
+            <div class="chat-input-row">
+              <textarea placeholder="무엇이든 물어보세요" rows="1" id="aiChatInput"
+                oninput="autoResize(this)" onkeydown="aiKeyDown(event,'chat')"></textarea>
+              <button class="send-btn" onclick="sendAI(document.getElementById('aiChatInput').value)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+              </button>
+            </div>
+            <div class="chat-input-hint"><span class="kbd">Enter</span>&nbsp;전송 · <span class="kbd">Shift+Enter</span>&nbsp;줄바꿈</div>
+          </div>
+        </div>
+        <!-- 스탯 패널 -->
+        <div class="stats-panel" id="statsPanel">
+          <div class="stats-inner">
+            <div class="stats-header">
+              <div class="stats-title">통계 분석 (샘플 데이터) — 2026-05-12</div>
+              <div class="stats-actions">
+                <div class="s-act" title="새로고침"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></div>
+                <div class="s-act" title="다운로드"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+                <div class="s-act" title="복사"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
+                <div class="s-act" title="닫기" onclick="closeStats()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+              </div>
+            </div>
+            <div class="stats-body">
+              <!-- KPI 4칸 -->
+              <div class="stat-kpi-row">
+                <div class="stat-kpi"><div class="stat-kpi-val" style="color:#818CF8">578건</div><div class="stat-kpi-lbl">총 인바운드</div></div>
+                <div class="stat-kpi"><div class="stat-kpi-val" style="color:#6EE7B7">83건</div><div class="stat-kpi-lbl">일평균</div></div>
+                <div class="stat-kpi"><div class="stat-kpi-val" style="color:#34D399">82.2%</div><div class="stat-kpi-lbl">평균 응답률</div></div>
+                <div class="stat-kpi"><div class="stat-kpi-val" style="color:#F87171">17.8%</div><div class="stat-kpi-lbl">평균 포기율</div></div>
+              </div>
+              <!-- 중간 카드 2칸 -->
+              <div class="stat-mid-row">
+                <div class="stat-mid">
+                  <div class="stat-mid-icon">📅</div>
+                  <div class="stat-mid-val" style="color:#818CF8">578건</div>
+                  <div class="stat-mid-desc">이번 주 인바운드</div>
+                  <div class="stat-mid-sub">지난 주 594건 대비 -3%</div>
+                </div>
+                <div class="stat-mid warm">
+                  <div class="stat-mid-icon">🔥</div>
+                  <div class="stat-mid-val" style="color:#FBBF24">03-25</div>
+                  <div class="stat-mid-desc">피크 일자</div>
+                  <div class="stat-mid-sub">113건 (최대)</div>
+                </div>
+              </div>
+              <!-- 차트 -->
+              <div class="chart-section-title">일별 추이</div>
+              <div class="chart-card">
+                <div class="chart-title">일별 인바운드 / 처리 / 포기</div>
+                <div class="chart-legend">
+                  <div class="legend-item"><div class="legend-line" style="background:#818CF8"></div>인바운드</div>
+                  <div class="legend-item"><div class="legend-line" style="background:#34D399"></div>처리</div>
+                  <div class="legend-item"><div class="legend-line" style="background:#F87171"></div>포기</div>
+                </div>
+                <div id="statChartSVG"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── AI MODE ──
+let aiMessages=[],aiChatStarted=false,aiThinking=false,aiHistoryList=[];
+const AI_SAMPLES=[
+  '실시간 대시보드를 보여줘. 인바운드, 응답률, SLA를 정리해줘.',
+  '통계 분석을 보여줘. 일별 추이와 응답률 변화를 분석해줘.',
+  '현재 상담원 현황을 보여줘. 전체, 가용, 통화중을 정리해줘.',
+  '현재 이상 징후가 있는지 체크해줘. 포기율과 SLA를 분석해줘.',
+];
+
+function toggleAISidebar(){
+  const sb=document.getElementById('aiSidebar');
+  const btn=document.getElementById('aiSbToggleBtn');
+  sb.classList.toggle('collapsed');
+  btn.style.display=sb.classList.contains('collapsed')?'flex':'none';
+}
+function newAIChat(){
+  aiMessages=[];aiChatStarted=false;
+  document.getElementById('aiWelcome').style.display='flex';
+  document.getElementById('aiChat').style.display='none';
+  document.getElementById('statsPanel').classList.remove('open');
+  document.getElementById('aiWelcomeInput').value='';
+  renderAISamples();
+}
+function renderAISamples(){
+  document.getElementById('aiSamples').innerHTML=AI_SAMPLES.map(s=>
+    `<div class="ai-sample" onclick='sendAI(${JSON.stringify(s)})'>
+      <span class="ai-sample-dot">✦</span><span>${s}</span>
+    </div>`
+  ).join('');
+}
+function isStatQuery(q){return /통계|분석|추이|주간|일별|인바운드|포기율|응답률/.test(q);}
+function nowTime(){
+  const d=new Date(),h=d.getHours();
+  return `${h<12?'오전':'오후'} ${h%12||12}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function sendAI(text){
+  text=(text||'').trim();
+  if(!text||aiThinking)return;
+  document.getElementById('aiWelcomeInput').value='';
+  document.getElementById('aiChatInput').value='';
+  if(!aiChatStarted){
+    aiChatStarted=true;
+    document.getElementById('aiWelcome').style.display='none';
+    document.getElementById('aiChat').style.display='flex';
+  }
+  if(!aiHistoryList.length||aiHistoryList[0].title!==text){
+    aiHistoryList.unshift({title:text,meta:'방금'});
+    if(aiHistoryList.length>5)aiHistoryList.pop();
+    renderAIHistory();
+  }
+  aiMessages.push({role:'user',content:text,time:nowTime()});
+  aiThinking=true;
+  renderAIMessages();
+  const showStats=isStatQuery(text);
+  setTimeout(()=>{
+    aiThinking=false;
+    aiMessages.push({role:'ai',
+      content:showStats
+        ?'통계를 조회했습니다. 이번 주 총 인바운드는 578건이며, 일평균 83건 수준입니다. 03-25일에 113건으로 최대치를 기록했고, 포기율은 평균 17.8%로 전주 대비 소폭 상승했습니다.'
+        :'조회했습니다. 현재 시스템은 정상 운영 중이며 요청하신 정보를 확인했습니다. 추가로 궁금한 사항이 있으시면 질문해 주세요.',
+      time:nowTime()});
+    renderAIMessages();
+    if(showStats){document.getElementById('statsPanel').classList.add('open');setTimeout(drawStatSVG,50);}
+  },900);
+}
+function renderAIMessages(){
+  const el=document.getElementById('aiMessages');
+  let html='';
+  aiMessages.forEach(m=>{
+    if(m.role==='user'){
+      html+=`<div><div class="msg-user"><div class="msg-user-bubble">${m.content}</div><div class="msg-user-av">A</div></div><div class="msg-time">${m.time}</div></div>`;
+    }else{
+      html+=`<div><div class="msg-ai-row"><div class="ai-avatar">✦</div><div class="msg-ai-card">${m.content}</div></div><div class="msg-ai-time">${m.time}</div></div>`;
+    }
+  });
+  if(aiThinking){
+    html+=`<div class="msg-ai-row"><div class="ai-avatar">✦</div><div class="msg-ai-card"><div class="thinking"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div></div></div>`;
+  }
+  el.innerHTML=html;
+  el.scrollTop=el.scrollHeight;
+}
+function renderAIHistory(){
+  const el=document.getElementById('aiHistory');
+  el.innerHTML=aiHistoryList.length
+    ?aiHistoryList.map(h=>`<div class="sdb-item"><div class="sdb-item-title">${h.title}</div><div class="sdb-item-meta">${h.meta}</div></div>`).join('')
+    :'<div class="sdb-hist-empty">대화 기록이 없습니다</div>';
+}
+function closeStats(){document.getElementById('statsPanel').classList.remove('open');}
+function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function aiKeyDown(e,mode){
+  if(e.key==='Enter'&&!e.shiftKey){
+    e.preventDefault();
+    sendAI(document.getElementById(mode==='welcome'?'aiWelcomeInput':'aiChatInput').value);
+  }
+}
+function drawStatSVG(){
+  const el=document.getElementById('statChartSVG');
+  if(!el)return;
+  const W=480,H=170,PL=30,PR=10,PT=8,PB=26;
+  const cw=W-PL-PR,ch=H-PT-PB;
+  const labels=['03-20','03-21','03-22','03-23','03-24','03-25','03-26'];
+  const datasets=[
+    {color:'#818CF8',data:[50,36,113,80,85,113,80]},
+    {color:'#34D399',data:[40,36,85,65,75,100,65]},
+    {color:'#F87171',data:[8,8,18,10,8,14,8]},
+  ];
+  const maxY=120,n=labels.length;
+  const xp=i=>PL+(i/(n-1))*cw;
+  const yp=v=>PT+ch-(v/maxY)*ch;
+  function smooth(data){
+    const pts=data.map((v,i)=>[xp(i),yp(v)]);
+    let d=`M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for(let i=1;i<pts.length;i++){
+      const cx=(pts[i-1][0]+pts[i][0])/2;
+      d+=` C${cx.toFixed(1)} ${pts[i-1][1].toFixed(1)},${cx.toFixed(1)} ${pts[i][1].toFixed(1)},${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)}`;
+    }
+    return d;
+  }
+  function area(data){
+    return `${smooth(data)} L${xp(data.length-1).toFixed(1)} ${yp(0).toFixed(1)} L${xp(0).toFixed(1)} ${yp(0).toFixed(1)} Z`;
+  }
+  let defs='<defs>'+datasets.map((ds,i)=>
+    `<linearGradient id="sg${i}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${ds.color}" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="${ds.color}" stop-opacity="0.02"/>
+    </linearGradient>`
+  ).join('')+'</defs>';
+  let grid=[0,20,40,60,80,100,120].map(v=>
+    `<line class="chart-grid-line" x1="${PL}" y1="${yp(v).toFixed(1)}" x2="${W-PR}" y2="${yp(v).toFixed(1)}" stroke-width="1"/>
+     <text class="chart-axis-text" x="${PL-4}" y="${(yp(v)+3.5).toFixed(1)}" text-anchor="end" font-size="8.5">${v}</text>`
+  ).join('');
+  let xLabels=labels.map((l,i)=>
+    `<text class="chart-axis-text" x="${xp(i).toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="8.5">${l}</text>`
+  ).join('');
+  let areas=datasets.map((ds,i)=>`<path d="${area(ds.data)}" fill="url(#sg${i})" stroke="none"/>`).join('');
+  let lines=datasets.map(ds=>`<path d="${smooth(ds.data)}" fill="none" stroke="${ds.color}" stroke-width="2" stroke-linecap="round"/>`).join('');
+  let dots=datasets.map(ds=>ds.data.map((v,j)=>
+    `<circle class="chart-dot" cx="${xp(j).toFixed(1)}" cy="${yp(v).toFixed(1)}" r="3" stroke="${ds.color}" stroke-width="1.8"/>`
+  ).join('')).join('');
+  el.innerHTML=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="overflow:visible">${defs}${grid}${xLabels}${areas}${lines}${dots}</svg>`;
+}
+
+// ── WAVE (Three.js) ──
+(function(){
+  const canvas=document.getElementById('wave-bg');
+  if(!canvas||typeof THREE==='undefined')return;
+  const scene=new THREE.Scene();
+  const W=window.innerWidth,H=window.innerHeight;
+  const camera=new THREE.PerspectiveCamera(50,W/H,0.1,1000);
+  camera.position.set(0,42,65);camera.lookAt(0,0,0);
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(W,H);
+  const geo=new THREE.PlaneGeometry(180,110,180,110);
+  geo.rotateX(-Math.PI/2);
+  const mat=new THREE.PointsMaterial({color:0x94a3b8,size:0.32,transparent:true,opacity:0.45,sizeAttenuation:true});
+  scene.add(new THREE.Points(geo,mat));
+  const pos=geo.attributes.position;
+  const origY=new Float32Array(pos.count);
+  for(let i=0;i<pos.count;i++)origY[i]=pos.getY(i);
+  canvas.style.opacity='1';
+  let t=0;
+  (function animate(){
+    requestAnimationFrame(animate);t+=0.003;
+    for(let i=0;i<pos.count;i++){
+      const x=pos.getX(i),z=pos.getZ(i);
+      pos.setY(i,origY[i]+Math.sin(x*0.18+t)*Math.cos(z*0.14+t*0.7)*4.5+Math.sin(x*0.09-t*0.5)*2);
+    }
+    pos.needsUpdate=true;renderer.render(scene,camera);
+  })();
+  window.addEventListener('resize',()=>{
+    const w=window.innerWidth,h=window.innerHeight;
+    camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);
+  });
+})();
+document.getElementById('wave-bg').style.opacity='0.75';
+newAIChat();
+</script>
+</body>
+</html>
