@@ -193,9 +193,9 @@
       </div>
       <div class="try">둘 다 진짜입니다 · 로그인해 보세요 · admin</div>
       <div class="frame"><div class="bar"><i></i><i></i><i></i><span>blue-horizon / desktop</span></div>
-        <iframe src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon desktop"></iframe></div>
+        <iframe data-src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon desktop"></iframe></div>
       <div class="phone" id="phone01">
-        <div class="view"><iframe src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon mobile"></iframe></div>
+        <div class="view"><iframe data-src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon mobile"></iframe></div>
         <div class="tag">MOBILE · 390px</div>
       </div>
       <div class="dband"></div><div class="dyear">.2026</div>
@@ -217,11 +217,11 @@
       <div class="try">둘 다 진짜입니다 · 창을 끌어보세요</div>
       <div class="frame scaled f2023"><div class="label">2023 · 상담사 화면</div>
         <div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
-        <div class="view"><iframe src="work/os-ui/2023/main.html" loading="lazy" title="Counseling OS 2023"></iframe></div></div>
+        <div class="view"><iframe data-src="work/os-ui/2023/main.html" loading="lazy" title="Counseling OS 2023"></iframe></div></div>
       <div class="arrow"></div>
       <div class="frame f2026"><div class="label">2026 · 관리자 OS</div>
         <div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
-        <iframe src="work/os-ui/2026/index.html" loading="lazy" title="Admin OS 2026"></iframe></div>
+        <iframe data-src="work/os-ui/2026/index.html" loading="lazy" title="Admin OS 2026"></iframe></div>
       <div class="dband"></div><div class="dyear">.2023 → 2026</div>
     </div>
   </section>
@@ -343,6 +343,21 @@ intro.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON' && !fired.fl
 const mouse={x:0,y:0}, sm={x:0,y:0}, vel={x:0,y:0}; let spin=0;
 addEventListener('pointermove', e=>{ mouse.x=e.clientX/innerWidth-.5; mouse.y=e.clientY/innerHeight-.5; });
 
+/* ── 실물 지연 로드: 현재 차원 ±0.9 안의 iframe 만 src 를 채우고, 멀어지면 비운다 ── */
+const lazyFrames = dims.map(d=>[...d.querySelectorAll('iframe[data-src]')]);
+let lastLoadCheck = -1;
+function loadNear(p){
+  const q = Math.round(p*10);
+  if(q === lastLoadCheck) return; lastLoadCheck = q;
+  dims.forEach((d,i)=>{
+    const near = Math.abs(p - i) < 0.9;
+    lazyFrames[i].forEach(f=>{
+      if(near && !f.getAttribute('src')) f.setAttribute('src', f.dataset.src);
+      else if(!near && f.getAttribute('src')) f.removeAttribute('src');
+    });
+  });
+}
+
 /* ── 프레임 ── */
 let prog = 0;                       // 부드럽게 따라가는 스크롤 진행도 (차원 단위: 0=인트로 … N-1=마지막)
 const tmpC = new THREE.Color();
@@ -378,6 +393,8 @@ function frame(){
     d.style.clipPath = `circle(${r.toFixed(2)}% at ${(ox*100).toFixed(2)}% ${(oy*100).toFixed(2)}%)`;
     d.classList.toggle('in', r > 100);
   }
+  /* 실물 iframe 은 가까운 차원만 살린다 — 다섯 개가 동시에 돌면 렌더러가 버거움 */
+  loadNear(prog);
 
   /* 마우스 */
   const live = s;
