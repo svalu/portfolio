@@ -66,6 +66,7 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   body.color .intro .dots i{background:var(--dc)}
   body.flow .intro .dots i{transition:none}
   /* 이름은 Medium(500). 굵어진 만큼 자간을 조금 조인다 */
+  h1.type{margin:0}
   .type{position:absolute;left:3.4%;top:2.5%;line-height:.86;font-size:clamp(90px,17.6vw,262px);letter-spacing:-.04em;font-weight:500;color:var(--m-type);z-index:3;user-select:none}
   .type small{display:block}
   body.color .type small{color:var(--c-type);--cd:1.3s}
@@ -95,16 +96,18 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   .ctl button{font:11px/1 system-ui,sans-serif;letter-spacing:.2em;padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.18);background:rgba(255,255,255,.7);color:#333;cursor:pointer}
 
   /* ───────────── 차원 공통 편집 체계 ───────────── */
-  .dim{--paper:#0b1020;--ink:#e8ecf4;--ink2:rgba(232,236,244,.62);--ink3:rgba(232,236,244,.38);--line:rgba(232,236,244,.12);--acc:#4b6cff;--acc2:#8ea0ff;--band-c:#16204a}
+  .dim{--paper:#0b1020;--ink:#e8ecf4;--ink2:rgba(232,236,244,.62);--ink3:rgba(232,236,244,.62);--line:rgba(232,236,244,.12);--acc:#4b6cff;--acc2:#8ea0ff;--band-c:#16204a}
   .dim .sheet{position:absolute;inset:0;background:var(--paper);color:var(--ink)}
   .dim .no{position:absolute;left:3.6%;top:5.2%;font-size:12px;letter-spacing:.34em;color:var(--ink3)}
   .dim .title{position:absolute;left:3.4%;top:9.5%;font-size:clamp(56px,9.4vw,150px);font-weight:200;letter-spacing:-.03em;line-height:.9;color:var(--ink)}
   .dim .title small{display:block}
-  .dim .ddots{position:absolute;left:3.6%;right:52%;top:44%;display:flex;justify-content:space-between}
+  .dim .ddots{position:absolute;left:3.6%;right:52%;top:41.5%;display:flex;justify-content:space-between}
+  .dim .hook{position:absolute;left:3.6%;top:45.5%;width:42%;font-size:clamp(20px,2.1vw,32px);font-weight:500;
+    letter-spacing:-.025em;line-height:1.3;color:var(--ink)}
   .dim .ddots i{width:.55vw;height:.55vw;min-width:5px;min-height:5px;border-radius:50%;background:var(--acc);opacity:.55}
   .dim .ddots i:nth-child(3n){opacity:1}
-  .dim .sub{position:absolute;left:3.6%;top:49%;width:40%;font-size:clamp(13px,1.1vw,17px);color:var(--ink2);font-weight:300}
-  .dim .facts{position:absolute;left:3.6%;top:57%;width:40%;display:grid;gap:12px;padding-top:18px;border-top:1px solid var(--line)}
+  .dim .sub{position:absolute;left:3.6%;top:54%;width:41%;font-size:clamp(13px,1.1vw,17px);color:var(--ink2);font-weight:300}
+  .dim .facts{position:absolute;left:3.6%;top:62%;width:41%;display:grid;gap:12px;padding-top:18px;border-top:1px solid var(--line)}
   .dim .facts p{font-size:clamp(12px,.95vw,14px);line-height:1.75;color:var(--ink2);font-weight:300}
   .dim .facts p b{color:var(--ink);font-weight:500}
   .dim .try{position:absolute;left:3.6%;bottom:7%;font-size:12px;letter-spacing:.18em;color:var(--acc2)}
@@ -144,15 +147,15 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   #d02 .arrow::after{content:"";position:absolute;right:0;top:-3px;border:3.5px solid transparent;border-left:7px solid var(--acc)}
   #d02.in .arrow{opacity:1}
   /* 등장: 차원이 60% 열리면 */
-  .dim .no,.dim .title small,.dim .sub,.dim .facts,.dim .try,.dim .ddots i,.dim .dyear{opacity:0;transform:translateY(16px);transition:opacity .8s var(--in),transform 1s var(--in)}
-  .dim.in .no,.dim.in .title small,.dim.in .sub,.dim.in .facts,.dim.in .try,.dim.in .ddots i,.dim.in .dyear{opacity:1;transform:none}
+  .dim .no,.dim .title small,.dim .hook,.dim .sub,.dim .facts,.dim .try,.dim .ddots i,.dim .dyear{opacity:0;transform:translateY(16px);transition:opacity .8s var(--in),transform 1s var(--in)}
+  .dim.in .no,.dim.in .title small,.dim.in .hook,.dim.in .sub,.dim.in .facts,.dim.in .try,.dim.in .ddots i,.dim.in .dyear{opacity:1;transform:none}
   .dim.in .title small:nth-child(2){transition-delay:.18s}
-  .dim.in .sub{transition-delay:.4s} .dim.in .facts{transition-delay:.55s} .dim.in .try{transition-delay:.8s} .dim.in .dyear{transition-delay:.6s}
+  .dim.in .hook{transition-delay:.32s} .dim.in .sub{transition-delay:.5s} .dim.in .facts{transition-delay:.65s} .dim.in .try{transition-delay:.8s} .dim.in .dyear{transition-delay:.6s}
   .dim.in .ddots i{transition-delay:calc(.3s + var(--i) * .03s)}
 
   /* 차원별 팔레트 */
   #d01{--paper:#0b1020;--acc:#4b6cff;--acc2:#9fb0ff;--band-c:#151d3f}
-  #d02{--paper:#f5f2ea;--ink:#16150f;--ink2:rgba(22,21,15,.62);--ink3:rgba(22,21,15,.4);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band-c:#e9dcc6}
+  #d02{--paper:#f5f2ea;--ink:#16150f;--ink2:rgba(22,21,15,.62);--ink3:rgba(22,21,15,.62);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band-c:#e9dcc6}
   #d03{--paper:#0f1412;--acc:#2fd3a0;--acc2:#8ff0cf;--band-c:#14241e}
 
   /* 오브젝트 캔버스: 모든 차원 위에 */
@@ -174,8 +177,9 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
     .dim .no{top:3.6%;font-size:10px}
     .dim .title,#d01 .title{top:7%;font-size:clamp(44px,15vw,92px);line-height:.92}
     .dim .ddots{display:none}
-    .dim .sub{top:29%;width:92%;font-size:13px}
-    .dim .facts{top:34.5%;width:92%;gap:8px;padding-top:12px}
+    .dim .hook{top:25%;width:92%;font-size:19px}
+    .dim .sub{top:34%;width:92%;font-size:13px}
+    .dim .facts{top:44%;width:92%;gap:8px;padding-top:12px}
     .dim .facts p{font-size:12px;line-height:1.6}
     .dim .facts p:nth-child(3){display:none}
     .dim .try{bottom:9.5%;font-size:10px;letter-spacing:.14em}
@@ -206,13 +210,13 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   <section class="dim intro" id="intro">
     <div class="stage">
       <div class="dots" id="dots"></div>
-      <div class="type" id="type"><small>HEE</small><small>RANG</small></div>
+      <h1 class="type" id="type"><small>HEE</small><small>RANG</small></h1>
       <div class="band" id="band"><div class="tri"></div><div class="year">.UX Engineer</div></div>
       <div class="mark" aria-hidden="true">
         <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4"><path d="M8 40 L50 8 L92 40"/><path d="M22 40 H78"/><circle cx="50" cy="66" r="26"/><path d="M50 40 V92 M24 66 H76"/></svg>
       </div>
       <div class="bottom" id="bottom">
-        <p class="body" id="body">화면을 만들던 사람이 시스템을 만들게 됐다. 상담 화면에 창과 작업표시줄을 넣어 OS처럼 굴린 것이 2023년, 그 관점이 관리자 도구 전체로 번진 것이 2026년이다. 그 사이에 AI 여럿과 한 프로젝트를 석 달 동안 이어서 일하는 방식을 설계했고, 그 방식으로 내 말투를 배우는 로컬 모델을 키웠다. 보기 좋은 디자인과 옳은 디자인은 다르다고 믿는다. 이 포트폴리오는 그 둘 사이에서 내가 어디에 서 있는지를 순서대로 보여준다.</p>
+        <p class="body" id="body">좋은 디자인이 옳은 디자인은 아니다. 보기 좋은 화면을 만드는 일과, 그 화면이 놓일 구조를 정하는 일은 다르다. 나는 화면을 그리다가 구조 쪽으로 넘어왔다. 상담사에게 페이지 대신 창과 작업표시줄을 준 것이 2023년, 같은 관점이 관리자 도구 전체로 번진 것이 2026년이다. 그 사이에 AI 여럿과 석 달을 이어서 일하는 방식을 짰고, 그 방식으로 내 말투를 배우는 모델을 키웠다. 여기 실린 화면은 캡처가 아니라 지금 눌러볼 수 있는 실물이다.</p>
       </div>
     </div>
     <div class="veil"></div>
@@ -227,17 +231,18 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
       <div class="no">01 — INTERFACE</div>
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
       <div class="ddots"></div>
+      <p class="hook">관리자가 자리에 없어도 본다.</p>
       <p class="sub">클라우드 컨택센터 운영 플랫폼 · 디자인 리뉴얼 · 2026</p>
       <div class="facts">
-        <p><b>관리자가 자리에 없어도 본다.</b> 같은 대시보드가 폰에서 그대로 접힌다. 컨택센터 관리 화면은 늘 데스크톱 전용이었다. 그 전제를 깼다.</p>
-        <p><b>한 화면에서 보고, 판단하고, 조치한다.</b> 실시간 KPI·상담원 상태·채널 대기열을 하나의 흐름으로.</p>
-        <p><b>디자인을 코드로 냈다.</b> 프레임워크 없는 단일 HTML. Three.js 지구본 로그인, p5 차트, 다크·라이트, AI Mode. 표면은 내가, 배선은 개발팀이.</p>
+        <p><b>컨택센터 관리 화면은 늘 데스크톱 전용이었다.</b> 그 전제를 깨고 같은 대시보드를 폰에 접어 넣었다. 오른쪽 폰 안에서 도는 게 그 화면이다.</p>
+        <p><b>보는 화면과 조치하는 화면이 따로 있으면 판단이 끊긴다.</b> 실시간 지표·상담원 상태·채널 대기열을 한 흐름으로 묶어, 보고 판단하고 조치하는 일이 한 자리에서 끝나게 했다.</p>
+        <p><b>디자인을 문서가 아니라 코드로 냈다.</b> 프레임워크 없는 단일 HTML 한 장. 지구본 로그인, 차트, 다크·라이트, AI Mode까지 돌아가는 상태로 만들어 넘겼고, 뒤의 배선은 개발팀이 이어받았다.</p>
       </div>
-      <div class="try">둘 다 진짜입니다 · 로그인해 보세요 · admin</div>
+      <div class="try">둘 다 실물입니다 · admin 으로 로그인해 보세요</div>
       <div class="frame"><div class="bar"><i></i><i></i><i></i><span>blue-horizon / desktop</span></div>
-        <iframe data-src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon desktop"></iframe></div>
+        <iframe data-src="work/blue-horizon/live.html" title="Blue Horizon desktop"></iframe></div>
       <div class="phone" id="phone01">
-        <div class="view"><iframe data-src="work/blue-horizon/live.html" loading="lazy" title="Blue Horizon mobile"></iframe></div>
+        <div class="view"><iframe data-src="work/blue-horizon/live.html" title="Blue Horizon mobile"></iframe></div>
         <div class="tag">MOBILE · 390px</div>
       </div>
       <div class="dband"></div><div class="dyear">.2026</div>
@@ -250,20 +255,21 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
       <div class="no">02 — SYSTEM</div>
       <div class="title"><small>OS</small><small>UI</small></div>
       <div class="ddots"></div>
-      <p class="sub">상담 화면을 OS처럼 · 같은 관점을 3년 두 번</p>
+      <p class="hook">화면이 아니라 책상을 줬다.</p>
+      <p class="sub">상담 화면을 OS처럼 · 같은 관점으로 3년, 두 번</p>
       <div class="facts">
-        <p><b>2023 · 상담사 화면.</b> 상담사는 창을 여러 개 띄워 일하는 사람이었다. 그래서 화면 대신 창·최소화·작업표시줄을 줬다. 페이지가 아니라 책상.</p>
-        <p><b>2026 · 관리자 OS.</b> 같은 관점이 관리자 도구 전체로 번졌다. 드래그·리사이즈·스냅·시작메뉴·바탕화면. 화면이 아니라 작업 공간을 설계했다.</p>
-        <p><b>화려해 보이지만 구조 얘기다.</b> 사용자가 여러 일을 동시에 하면, UI는 하나의 페이지이길 그만둬야 한다.</p>
+        <p><b>2023.</b> 상담사는 창을 여러 개 띄워 놓고 일하는 사람이었다. 그래서 페이지 대신 창과 작업표시줄을 줬다. 화면을 옮겨다니지 않고 펼쳐 놓고 쓰게.</p>
+        <p><b>2026.</b> 같은 관점이 관리자 도구 전체로 번졌다. 드래그·리사이즈·스냅·시작메뉴·바탕화면. 화면이 아니라 일할 공간을 설계했다.</p>
+        <p><b>화려해 보이지만 결국 구조 얘기다.</b> 사용자가 여러 일을 동시에 한다면, UI는 한 장의 페이지이기를 그만둬야 한다.</p>
       </div>
-      <div class="try">둘 다 진짜입니다 · 창을 끌어보세요</div>
+      <div class="try">둘 다 실물입니다 · 아이콘을 눌러 창을 열어보세요</div>
       <div class="frame scaled f2023"><div class="label">2023 · 상담사 화면</div>
         <div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
-        <div class="view"><iframe data-src="work/os-ui/2023/main.html" loading="lazy" title="Counseling OS 2023"></iframe></div></div>
+        <div class="view"><iframe data-src="work/os-ui/2023/main.html" title="Counseling OS 2023"></iframe></div></div>
       <div class="arrow"></div>
       <div class="frame scaled f2026" data-vw="1440" data-mvw="1024"><div class="label">2026 · 관리자 OS</div>
         <div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
-        <div class="view"><iframe data-src="work/os-ui/2026/index.html" loading="lazy" title="Admin OS 2026"></iframe></div></div>
+        <div class="view"><iframe data-src="work/os-ui/2026/index.html" title="Admin OS 2026"></iframe></div></div>
       <div class="dband"></div><div class="dyear">.2023 → 2026</div>
     </div>
   </section>
@@ -274,12 +280,14 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
       <div class="ddots"></div>
-      <p class="sub">AI 여럿과 한 프로젝트를 석 달 이어서 일한 방법</p>
+      <p class="hook">AI 여럿과 한 프로젝트를 석 달 이어서 일했다.</p>
+      <p class="sub">AI는 대화가 끝나면 잊는다. 그래서 기억을 사람 밖에, 파일로 뒀다.</p>
       <div class="facts">
-        <p><b>기억을 사람 밖에, 파일로 두었다.</b> 역할별 AI가 읽고 쓰며 서로 인계한다. 사람은 방향만 준다.</p>
-        <p><b>실측이 구조를 바꿨다.</b> 평균 3.4일 간격, 한 번에 8분. 대화 단위를 턴에서 시간으로 재설계했다.</p>
+        <p><b>역할을 나눈 AI들이 같은 파일을 읽고 쓰며 서로 인계한다.</b> 사람은 방향만 준다. 계정을 옮긴 날에도 맥락이 끊기지 않았다.</p>
+        <p><b>실측이 구조를 바꿨다.</b> 사용 로그를 재보니 평균 3.4일 간격, 한 번에 8분이었다. "직전 3턴"은 근거 없는 단위였다. 대화의 단위를 턴에서 시간으로 다시 잡았다.</p>
+        <p><b>AI 도입이 겉도는 건 도구가 없어서가 아니라 일하는 방식이 안 바뀌어서다.</b> 그 방식을 혼자 석 달 굴려봤고, 어디서 깨지는지를 봤다.</p>
       </div>
-      <div class="try">도식 · 준비 중</div>
+      <div class="try">숫자는 전부 실사용 로그 실측</div>
       <div class="dband"></div><div class="dyear">.2026</div>
     </div>
   </section>
@@ -415,6 +423,7 @@ document.getElementById('skip').onclick = skip;
 document.getElementById('hint').onclick = ()=> scrollTo({top:innerHeight*1.0, behavior:'smooth'});
 addEventListener('wheel', ()=>{ if(!fired.flow) skip(); }, {passive:true});
 addEventListener('touchmove', ()=>{ if(!fired.flow) skip(); }, {passive:true});   /* 폰: 밀면 인트로 스킵 */
+addEventListener('keydown', e=>{ if(!fired.flow && /^(Arrow|Page|Enter|Escape| |Spacebar|Tab)/.test(e.key)) skip(); });  /* 키보드로도 빠져나갈 수 있게 */
 intro.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON' && !fired.flow) skip(); });
 
 const mouse={x:0,y:0}, sm={x:0,y:0}, vel={x:0,y:0}; let spin=0;
@@ -474,9 +483,17 @@ function frame(){
     const R = r*diag;
     const m = R < 1 ? 'radial-gradient(circle 1px at 50% 50%,transparent 0,transparent 1px)'
                     : `radial-gradient(circle ${R.toFixed(0)}px at ${(ox*100).toFixed(2)}% ${(oy*100).toFixed(2)}%,#000 ${Math.max(R-60,0).toFixed(0)}px,transparent ${R.toFixed(0)}px)`;
-    d.style.webkitMaskImage = m; d.style.maskImage = m;
+    if(d._m !== m){ d.style.webkitMaskImage = m; d.style.maskImage = m; d._m = m; }   /* 값이 같으면 쓰지 않는다(스타일 재계산 절약) */
     d.classList.toggle('in', r > 0.7);
+    /* 마스크로 가려도 클릭·탭 이동은 그대로 들어간다. 완전히 열린 차원만 만질 수 있게 한다 */
+    var reachable = r > 0.999;
+    d.style.pointerEvents = reachable ? '' : 'none';
+    d.inert = !reachable;
   }
+  /* 인트로도 같은 자리에 깔려 있어 01 화면의 클릭을 가로챈다. 지나갔으면 비활성 */
+  var introOn = prog < 0.5;
+  dims[0].style.pointerEvents = introOn ? '' : 'none';
+  dims[0].inert = !introOn;
   /* 실물 iframe 은 가까운 차원만 살린다 — 다섯 개가 동시에 돌면 렌더러가 버거움 */
   loadNear(prog);
 
