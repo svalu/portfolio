@@ -268,9 +268,10 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
       <div class="ddots"></div>
       <div class="tabs" id="tabs01" role="tablist" aria-label="시안">
-        <button role="tab" aria-selected="true"  data-src="work/blue-horizon/live.html">다크 · 라이브</button>
-        <button role="tab" aria-selected="false" data-src="work/blue-horizon/report.html">리포트</button>
-        <button role="tab" aria-selected="false" data-src="work/blue-horizon/flat.html">플랫</button>
+        <button role="tab" aria-selected="true"  data-src="work/blue-horizon/live.html">최종</button>
+        <button role="tab" aria-selected="false" data-src="work/blue-horizon/glass.html">시안 · 글래스</button>
+        <button role="tab" aria-selected="false" data-src="work/blue-horizon/flat.html">시안 · 플랫</button>
+        <button role="tab" aria-selected="false" data-src="work/blue-horizon/p5.html">시안 · 네트워크</button>
       </div>
       <p class="hook">관리자가 자리에 없어도 본다.</p>
       <p class="sub">클라우드 컨택센터 운영 플랫폼 · 디자인 리뉴얼 · 2026</p>
@@ -278,7 +279,7 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
         <p><b>컨택센터 관리 화면은 늘 데스크톱 전용이었다.</b> 그 전제를 깨고 같은 대시보드를 폰에 접어 넣었다. 오른쪽 폰 안에서 도는 게 그 화면이다.</p>
         <p><b>보는 화면과 조치하는 화면이 따로 있으면 판단이 끊긴다.</b> 실시간 지표·상담원 상태·채널 대기열을 한 흐름으로 묶어, 보고 판단하고 조치하는 일이 한 자리에서 끝나게 했다.</p>
         <p><b>디자인을 문서가 아니라 코드로 냈다.</b> 프레임워크 없는 단일 HTML 한 장. 돌아가는 상태로 만들어 넘겼고, 뒤의 배선은 개발팀이 이어받았다.</p>
-        <p><b>방향을 셋 만들어 놓고 다크를 골랐다.</b> 관리자는 하루 종일 이 화면을 본다. 눈이 편한 쪽이 맞다. 다만 색만 뒤집은 다크는 어색해진다. 어색하지 않은 다크를 만드는 것이 일이었다. 위 탭으로 나머지 둘도 볼 수 있다.</p>
+        <p><b>시안 셋을 만들어 놓고 다크를 골랐다.</b> 관리자는 하루 종일 이 화면을 본다. 눈이 편한 쪽이 맞다. 다만 색만 뒤집은 다크는 어색해진다. 어색하지 않은 다크를 만드는 것이 일이었다. 위 탭으로 셋 다 볼 수 있다.</p>
       </div>
       <div class="try">둘 다 실물입니다 · admin 으로 로그인해 보세요</div>
       <div class="frame" data-vw="1440" data-title="Blue Horizon · 데스크톱"><button class="zoom" type="button">크게 보기</button><div class="bar"><i></i><i></i><i></i><span>blue-horizon / desktop</span></div>
@@ -566,7 +567,7 @@ frame();
 (function(){
   var wrap=document.getElementById('tabs01'); if(!wrap) return;
   var host=document.querySelector('#d01 .frame'), fr=host.querySelector('iframe'), bar=host.querySelector('.bar span');
-  var names={'live.html':'blue-horizon / desktop','report.html':'blue-horizon / report','flat.html':'blue-horizon / flat'};
+  var names={'live.html':'blue-horizon / 최종','glass.html':'blue-horizon / 글래스','flat.html':'blue-horizon / 플랫','p5.html':'blue-horizon / 네트워크'};
   wrap.addEventListener('click', function(e){
     var b=e.target.closest('button'); if(!b) return;
     wrap.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-selected', String(x===b)); });
