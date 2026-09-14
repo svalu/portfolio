@@ -540,15 +540,7 @@ function frame(){
                     : `radial-gradient(circle ${R.toFixed(0)}px at ${(ox*100).toFixed(2)}% ${(oy*100).toFixed(2)}%,#000 ${Math.max(R-60,0).toFixed(0)}px,transparent ${R.toFixed(0)}px)`;
     if(d._m !== m){ d.style.webkitMaskImage = m; d.style.maskImage = m; d._m = m; }   /* 값이 같으면 쓰지 않는다(스타일 재계산 절약) */
     d.classList.toggle('in', r > 0.7);
-    /* 마스크로 가려도 클릭·탭 이동은 그대로 들어간다. 완전히 열린 차원만 만질 수 있게 한다 */
-    var reachable = r > 0.999;
-    d.style.pointerEvents = reachable ? '' : 'none';
-    d.inert = !reachable;
   }
-  /* 인트로도 같은 자리에 깔려 있어 01 화면의 클릭을 가로챈다. 지나갔으면 비활성 */
-  var introOn = prog < 0.5;
-  dims[0].style.pointerEvents = introOn ? '' : 'none';
-  dims[0].inert = !introOn;
   /* 실물 iframe 은 가까운 차원만 살린다 — 다섯 개가 동시에 돌면 렌더러가 버거움 */
   loadNear(prog);
 
