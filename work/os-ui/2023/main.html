@@ -4,7 +4,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
     <title>Counseling OS · 2023</title>
-    <link rel="stylesheet" type="text/css" href="./css/main.css?v=6">
+    <link rel="stylesheet" type="text/css" href="./css/main.css?v=7">
     <script type="text/javascript" src="./js/jquery-1.6.2.min.js"></script>
 
     <!--    드래그 소스-->
@@ -16,7 +16,8 @@
 /* 포폴 데모용 실적 창 — 기존 색 변수를 그대로 쓴다 */
 
 /* 창 여닫기 모션 — display:none 에서 벗어나는 순간 브라우저가 알아서 재생한다(클래스 조작·타이머 불필요) */
-.popup_wrap,.popup_alert_wrap{transform-origin:50% 30%;animation:winIn .26s cubic-bezier(.2,.8,.25,1) both}
+.popup_wrap,.popup_alert_wrap{transform-origin:50% 30%}
+.popup_wrap.win_in,.popup_alert_wrap.win_in{animation:winIn .26s cubic-bezier(.2,.8,.25,1) both}
 @keyframes winIn{from{opacity:0;transform:scale(.965) translateY(10px)}to{opacity:1;transform:none}}
 .popup_wrap.win_out,.popup_alert_wrap.win_out{animation:winOut .2s ease-in both;pointer-events:none}
 @keyframes winOut{from{opacity:1;transform:none}to{opacity:0;transform:scale(.97) translateY(6px)}}
@@ -2068,7 +2069,10 @@
       if(x === undefined){ x = 150 + (step%6)*34; y = 70 + (step%6)*30; step++; }
       el.style.left = x + 'px'; el.style.top = y + 'px';
       el.classList.remove('win_out');
-      el.classList.remove('display_none');   /* 여기서 winIn 이 자동 재생된다 */
+      el.classList.add('win_in');
+      el.classList.remove('display_none');
+      /* 애니메이션을 남겨두면 stacking context 가 유지돼 창 안의 z-index:-1 패널이 배경 위로 뜬다 */
+      setTimeout(function(){ el.classList.remove('win_in'); }, 320);
     }
     el.style.zIndex = topmost();
   }

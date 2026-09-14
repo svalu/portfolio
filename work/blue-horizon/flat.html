@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blue Horizon — Dashboard</title>
+<style>@font-face{font-family:"Pretendard";src:url("../../assets/fonts/Pretendard-Light.woff2") format("woff2");font-weight:300}@font-face{font-family:"Pretendard";src:url("../../assets/fonts/Pretendard-Regular.woff2") format("woff2");font-weight:400}@font-face{font-family:"Pretendard";src:url("../../assets/fonts/Pretendard-Medium.woff2") format("woff2");font-weight:500}</style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#EEF2F8;
+  --card:#FFFFFF;
+  --blue:#2563EB;
+  --blue-soft:#EFF6FF;
+  --text:#0F172A;
+  --sub:#64748B;
+  --dim:#94A3B8;
+  --border:#E2E8F0;
+  --red:#EF4444;
+  --amber:#F59E0B;
+  --green:#10B981;
+  --nav-w:220px;
+}
+
+html,body{height:100%;overflow:hidden;}
+body{
+  display:flex;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Pretendard',system-ui,sans-serif;
+  font-size:14px;
+  line-height:1.5;
+}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--nav-w);
+  height:100vh;
+  background:var(--card);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+}
+
+.sb-brand{
+  padding:18px 18px 14px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+
+.sb-mark{
+  width:26px;height:26px;
+  background:var(--blue);
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:#fff;
+  flex-shrink:0;letter-spacing:-0.5px;
+}
+
+.sb-name{
+  font-size:14px;font-weight:700;
+  color:var(--text);letter-spacing:-0.3px;
+}
+
+.sb-name em{color:var(--blue);font-style:normal;}
+
+.sb-nav{
+  flex:1;padding:10px 10px;
+  display:flex;flex-direction:column;gap:1px;
+  overflow-y:auto;
+}
+
+.sb-sec{
+  font-size:10px;font-weight:600;color:var(--dim);
+  letter-spacing:0.08em;text-transform:uppercase;
+  padding:12px 10px 5px;
+}
+
+.sb-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:7px;
+  cursor:pointer;color:var(--sub);
+  font-size:13px;font-weight:500;
+  transition:background .1s,color .1s;
+}
+
+.sb-item:hover{background:#F1F5F9;color:var(--text);}
+
+.sb-item.active{
+  background:var(--blue-soft);
+  color:var(--blue);font-weight:600;
+}
+
+.sb-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:currentColor;opacity:0.45;flex-shrink:0;
+}
+
+.sb-item.active .sb-dot{opacity:1;}
+
+.sb-footer{
+  padding:12px 14px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:9px;
+  flex-shrink:0;
+}
+
+.sb-ava{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--blue);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;flex-shrink:0;
+}
+
+.sb-uname{font-size:12.5px;font-weight:600;color:var(--text);}
+.sb-urole{font-size:11px;color:var(--sub);}
+
+/* ── MAIN ── */
+.main{
+  flex:1;display:flex;flex-direction:column;
+  overflow:hidden;min-width:0;
+}
+
+/* ── HEADER ── */
+.header{
+  height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;flex-shrink:0;
+}
+
+.hd-left{display:flex;flex-direction:column;gap:1px;}
+
+.hd-title{
+  font-size:17px;font-weight:700;
+  color:var(--text);letter-spacing:-0.4px;
+  line-height:1;
+}
+
+.hd-sub{
+  font-size:11.5px;color:var(--sub);
+  display:flex;align-items:center;gap:6px;margin-top:2px;
+}
+
+.live-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--green);display:inline-block;
+  animation:blink 2s ease infinite;
+}
+
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.hd-right{
+  display:flex;align-items:center;gap:6px;
+  font-size:12.5px;color:var(--sub);
+  font-variant-numeric:tabular-nums;
+}
+
+.hd-right strong{color:var(--text);font-weight:600;}
+
+/* ── CONTENT ── */
+.content{
+  flex:1;overflow-y:auto;
+  padding:4px 24px 24px;
+  display:flex;flex-direction:column;gap:14px;
+}
+
+/* ── CARD ── */
+.card{
+  background:var(--card);
+  border-radius:11px;
+  border:1px solid var(--border);
+  overflow:hidden;
+}
+
+.card-head{
+  padding:14px 18px 11px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+
+.card-title{font-size:12.5px;font-weight:600;color:var(--text);}
+.card-link{font-size:12px;color:var(--blue);cursor:pointer;font-weight:500;}
+.card-badge{font-size:12px;font-weight:600;}
+
+/* ── KPI ROW ── */
+.kpi-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.kpi{
+  background:var(--card);
+  border-radius:11px;
+  border:1px solid var(--border);
+  padding:18px 20px 16px;
+}
+
+.kpi-label{
+  font-size:11px;font-weight:500;color:var(--sub);
+  letter-spacing:0.03em;margin-bottom:10px;
+}
+
+.kpi-num{
+  font-size:38px;font-weight:700;
+  line-height:1;letter-spacing:-1.5px;
+  color:var(--text);margin-bottom:9px;
+}
+
+.kpi-num .unit{
+  font-size:15px;font-weight:500;
+  letter-spacing:0;color:var(--sub);margin-left:1px;
+}
+
+.kpi-tag{
+  font-size:11.5px;font-weight:500;
+  display:flex;align-items:center;gap:3px;
+}
+
+.up{color:var(--green);} .dn{color:var(--red);} .neu{color:var(--dim);}
+
+/* ── MID ROW ── */
+.mid-row{
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:14px;
+}
+
+/* ── TABLE ── */
+.q-table{width:100%;border-collapse:collapse;}
+
+.q-table th{
+  font-size:10.5px;font-weight:600;color:var(--dim);
+  letter-spacing:0.07em;text-transform:uppercase;
+  text-align:left;padding:9px 18px;
+  border-bottom:1px solid var(--border);
+}
+
+.q-table th:not(:first-child){text-align:right;}
+
+.q-table td{
+  padding:12px 18px;
+  border-bottom:1px solid #F1F5F9;
+  font-size:13px;
+  vertical-align:middle;
+}
+
+.q-table td:not(:first-child){
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+
+.q-table tr:last-child td{border-bottom:none;}
+.q-table tbody tr:hover td{background:#FAFBFF;}
+
+.qn{font-size:13px;font-weight:600;color:var(--text);}
+.qs{font-size:10.5px;color:var(--dim);margin-top:1px;}
+.qv{font-weight:600;color:var(--text);}
+.qv-s{font-size:10.5px;color:var(--dim);}
+
+.s-ok{color:var(--green);font-size:11.5px;font-weight:600;}
+.s-warn{color:var(--amber);font-size:11.5px;font-weight:600;}
+.s-danger{color:var(--red);font-size:11.5px;font-weight:600;}
+
+/* ── ALERT LIST ── */
+.al-list{display:flex;flex-direction:column;}
+
+.al-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 18px;
+  border-bottom:1px solid #F1F5F9;
+  cursor:pointer;transition:background .1s;
+}
+
+.al-item:last-child{border-bottom:none;}
+.al-item:hover{background:#FAFBFF;}
+
+.al-dot{
+  width:6px;height:6px;border-radius:50%;
+  flex-shrink:0;margin-top:5px;
+}
+
+.al-dot.d{background:var(--red);}
+.al-dot.w{background:var(--amber);}
+.al-dot.i{background:var(--blue);}
+
+.al-body{flex:1;min-width:0;}
+
+.al-title{
+  font-size:12.5px;font-weight:600;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-bottom:2px;
+}
+
+.al-desc{font-size:11px;color:var(--sub);}
+.al-time{font-size:10.5px;color:var(--dim);flex-shrink:0;padding-top:2px;}
+
+/* ── BOTTOM ROW ── */
+.bot-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+/* ── EVENT LIST ── */
+.ev-list{padding:2px 0;}
+
+.ev-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 18px;
+  border-bottom:1px solid #F1F5F9;
+  font-size:12px;
+}
+
+.ev-item:last-child{border-bottom:none;}
+
+.ev-time{
+  font-size:11px;color:var(--dim);
+  font-variant-numeric:tabular-nums;
+  flex-shrink:0;width:50px;
+}
+
+.ev-dot{
+  width:5px;height:5px;border-radius:50%;flex-shrink:0;
+}
+
+.ev-text{color:var(--sub);flex:1;}
+.ev-text strong{color:var(--text);font-weight:600;}
+
+/* ── NOTICE ── */
+.nt-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 18px;border-bottom:1px solid #F1F5F9;
+}
+
+.nt-item:last-child{border-bottom:none;}
+
+.nt-tag{
+  font-size:10px;font-weight:700;letter-spacing:0.03em;
+  padding:2px 6px;border-radius:4px;flex-shrink:0;margin-top:2px;
+}
+
+.nt-tag.urgent{background:#FEE2E2;color:var(--red);}
+.nt-tag.important{background:#FEF9C3;color:#B45309;}
+.nt-tag.normal{background:#EFF6FF;color:var(--blue);}
+
+.nt-body{flex:1;min-width:0;}
+.nt-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.nt-desc{font-size:11px;color:var(--sub);}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-mark">AC</div>
+    <div class="sb-name">Blue <em>Horizon</em></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">메인</div>
+    <div class="sb-item active"><div class="sb-dot"></div>홈 대시보드</div>
+
+    <div class="sb-sec">모니터링</div>
+    <div class="sb-item"><div class="sb-dot"></div>실시간 현황</div>
+    <div class="sb-item"><div class="sb-dot"></div>상담원 현황</div>
+
+    <div class="sb-sec">분석</div>
+    <div class="sb-item"><div class="sb-dot"></div>통계 / 분석</div>
+    <div class="sb-item"><div class="sb-dot"></div>캠페인 성과</div>
+
+    <div class="sb-sec">관리</div>
+    <div class="sb-item"><div class="sb-dot"></div>사용자 관리</div>
+    <div class="sb-item"><div class="sb-dot"></div>권한 관리</div>
+    <div class="sb-item"><div class="sb-dot"></div>설정</div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-ava">A</div>
+    <div>
+      <div class="sb-uname">admin</div>
+      <div class="sb-urole">슈퍼바이저</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="hd-left">
+      <div class="hd-title">대시보드</div>
+      <div class="hd-sub">
+        <span class="live-dot"></span>
+        실시간 · 오늘 09:00 기준
+      </div>
+    </div>
+    <div class="hd-right">
+      <strong id="clock">--:--:--</strong>&nbsp;· 2026.05.22
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- KPI -->
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">현재 대기호</div>
+        <div class="kpi-num">22<span class="unit">건</span></div>
+        <div class="kpi-tag dn">▲ 전 동시간 +8건</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">응대율</div>
+        <div class="kpi-num">95<span class="unit">%</span></div>
+        <div class="kpi-tag dn">▼ 전 동시간 −1.4%p</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">SLA 달성률</div>
+        <div class="kpi-num">97<span class="unit">%</span></div>
+        <div class="kpi-tag neu">목표 95% · 달성</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">통화중 상담원</div>
+        <div class="kpi-num">40<span class="unit">명</span></div>
+        <div class="kpi-tag neu">휴식 4 · 이석 2명</div>
+      </div>
+    </div>
+
+    <!-- MID ROW -->
+    <div class="mid-row">
+
+      <!-- Queue Table -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">큐별 현황 · 5개 큐 운영중</span>
+          <span class="card-link">전체 보기 →</span>
+        </div>
+        <table class="q-table">
+          <thead>
+            <tr>
+              <th>큐</th>
+              <th>대기</th>
+              <th>응대율</th>
+              <th>SLA</th>
+              <th>평균 대기</th>
+              <th>투입 인원</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="qn">일반문의</div><div class="qs">General Inquiry</div></td>
+              <td><span class="qv">12</span><div class="qv-s">건</div></td>
+              <td>95.1%</td><td>99.0%</td><td>1분 12초</td><td>14명</td>
+              <td><span class="s-ok">정상</span></td>
+            </tr>
+            <tr>
+              <td><div class="qn">기술지원</div><div class="qs">Tech Support</div></td>
+              <td><span class="qv">8</span><div class="qv-s">건</div></td>
+              <td>91.2%</td><td>94.8%</td><td>2분 44초</td><td>9명</td>
+              <td><span class="s-warn">주의</span></td>
+            </tr>
+            <tr>
+              <td><div class="qn">VIP 전용</div><div class="qs">Premium</div></td>
+              <td><span class="qv">3</span><div class="qv-s">건</div></td>
+              <td>98.7%</td><td>100%</td><td>0분 28초</td><td>5명</td>
+              <td><span class="s-ok">정상</span></td>
+            </tr>
+            <tr>
+              <td><div class="qn">불만처리</div><div class="qs">Complaints</div></td>
+              <td><span class="qv" style="color:var(--red)">15</span><div class="qv-s">건</div></td>
+              <td style="color:var(--red);font-weight:600">82.4%</td>
+              <td style="color:var(--red);font-weight:600">87.2%</td>
+              <td style="color:var(--red);font-weight:600">4분 51초</td>
+              <td>7명</td>
+              <td><span class="s-danger">위험</span></td>
+            </tr>
+            <tr>
+              <td><div class="qn">영업상담</div><div class="qs">Sales</div></td>
+              <td><span class="qv">5</span><div class="qv-s">건</div></td>
+              <td>88.1%</td><td>96.3%</td><td>1분 58초</td><td>11명</td>
+              <td><span class="s-warn">주의</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">주의 필요 항목</span>
+          <span class="card-badge" style="color:var(--red)">4건</span>
+        </div>
+        <div class="al-list">
+          <div class="al-item">
+            <div class="al-dot d"></div>
+            <div class="al-body">
+              <div class="al-title">1588-1234 대기호 급증</div>
+              <div class="al-desc">현재 8건 대기 · 평균 대기 4분 32초</div>
+            </div>
+            <div class="al-time">2분 전</div>
+          </div>
+          <div class="al-item">
+            <div class="al-dot w"></div>
+            <div class="al-body">
+              <div class="al-title">SLA 달성률 하락 추세</div>
+              <div class="al-desc">현재 94.2% · 목표 95% 미달</div>
+            </div>
+            <div class="al-time">15분 전</div>
+          </div>
+          <div class="al-item">
+            <div class="al-dot w"></div>
+            <div class="al-body">
+              <div class="al-title">상담원 3명 장시간 후처리</div>
+              <div class="al-desc">박*수 12분 · 최*영 9분 · 정*아 8분</div>
+            </div>
+            <div class="al-time">5분 전</div>
+          </div>
+          <div class="al-item">
+            <div class="al-dot i"></div>
+            <div class="al-body">
+              <div class="al-title">Kinesis 스트림 지연 감지</div>
+              <div class="al-desc">평소 대비 1.2초 지연 · 모니터링 중</div>
+            </div>
+            <div class="al-time">30분 전</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /mid-row -->
+
+    <!-- BOTTOM ROW -->
+    <div class="bot-row">
+
+      <!-- Events -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">실시간 이벤트</span>
+          <span style="font-size:11px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:5px;">
+            <span class="live-dot"></span>LIVE
+          </span>
+        </div>
+        <div class="ev-list">
+          <div class="ev-item">
+            <span class="ev-time">14:32:15</span>
+            <span class="ev-dot" style="background:var(--sub)"></span>
+            <span class="ev-text"><strong>김*연</strong> 상태 변경: 통화 → 후처리</span>
+          </div>
+          <div class="ev-item">
+            <span class="ev-time">14:31:58</span>
+            <span class="ev-dot" style="background:var(--red)"></span>
+            <span class="ev-text"><strong>1588-1234</strong> 신규 대기호 발생 (#4523)</span>
+          </div>
+          <div class="ev-item">
+            <span class="ev-time">14:31:42</span>
+            <span class="ev-dot" style="background:var(--green)"></span>
+            <span class="ev-text"><strong>박*수</strong> 상담 완료 (4분 12초)</span>
+          </div>
+          <div class="ev-item">
+            <span class="ev-time">14:31:20</span>
+            <span class="ev-dot" style="background:var(--amber)"></span>
+            <span class="ev-text">SLA 경고: <strong>1588-5678</strong> 목표 미달 (93.1%)</span>
+          </div>
+          <div class="ev-item">
+            <span class="ev-time">14:30:55</span>
+            <span class="ev-dot" style="background:var(--dim)"></span>
+            <span class="ev-text"><strong>이*호</strong> 상담원 로그인</span>
+          </div>
+          <div class="ev-item">
+            <span class="ev-time">14:30:30</span>
+            <span class="ev-dot" style="background:var(--green)"></span>
+            <span class="ev-text"><strong>최*영</strong> 상담 완료 (2분 45초)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notices -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">활성 공지사항</span>
+          <span class="card-link">전체보기 →</span>
+        </div>
+        <div>
+          <div class="nt-item">
+            <span class="nt-tag urgent">긴급</span>
+            <div class="nt-body">
+              <div class="nt-title">시스템 점검 안내 (02/25 22:00~)</div>
+              <div class="nt-desc">관리자 · 30분 전 · 전체</div>
+            </div>
+          </div>
+          <div class="nt-item">
+            <span class="nt-tag important">중요</span>
+            <div class="nt-body">
+              <div class="nt-title">신규 상담 스크립트 적용 안내</div>
+              <div class="nt-desc">슈퍼바이저 · 2시간 전 · 상담A</div>
+            </div>
+          </div>
+          <div class="nt-item">
+            <span class="nt-tag normal">일반</span>
+            <div class="nt-body">
+              <div class="nt-title">이번 주 실적 우수 상담원 발표</div>
+              <div class="nt-desc">관리자 · 오늘 09:00 · 전체</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /bot-row -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+function tick(){
+  const n=new Date();
+  const pad=v=>String(v).padStart(2,'0');
+  const t=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  const el=document.getElementById('clock');
+  if(el) el.textContent=t;
+}
+tick();
+setInterval(tick,1000);
+</script>
+</body>
+</html>
