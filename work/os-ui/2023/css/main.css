@@ -4327,3 +4327,16 @@ textarea {
 .cursor_d {
     cursor: default;
 }
+/* ── 포폴 데모용 아이콘 (Lucide 계열, ISC) ── */
+.bg_icon[class*="ui_"]{-webkit-mask-box-image:none;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain}
+.bg_icon.ui_chat{-webkit-mask-image:url(../img/ui_chat.svg);mask-image:url(../img/ui_chat.svg)}
+.bg_icon.ui_notice{-webkit-mask-image:url(../img/ui_notice.svg);mask-image:url(../img/ui_notice.svg)}
+.bg_icon.ui_users{-webkit-mask-image:url(../img/ui_users.svg);mask-image:url(../img/ui_users.svg)}
+.bg_icon.ui_auth{-webkit-mask-image:url(../img/ui_auth.svg);mask-image:url(../img/ui_auth.svg)}
+.bg_icon.ui_message{-webkit-mask-image:url(../img/ui_message.svg);mask-image:url(../img/ui_message.svg)}
+.bg_icon.ui_phrase{-webkit-mask-image:url(../img/ui_phrase.svg);mask-image:url(../img/ui_phrase.svg)}
+.bg_icon.ui_memo{-webkit-mask-image:url(../img/ui_memo.svg);mask-image:url(../img/ui_memo.svg)}
+.bg_icon.ui_hours{-webkit-mask-image:url(../img/ui_hours.svg);mask-image:url(../img/ui_hours.svg)}
+.bg_icon.ui_ban{-webkit-mask-image:url(../img/ui_ban.svg);mask-image:url(../img/ui_ban.svg)}
+.bg_icon_wrap{cursor:pointer}
+.bg_icon_wrap:hover .bg_icon{opacity:.65}

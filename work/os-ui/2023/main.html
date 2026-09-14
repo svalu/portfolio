@@ -4,7 +4,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
     <title>Counseling OS · 2023</title>
-    <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link rel="stylesheet" type="text/css" href="./css/main.css?v=2">
     <script type="text/javascript" src="./js/jquery-1.6.2.min.js"></script>
 
     <!--    드래그 소스-->
@@ -15,7 +15,7 @@
 
 <body class="body_size logo_canter">
     <!--alert-->
-    <div class="popup_alert_wrap drag_oj ">
+    <div class="popup_alert_wrap drag_oj display_none">
         <div class="popup_alert_title_1">Logout</div>
         <div class="popup_bu_right_wrap">
             <button class="popup_bu_icon esc"></button>
@@ -28,7 +28,7 @@
         </div>
     </div>
     <!--접근사유-->
-    <div class="popup_alert_wrap  drag_oj">
+    <div class="popup_alert_wrap drag_oj display_none">
         <div class="popup_alert_title_2">접근 사유 작성</div>
         <div class="popup_bu_right_wrap">
             <button class="popup_bu_icon esc"></button>
@@ -43,7 +43,7 @@
     </div>
     <!-----------------------------------2차------------------------------------------>
     <!--    상담채팅_체팅-사이드바 용 -->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw1" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">상담채팅</div>
@@ -173,7 +173,7 @@
 
 
     <!--    상담채팅_체팅_ 인팝업 -->
-    <div class="popup_wrap drag_oj  ">
+    <div id="pw2" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">상담채팅</div>
@@ -306,7 +306,7 @@
 
 
     <!--    공지사항_신규-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw3" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">공지사항</div>
@@ -372,7 +372,7 @@
 
 
     <!--    공지사항_상세내용-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw4" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">공지사항</div>
@@ -428,7 +428,7 @@
 
 
     <!--개인상용구-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw5" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">개인 상용구 관리</div>
@@ -489,7 +489,7 @@
 
 
     <!--메시지 관리-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw6" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">메시지 관리</div>
@@ -591,7 +591,7 @@
     </div>
 
     <!--권한관리-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw7" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">권한 관리</div>
@@ -713,7 +713,7 @@
 
 
     <!--메모장-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw8" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">메모장</div>
@@ -770,7 +770,7 @@
 
 
     <!--사용자 관리-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw9" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">사용자 조회</div>
@@ -942,7 +942,7 @@
 
 
     <!--상담채팅-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw10" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">상담채팅</div>
@@ -1101,7 +1101,7 @@
 
 
     <!--    금지어 관리-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw11" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">금지어 관리</div>
@@ -1224,7 +1224,7 @@
     </div>
 
     <!--    공지사항 관리-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw12" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">공지사항 관리</div>
@@ -1352,7 +1352,7 @@
     </div>
 
     <!--사용자 관리-  그룹설정-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw13" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">사용자 관리</div>
@@ -1411,7 +1411,7 @@
 
 
     <!--사용자 관리_신규 -->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw14" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">사용자 조회</div>
@@ -1482,7 +1482,7 @@
     </div>
 
     <!--    운영시간 관리-->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw15" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">운영시간 관리</div>
@@ -1643,7 +1643,7 @@
         </div>
     </div>
     <!--사용자 그룹설정 -->
-    <div class="popup_wrap drag_oj ">
+    <div id="pw16" class="popup_wrap drag_oj display_none">
         <div class="popup_top_line">
             <div class="popup_inline left_wrap">
                 <div class="con_title_text_1">사용자 관리</div>
@@ -1791,41 +1791,41 @@
         </div>
     </div>
     <div class="bg_icon_container">
-        <div class="bg_icon_wrap">
-            <div class="bg_icon dashboard"></div>
-            <div class="bg_icon_text">대시보드</div>
+        <div class="bg_icon_wrap" data-open="pw1" title="상담채팅">
+            <div class="bg_icon ui_chat"></div>
+            <div class="bg_icon_text">상담채팅</div>
         </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon operation"></div>
-            <div class="bg_icon_text">운영관리</div>
+        <div class="bg_icon_wrap" data-open="pw3" title="공지사항">
+            <div class="bg_icon ui_notice"></div>
+            <div class="bg_icon_text">공지사항</div>
         </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon consultation"></div>
-            <div class="bg_icon_text">상담관리</div>
+        <div class="bg_icon_wrap" data-open="pw13" title="사용자 관리">
+            <div class="bg_icon ui_users"></div>
+            <div class="bg_icon_text">사용자 관리</div>
         </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon performance"></div>
-            <div class="bg_icon_text">개인실적</div>
+        <div class="bg_icon_wrap" data-open="pw7" title="권한 관리">
+            <div class="bg_icon ui_auth"></div>
+            <div class="bg_icon_text">권한 관리</div>
         </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon consultation_history"></div>
-            <div class="bg_icon_text">상담이력</div>
+        <div class="bg_icon_wrap" data-open="pw6" title="메시지 관리">
+            <div class="bg_icon ui_message"></div>
+            <div class="bg_icon_text">메시지 관리</div>
         </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon notepad"></div>
+        <div class="bg_icon_wrap" data-open="pw5" title="상용구 관리">
+            <div class="bg_icon ui_phrase"></div>
+            <div class="bg_icon_text">상용구 관리</div>
+        </div>
+        <div class="bg_icon_wrap" data-open="pw8" title="메모장">
+            <div class="bg_icon ui_memo"></div>
             <div class="bg_icon_text">메모장</div>
         </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon chatting"></div>
-            <div class="bg_icon_text">채팅상담</div>
+        <div class="bg_icon_wrap" data-open="pw15" title="운영시간 관리">
+            <div class="bg_icon ui_hours"></div>
+            <div class="bg_icon_text">운영시간 관리</div>
         </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon template"></div>
-            <div class="bg_icon_text">공용템플릿</div>
-        </div>
-        <div class="bg_icon_wrap">
-            <div class="bg_icon personal_template"></div>
-            <div class="bg_icon_text">개인템플릿</div>
+        <div class="bg_icon_wrap" data-open="pw11" title="금지어 관리">
+            <div class="bg_icon ui_ban"></div>
+            <div class="bg_icon_text">금지어 관리</div>
         </div>
     </div>
     <div class="work_body logo_right_bottom">
@@ -1965,4 +1965,35 @@
     $('.side_bar').click(function() {
         $(this).parent('div.after_treatment_wrap').toggleClass('active');
     });
+</script>
+
+<!-- 포폴 데모: 바탕 아이콘으로 창 열기 -->
+<script>
+(function(){
+  var step = 0;
+  function topmost(){
+    var z = 0;
+    document.querySelectorAll('.drag_oj').forEach(function(el){ z = Math.max(z, parseInt(el.style.zIndex||0,10)||0); });
+    return z + 1;
+  }
+  function open(id, x, y){
+    var el = document.getElementById(id); if(!el) return;
+    var fresh = el.classList.contains('display_none');
+    el.classList.remove('display_none');
+    if(fresh){                              /* 처음 열 때만 자리를 잡아준다. 옮겨둔 창은 그 자리 유지 */
+      if(x === undefined){ x = 150 + (step%6)*34; y = 70 + (step%6)*30; step++; }
+      el.style.left = x + 'px'; el.style.top = y + 'px';
+    }
+    el.style.zIndex = topmost();
+  }
+  document.querySelectorAll('.bg_icon_wrap').forEach(function(w){
+    var moved = false, sx = 0, sy = 0;
+    w.addEventListener('mousedown', function(e){ moved = false; sx = e.clientX; sy = e.clientY; });
+    w.addEventListener('mousemove', function(e){ if(Math.abs(e.clientX-sx) + Math.abs(e.clientY-sy) > 6) moved = true; });
+    w.addEventListener('click', function(){ if(moved) return; open(w.dataset.open); });   /* 드래그로 옮긴 것은 열지 않는다 */
+  });
+  /* 처음엔 둘만. 상담 화면이 주인공, 메모장은 곁에 */
+  open('pw1', 300, 90);
+  open('pw8', 980, 430);
+})();
 </script>
