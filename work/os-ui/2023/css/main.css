@@ -78,22 +78,22 @@ input:-internal-autofill-selected {
 }
 
 @font-face {
-    src: url(../font/NanumGothic.otf);
+    src: url(../font/Pretendard-Regular.woff2) format("woff2");
     font-family: "font_na";
 }
 
 @font-face {
-    src: url(../font/NanumGothicBold.otf);
+    src: url(../font/Pretendard-Bold.woff2) format("woff2");
     font-family: "font_b";
 }
 
 @font-face {
-    src: url(../font/NanumGothicExtraBold.otf);
+    src: url(../font/Pretendard-ExtraBold.woff2) format("woff2");
     font-family: "font_eb";
 }
 
 @font-face {
-    src: url(../font/NanumGothicLight.otf);
+    src: url(../font/Pretendard-Light.woff2) format("woff2");
     font-family: "font_l";
 }
 
@@ -4340,3 +4340,4 @@ textarea {
 .bg_icon.ui_ban{-webkit-mask-image:url(../img/ui_ban.svg);mask-image:url(../img/ui_ban.svg)}
 .bg_icon_wrap{cursor:pointer}
 .bg_icon_wrap:hover .bg_icon{opacity:.65}
+.bg_icon.ui_chart{-webkit-mask-image:url(../img/ui_chart.svg);mask-image:url(../img/ui_chart.svg)}
