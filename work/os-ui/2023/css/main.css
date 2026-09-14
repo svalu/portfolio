@@ -78,22 +78,22 @@ input:-internal-autofill-selected {
 }
 
 @font-face {
-    src: url(../font/Pretendard-Regular.woff2) format("woff2");
+    src: url(../../../../assets/fonts/Pretendard-Regular.woff2) format("woff2");
     font-family: "font_na";
 }
 
 @font-face {
-    src: url(../font/Pretendard-Bold.woff2) format("woff2");
+    src: url(../../../../assets/fonts/Pretendard-Bold.woff2) format("woff2");
     font-family: "font_b";
 }
 
 @font-face {
-    src: url(../font/Pretendard-ExtraBold.woff2) format("woff2");
+    src: url(../../../../assets/fonts/Pretendard-ExtraBold.woff2) format("woff2");
     font-family: "font_eb";
 }
 
 @font-face {
-    src: url(../font/Pretendard-Light.woff2) format("woff2");
+    src: url(../../../../assets/fonts/Pretendard-Light.woff2) format("woff2");
     font-family: "font_l";
 }
 

@@ -436,7 +436,7 @@ function loadNear(p){
   const q = Math.round(p*10);
   if(q === lastLoadCheck) return; lastLoadCheck = q;
   dims.forEach((d,i)=>{
-    const near = Math.abs(p - i) < 0.9;
+    const near = Math.abs(p - i) < 1.35;   /* 전환이 시작되기 전에 미리 붙여 흰 화면을 없앤다 */
     lazyFrames[i].forEach(f=>{
       const shown = f.getClientRects().length > 0;          /* display:none(모바일에서 접은 프레임)이면 로드하지 않는다 */
       if(near && shown && !f.getAttribute('src')) f.setAttribute('src', f.dataset.src);
