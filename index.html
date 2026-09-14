@@ -156,7 +156,8 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   #d03{--paper:#0f1412;--acc:#2fd3a0;--acc2:#8ff0cf;--band-c:#14241e}
 
   /* 오브젝트 캔버스: 모든 차원 위에 */
-  #c{position:fixed;inset:0;z-index:30;pointer-events:none}
+  /* 크기는 CSS 로 늘리지 않는다. JS 가 보이는 영역(visualViewport)만큼 px 로 직접 박는다 */
+  #c{position:fixed;left:0;top:0;z-index:30;pointer-events:none}
 
   /* ───────────── 모바일 (세로 폰) ─────────────
      같은 편집 체계를 세로로 다시 편다: 번호 → 타이포 → 한 줄 소개 → 본문 2줄 → 실물 하나 → 띠 */
@@ -336,13 +337,22 @@ const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(-4, 6, 8)
 const rim = new THREE.DirectionalLight(0xffffff, .25); rim.position.set(5, -2, -6); scene.add(rim);
 
 let baseScale=1, vwW=1, vhW=1;
+/* 기준은 innerHeight 가 아니라 캔버스 자신의 크기다. 둘이 다르면(모바일 주소창) x 투영이 어긋난다 */
 function place(){
-  renderer.setSize(innerWidth, innerHeight, false); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  const vv = window.visualViewport;
+  const w = Math.round(vv ? vv.width : innerWidth), h = Math.round(vv ? vv.height : innerHeight);
+  if(!w || !h) return;
+  renderer.setSize(w, h, true); camera.aspect = w/h; camera.updateProjectionMatrix();
   vhW = 2*Math.tan(camera.fov*Math.PI/360)*camera.position.z; vwW = vhW*camera.aspect;
   baseScale = Math.min(vhW*0.81/9.43, vwW/20);
   setSpreadCenters();
 }
-addEventListener('resize', place); place();
+addEventListener('resize', place);
+addEventListener('orientationchange', place);
+if(window.visualViewport) visualViewport.addEventListener('resize', place);
+addEventListener('load', place);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+place();
 
 /* 고정 뷰포트 프레임: 진짜 크기(폰 390×844 / 데스크톱 1440×900)로 렌더한 뒤 프레임 폭에 맞춰 축소 */
 function fitViews(){

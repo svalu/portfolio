@@ -120,7 +120,8 @@
   .foot .sig{margin-top:26px;font-size:22px;font-weight:200;letter-spacing:-.02em}
 
   /* 3D 오브젝트: 우상단에 작게, 카드 색을 미리 입는다 */
-  #c{position:fixed;inset:0;z-index:10;pointer-events:none}
+  /* 크기는 CSS 로 늘리지 않는다. JS 가 보이는 영역(visualViewport)만큼 px 로 직접 박는다 */
+  #c{position:fixed;left:0;top:0;z-index:10;pointer-events:none}
 </style>
 </head>
 <body class="act0">
@@ -237,10 +238,27 @@ const bodyM = new THREE.Mesh(lathe, mat), ball = new THREE.Mesh(new THREE.Sphere
 const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x333333, .55));
 const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(-4,6,8); scene.add(key);
-let vwW=1, vhW=1, base=1;
-function place(){ renderer.setSize(innerWidth, innerHeight, false); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
-  vhW = 2*Math.tan(camera.fov*Math.PI/360)*camera.position.z; vwW = vhW*camera.aspect; base = Math.min(vhW*0.34/9.43, vwW*0.30/4.7); }
-addEventListener('resize', place); place();
+let vwW=1, vhW=1, base=1, vpW=1, vpH=1;
+/* 기준은 innerHeight 가 아니라 캔버스 자신의 크기다.
+   모바일은 주소창 때문에 innerHeight 와 화면에 깔린 fixed 캔버스의 높이가 다르고,
+   그 비율 차이만큼 x 투영이 어긋나 오브젝트가 화면 밖으로 밀린다. */
+function place(){
+  const vv = window.visualViewport;
+  const w = Math.round(vv ? vv.width : innerWidth), h = Math.round(vv ? vv.height : innerHeight);
+  if(!w || !h) return;
+  vpW = w; vpH = h;
+  renderer.setSize(w, h, true); camera.aspect = w/h; camera.updateProjectionMatrix();   /* true = 캔버스 CSS 크기도 같이 맞춘다 */
+  vhW = 2*Math.tan(camera.fov*Math.PI/360)*camera.position.z; vwW = vhW*camera.aspect;
+  base = Math.min(vhW*0.34/9.43, vwW*0.30/4.7);
+}
+/* 캔버스가 실제로 레이아웃될 때·주소창이 여닫힐 때마다 다시 잰다.
+   처음부터 작은 화면이면 resize 가 안 나서 초기 오차가 그대로 남던 문제를 이걸로 잡는다. */
+addEventListener('resize', place);
+addEventListener('orientationchange', place);
+if(window.visualViewport) visualViewport.addEventListener('resize', place);
+addEventListener('load', place);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+place();
 const worldXY = (x,y)=>[(x-0.5)*vwW, -(y-0.5)*vhW - 0.115*base];
 
 /* ── 히어로 타임라인: 0.4s 빨강 → 1.5s 응축 → 이름 → 색 ── */
@@ -277,13 +295,13 @@ function frame(){
   requestAnimationFrame(frame);
   const now = performance.now()/1000, t = now - t0;
   for(const k in T){ if(!fired[k] && t>=T[k]){ fired[k]=1; B.classList.add(k); if(k==='act1') B.classList.remove('act0'); if(k==='color'){ setTimeout(()=>{ B.classList.add('flow'); flowStart=performance.now()/1000; }, 1900); } } }
-  if(B.classList.contains('flow') && scrollY < innerHeight) flowDots(now);
+  if(B.classList.contains('flow') && scrollY < vpH) flowDots(now);
 
   const s = easeIO(clamp01((t - T.act1)/SHRINK));
   veil.style.setProperty('--vr', (150*(1-s)).toFixed(2)+'%'); if(s>=1) B.classList.add('done');
 
   /* 자리: 히어로에선 우측 중앙 크게(응축), 카드에선 우상단 작게. 스크롤 첫 화면에서 서서히 옮겨간다 */
-  const p = clamp01(scrollY/(innerHeight*0.9));
+  const p = clamp01(scrollY/(vpH*0.9));
   const x = .78 + (.84-.78)*p, y = .44 + (.11-.44)*p, sz = (1 + (1-s)*3.0) * (1 - .55*p);
   const [wx,wy] = worldXY(x,y); group.position.set(wx,wy,0); group.scale.setScalar(base*sz);
   colT.lerp(colTarget, .04); mat.color.copy(colT);
