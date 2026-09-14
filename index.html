@@ -7,6 +7,7 @@
 <script>
 /* 폰이면 모바일 모드로. ?desktop=1 이면 이 차원 여정을 그대로 본다 */
 if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) location.replace('m/' + location.hash);
+addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) location.replace('m/' + location.hash); });
 </script>
 <style>
   /* 가변 한 파일을 늘려 쓰지 않고, 굵기마다 따로 그려진 정적판을 쓴다 (획 대비·속공간이 다르다) */
@@ -213,8 +214,10 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
     .dim .no{top:3.6%;font-size:10px}
     .dim .title,#d01 .title{top:7%;font-size:clamp(44px,15vw,92px);line-height:.92}
     .dim .ddots{display:none}
-    .dim .hook{top:25%;width:92%;font-size:19px}
-    .dim .sub{top:34%;width:92%;font-size:13px}
+    .dim .hook{top:22%;width:92%;font-size:19px}
+    .dim .tabs{top:25.5%;left:4%;right:4%;flex-wrap:wrap}
+    .dim .tabs button{height:24px;padding:0 9px;font-size:10px}
+    .dim .sub{top:36%;width:92%;font-size:13px}
     .dim .facts{top:44%;width:92%;gap:8px;padding-top:12px}
     .dim .facts p{font-size:12px;line-height:1.6}
     .dim .facts p:nth-child(3){display:none}
@@ -481,6 +484,20 @@ addEventListener('touchmove', ()=>{ if(!fired.flow) skip(); }, {passive:true}); 
 addEventListener('keydown', e=>{ if(!fired.flow && /^(Arrow|Page|Enter|Escape| |Spacebar|Tab)/.test(e.key)) skip(); });  /* 키보드로도 빠져나갈 수 있게 */
 intro.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON' && !fired.flow) skip(); });
 
+/* ── 만질 수 있는 차원은 하나뿐. 마스크는 시각만 가리고 클릭은 통과시키므로 직접 끈다.
+      판정은 스크롤 위치로 즉시(부드러운 prog 를 기다리면 전환 중 클릭이 죽는다) ── */
+function updateReach(){
+  const a = Math.max(0, Math.min(N-1, Math.round(scrollY / innerHeight)));
+  for(let i=0;i<N;i++){
+    const on = (i === a);
+    if(dims[i]._on !== on){ dims[i].style.pointerEvents = on ? '' : 'none'; dims[i].inert = !on; dims[i]._on = on; }
+  }
+}
+addEventListener('scroll', updateReach, {passive:true});
+addEventListener('resize', updateReach);
+['wheel','touchmove','keydown','pointerdown'].forEach(function(ev){ addEventListener(ev, updateReach, {passive:true, capture:true}); });   /* 입력이 들어오는 순간에도 */
+updateReach();
+
 const mouse={x:0,y:0}, sm={x:0,y:0}, vel={x:0,y:0}; let spin=0;
 addEventListener('pointermove', e=>{ mouse.x=e.clientX/innerWidth-.5; mouse.y=e.clientY/innerHeight-.5; });
 
@@ -509,6 +526,7 @@ function frame(){
   for(const k in T){ if(!fired[k] && t>=T[k]){ fired[k]=1; B.classList.add(k); if(k==='act1') B.classList.remove('act0'); if(k==='flow'){ flowStart=now; unlock(); } } }
   if(fired.flow && prog<0.9) flowDots(now);
 
+  updateReach();
   /* 스크롤 → 차원 진행도 */
   const target = Math.min(scrollY/innerHeight, N-1);
   prog += (target - prog)*.09;
