@@ -121,6 +121,24 @@
   .foot a{color:#8a0f78;text-decoration:none;border-bottom:1px solid currentColor}
   .foot .sig{margin-top:26px;font-size:22px;font-weight:200;letter-spacing:-.02em}
 
+
+  /* 크게 보기 — 새 탭으로 내보내지 않고 이 화면 안에서 연다 */
+  .zoom{position:absolute;right:10px;top:8px;z-index:5;height:26px;padding:0 12px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.24);background:rgba(0,0,0,.42);color:#fff;font:11px/1 inherit;letter-spacing:.1em}
+  .frame .zoom{border-color:rgba(22,21,15,.18);background:rgba(255,255,255,.82);color:#16150f}
+  .phone .zoom{right:50%;transform:translateX(50%);top:auto;bottom:10px}
+  .lb{position:fixed;inset:0;z-index:60;background:rgba(6,8,14,.97);display:flex;flex-direction:column;opacity:0;transition:opacity .25s var(--in)}
+  .lb.on{opacity:1}
+  .lb[hidden]{display:none}
+  .lb-bar{display:flex;align-items:center;gap:8px;padding:10px 12px;color:#e8ecf4;flex-wrap:nowrap}
+  .lb-bar .sp{flex:1}
+  .lb-bar .t{font-size:11px;letter-spacing:.1em;color:rgba(232,236,244,.66);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
+  .lb-bar input[type=range]{width:74px;flex:0 0 auto;accent-color:#8ea0ff}
+  .lb-bar button{height:30px;padding:0 11px;white-space:nowrap;flex:0 0 auto;border-radius:999px;border:1px solid rgba(232,236,244,.24);background:transparent;color:#e8ecf4;font:11px/1 inherit;letter-spacing:.12em}
+  .lb-stage{flex:1;overflow:auto;padding:0 12px 18px;display:flex;align-items:center;justify-content:center}
+  .lb-view{transform-origin:center center;border-radius:8px;overflow:hidden;background:#fff}
+  .lb-view iframe{display:block;border:0;background:#fff}
+
   /* 3D 오브젝트: 우상단에 작게, 카드 색을 미리 입는다 */
   /* 크기는 CSS 로 늘리지 않는다. JS 가 보이는 영역(visualViewport)만큼 px 로 직접 박는다 */
   /* 베일(z20)보다 위여야 한다. 아래에 두면 빨강이 응축되는 동안 오브젝트가 가려져,
@@ -150,8 +168,8 @@
   <h2 class="h r"><small>BLUE</small><small>HORIZON</small></h2>
   <p class="hook r">관리자가 자리에 없어도 본다.</p>
   <p class="sub r">클라우드 컨택센터 운영 플랫폼 · 디자인 리뉴얼 · 2026. 컨택센터 관리 화면은 늘 데스크톱 전용이었다. 그 전제를 깨고 같은 대시보드를 폰에 접어 넣었다. 지금 이 폰에서 도는 게 그 화면이다.</p>
-  <div class="phone r"><div class="view"><iframe data-src="../work/blue-horizon/live.html" title="Blue Horizon"></iframe></div><a class="tap" href="../work/blue-horizon/live.html" target="_blank" aria-label="실물 열기"></a></div>
-  <a class="btn r" href="../work/blue-horizon/live.html" target="_blank">실물 열기 · admin 으로 로그인</a>
+  <div class="phone r" data-vw="390" data-vh="844" data-title="Blue Horizon · 모바일"><div class="view"><iframe data-src="../work/blue-horizon/live.html" title="Blue Horizon"></iframe></div><button class="zoom" type="button">크게 보기</button></div>
+  <button class="btn r" type="button" id="openLive">크게 보기 · admin 으로 로그인</button>
   <div class="facts r">
     <p><b>보는 화면과 조치하는 화면이 따로 있으면 판단이 끊긴다.</b> 실시간 지표·상담원 상태·채널 대기열을 한 흐름으로 묶었다.</p>
     <p><b>디자인을 문서가 아니라 코드로 냈다.</b> 프레임워크 없는 단일 HTML 한 장. 돌아가는 상태로 만들어 넘겼고, 뒤의 배선은 개발팀이 이어받았다.</p>
@@ -165,13 +183,13 @@
   <h2 class="h r"><small>OS</small><small>UI</small></h2>
   <p class="hook r">화면이 아니라 책상을 줬다.</p>
   <p class="sub r">상담사는 창을 여러 개 띄워 놓고 일하는 사람이었다. 2023년 페이지 대신 창과 작업표시줄을 줬고, 2026년 같은 관점이 관리자 도구 전체로 번졌다. 같은 관점으로 3년, 두 번.</p>
-  <div class="frame r" data-vw="1024"><div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
+  <div class="frame r" data-vw="1024" data-title="2026 · 관리자 OS"><div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
     <div class="view"><iframe data-src="../work/os-ui/2026/index.html" title="Admin OS 2026"></iframe></div>
-    <a class="tap" href="../work/os-ui/2026/index.html" target="_blank" aria-label="열기"></a></div>
+    <button class="zoom" type="button">크게 보기</button></div>
   <div class="cap r">2026 · 관리자 OS — 드래그·리사이즈·스냅·시작메뉴</div>
-  <div class="frame small r" data-vw="1440"><div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
+  <div class="frame small r" data-vw="1440" data-title="2023 · 상담사 화면"><div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
     <div class="view"><iframe data-src="../work/os-ui/2023/main.html" title="Counseling OS 2023"></iframe></div>
-    <a class="tap" href="../work/os-ui/2023/main.html" target="_blank" aria-label="열기"></a></div>
+    <button class="zoom" type="button">크게 보기</button></div>
   <div class="cap r">2023 · 상담사 화면 — 창과 작업표시줄</div>
   <div class="facts r">
     <p><b>둘 다 데스크톱 화면이라 폰에선 작게 보인다.</b> 탭하면 실물이 열리고, 창을 끌어보려면 데스크톱에서 여는 편이 낫다.</p>
@@ -217,6 +235,16 @@
 </section>
 
 <div class="veil" id="veil"></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="실물 크게 보기">
+  <div class="lb-bar">
+    <span class="t" id="lbTitle"></span><span class="sp"></span>
+    <input type="range" id="lbZoom" min="25" max="140" step="5" value="100" aria-label="배율">
+    <span class="t" id="lbPct">100%</span>
+    <button type="button" id="lbFit">맞춤</button>
+    <button type="button" id="lbClose">닫기</button>
+  </div>
+  <div class="lb-stage" id="lbStage"><div class="lb-view" id="lbView"><iframe id="lbFrame" title="실물 크게 보기"></iframe></div></div>
+</div>
 <canvas id="c"></canvas>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -294,6 +322,34 @@ const loadObs = new IntersectionObserver(es=>es.forEach(e=>{
   else if(f.getAttribute('src') && Math.abs(e.boundingClientRect.top) > innerHeight*1.2) f.removeAttribute('src');
 }), {rootMargin:'60% 0px 60% 0px'});
 document.querySelectorAll('iframe[data-src]').forEach(f=>loadObs.observe(f));
+
+
+/* ── 크게 보기 (모바일): 새 탭 대신 이 화면 안에서, 배율 조절 ── */
+(function(){
+  var lb=document.getElementById('lb'), fr=document.getElementById('lbFrame'), view=document.getElementById('lbView'),
+      stage=document.getElementById('lbStage'), zoom=document.getElementById('lbZoom'), pct=document.getElementById('lbPct'),
+      title=document.getElementById('lbTitle'), cur={w:1024,h:640};
+  function apply(z){ view.style.width=cur.w+'px'; view.style.height=cur.h+'px'; view.style.transform='scale('+(z/100)+')';
+    view.style.margin=((cur.h*z/100-cur.h)/2)+'px '+((cur.w*z/100-cur.w)/2)+'px';   /* 축소한 만큼 자리도 줄인다 */ pct.textContent=z+'%'; }
+  function fit(){ var z=Math.floor(Math.min((stage.clientWidth-28)/cur.w,(stage.clientHeight-20)/cur.h)*100); z=Math.max(25,Math.min(140,z)); zoom.value=z; apply(z); }
+  function open(host){
+    var src=host.querySelector('iframe[data-src],iframe[src]'); if(!src) return;
+    cur.w=+host.dataset.vw||1024; cur.h=+host.dataset.vh||Math.round(cur.w*0.625);
+    fr.style.width=cur.w+'px'; fr.style.height=cur.h+'px';
+    title.textContent=host.dataset.title||'';
+    fr.src=src.getAttribute('src')||src.dataset.src;
+    lb.hidden=false; setTimeout(function(){ lb.classList.add('on'); fit(); },20);
+    document.body.style.overflow='hidden';
+  }
+  function close(){ lb.classList.remove('on'); setTimeout(function(){ lb.hidden=true; fr.removeAttribute('src'); document.body.style.overflow=''; },240); }
+  document.querySelectorAll('.zoom').forEach(function(b){ b.addEventListener('click', function(){ open(b.parentElement); }); });
+  var live=document.getElementById('openLive');
+  if(live) live.addEventListener('click', function(){ open(document.querySelector('#c01 .phone')); });
+  zoom.addEventListener('input', function(){ apply(+zoom.value); });
+  document.getElementById('lbFit').addEventListener('click', fit);
+  document.getElementById('lbClose').addEventListener('click', close);
+  addEventListener('keydown', function(e){ if(!lb.hidden && e.key==='Escape') close(); });
+})();
 
 /* ── 프레임 ── */
 function frame(){

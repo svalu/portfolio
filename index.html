@@ -158,6 +158,34 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   #d02{--paper:#f5f2ea;--ink:#16150f;--ink2:rgba(22,21,15,.62);--ink3:rgba(22,21,15,.62);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band-c:#e9dcc6}
   #d03{--paper:#0f1412;--acc:#2fd3a0;--acc2:#8ff0cf;--band-c:#14241e}
 
+
+  /* 크게 보기 — 새 창으로 내보내지 않고 이 페이지 안에서 연다 */
+  .zoom{position:absolute;right:8px;top:5px;z-index:4;display:flex;align-items:center;gap:6px;
+    height:24px;padding:0 10px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+    background:rgba(0,0,0,.28);color:#fff;font:11px/1 inherit;letter-spacing:.1em;cursor:pointer;
+    opacity:0;transition:opacity .3s var(--in),background .2s}
+  .frame:hover .zoom,.phone:hover .zoom,.zoom:focus-visible{opacity:1}
+  .zoom:hover{background:rgba(0,0,0,.5)}
+  #d02 .zoom{border-color:rgba(22,21,15,.2);background:rgba(255,255,255,.72);color:#16150f}
+  #d02 .zoom:hover{background:#fff}
+  .phone .zoom{right:50%;transform:translateX(50%);top:auto;bottom:-30px;background:rgba(0,0,0,.4)}
+
+  .lb{position:fixed;inset:0;z-index:60;background:rgba(6,8,14,.86);backdrop-filter:blur(6px);
+    display:flex;flex-direction:column;opacity:0;transition:opacity .28s var(--in)}
+  .lb.on{opacity:1}
+  .lb[hidden]{display:none}
+  .lb-bar{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:14px 20px;color:#e8ecf4}
+  .lb-title{font-size:12px;letter-spacing:.2em;color:rgba(232,236,244,.7)}
+  .lb-bar .sp{flex:1}
+  .lb-bar label{font-size:11px;letter-spacing:.14em;color:rgba(232,236,244,.55)}
+  .lb-bar input[type=range]{width:160px;accent-color:#8ea0ff}
+  .lb-bar button{height:30px;padding:0 14px;border-radius:999px;border:1px solid rgba(232,236,244,.22);
+    background:transparent;color:#e8ecf4;font:11px/1 inherit;letter-spacing:.14em;cursor:pointer}
+  .lb-bar button:hover{background:rgba(232,236,244,.12)}
+  .lb-stage{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:0 20px 24px}
+  .lb-view{transform-origin:top center;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+  .lb-view iframe{display:block;border:0;background:#fff}
+
   /* 오브젝트 캔버스: 모든 차원 위에 */
   /* 크기는 CSS 로 늘리지 않는다. JS 가 보이는 영역(visualViewport)만큼 px 로 직접 박는다 */
   #c{position:fixed;left:0;top:0;z-index:30;pointer-events:none}
@@ -239,9 +267,9 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
         <p><b>디자인을 문서가 아니라 코드로 냈다.</b> 프레임워크 없는 단일 HTML 한 장. 지구본 로그인, 차트, 다크·라이트, AI Mode까지 돌아가는 상태로 만들어 넘겼고, 뒤의 배선은 개발팀이 이어받았다.</p>
       </div>
       <div class="try">둘 다 실물입니다 · admin 으로 로그인해 보세요</div>
-      <div class="frame"><div class="bar"><i></i><i></i><i></i><span>blue-horizon / desktop</span></div>
+      <div class="frame" data-vw="1440" data-title="Blue Horizon · 데스크톱"><button class="zoom" type="button">크게 보기</button><div class="bar"><i></i><i></i><i></i><span>blue-horizon / desktop</span></div>
         <iframe data-src="work/blue-horizon/live.html" title="Blue Horizon desktop"></iframe></div>
-      <div class="phone" id="phone01">
+      <div class="phone" id="phone01" data-vw="390" data-vh="844" data-title="Blue Horizon · 모바일"><button class="zoom" type="button">크게 보기</button>
         <div class="view"><iframe data-src="work/blue-horizon/live.html" title="Blue Horizon mobile"></iframe></div>
         <div class="tag">MOBILE · 390px</div>
       </div>
@@ -263,11 +291,11 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
         <p><b>화려해 보이지만 결국 구조 얘기다.</b> 사용자가 여러 일을 동시에 한다면, UI는 한 장의 페이지이기를 그만둬야 한다.</p>
       </div>
       <div class="try">둘 다 실물입니다 · 아이콘을 눌러 창을 열어보세요</div>
-      <div class="frame scaled f2023"><div class="label">2023 · 상담사 화면</div>
+      <div class="frame scaled f2023" data-vw="1440" data-title="2023 · 상담사 화면"><button class="zoom" type="button">크게 보기</button><div class="label">2023 · 상담사 화면</div>
         <div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
         <div class="view"><iframe data-src="work/os-ui/2023/main.html" title="Counseling OS 2023"></iframe></div></div>
       <div class="arrow"></div>
-      <div class="frame scaled f2026" data-vw="1440" data-mvw="1024"><div class="label">2026 · 관리자 OS</div>
+      <div class="frame scaled f2026" data-vw="1440" data-mvw="1024" data-title="2026 · 관리자 OS"><button class="zoom" type="button">크게 보기</button><div class="label">2026 · 관리자 OS</div>
         <div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
         <div class="view"><iframe data-src="work/os-ui/2026/index.html" title="Admin OS 2026"></iframe></div></div>
       <div class="dband"></div><div class="dyear">.2023 → 2026</div>
@@ -294,6 +322,18 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
 
 </div>
 
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="실물 크게 보기">
+  <div class="lb-bar">
+    <span class="lb-title" id="lbTitle"></span>
+    <span class="sp"></span>
+    <label for="lbZoom">배율</label>
+    <input type="range" id="lbZoom" min="30" max="150" step="5" value="100">
+    <span class="lb-title" id="lbPct">100%</span>
+    <button type="button" id="lbFit">화면에 맞춤</button>
+    <button type="button" id="lbClose">닫기 (Esc)</button>
+  </div>
+  <div class="lb-stage" id="lbStage"><div class="lb-view" id="lbView"><iframe id="lbFrame" title="실물 크게 보기"></iframe></div></div>
+</div>
 <canvas id="c"></canvas>
 <div class="ctl"><button id="replay">REPLAY</button><button id="skip">SKIP</button></div>
 
@@ -506,6 +546,49 @@ function frame(){
   renderer.render(scene, camera);
 }
 frame();
+
+/* ── 크게 보기: 새 창 대신 이 페이지 안에서, 배율을 조절하며 본다 ── */
+(function(){
+  var lb=document.getElementById('lb'), lbFrame=document.getElementById('lbFrame'), lbView=document.getElementById('lbView'),
+      lbStage=document.getElementById('lbStage'), lbZoom=document.getElementById('lbZoom'), lbPct=document.getElementById('lbPct'),
+      lbTitle=document.getElementById('lbTitle'), cur={w:1440,h:900}, lastFocus=null;
+  function apply(z){
+    lbView.style.transform='scale('+(z/100)+')';
+    lbView.style.height=(cur.h*z/100)+'px';           /* 스케일한 만큼 자리도 줄여 스크롤이 맞게 */
+    lbPct.textContent=z+'%';
+  }
+  function fit(){
+    var pad=48, aw=lbStage.clientWidth-pad, ah=lbStage.clientHeight-pad;
+    var z=Math.floor(Math.min(aw/cur.w, ah/cur.h)*100);
+    z=Math.max(30,Math.min(150,z)); lbZoom.value=z; apply(z);
+  }
+  function open(host){
+    var src=host.querySelector('iframe[data-src],iframe[src]');
+    if(!src) return;
+    cur.w=+host.dataset.vw||1440; cur.h=+host.dataset.vh||Math.round(cur.w*0.625);
+    lbView.style.width=cur.w+'px';
+    lbFrame.style.width=cur.w+'px'; lbFrame.style.height=cur.h+'px';
+    lbTitle.textContent=host.dataset.title||'';
+    lbFrame.src=src.getAttribute('src')||src.dataset.src;
+    lastFocus=document.activeElement;
+    lb.hidden=false; requestAnimationFrame(function(){ lb.classList.add('on'); });
+    setTimeout(function(){ lb.classList.add('on'); fit(); document.getElementById('lbClose').focus(); }, 30);
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    lb.classList.remove('on');
+    setTimeout(function(){ lb.hidden=true; lbFrame.removeAttribute('src'); document.body.style.overflow=''; if(lastFocus) lastFocus.focus(); }, 260);
+  }
+  document.querySelectorAll('.zoom').forEach(function(b){
+    b.addEventListener('click', function(e){ e.stopPropagation(); open(b.parentElement); });
+  });
+  lbZoom.addEventListener('input', function(){ apply(+lbZoom.value); });
+  document.getElementById('lbFit').addEventListener('click', fit);
+  document.getElementById('lbClose').addEventListener('click', close);
+  lb.addEventListener('click', function(e){ if(e.target===lb||e.target===lbStage) close(); });
+  addEventListener('keydown', function(e){ if(!lb.hidden && e.key==='Escape') close(); });
+  addEventListener('resize', function(){ if(!lb.hidden) fit(); });
+})();
 </script>
 </body>
 </html>
