@@ -61,7 +61,8 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   body.act2 .intro .dots i{transition-delay:var(--ad),var(--ad),var(--cd)}
   body.color .intro .dots i{background:var(--dc)}
   body.flow .intro .dots i{transition:none}
-  .type{position:absolute;left:3.4%;top:2.5%;line-height:.86;font-size:clamp(90px,17.6vw,262px);letter-spacing:-.03em;font-weight:200;color:var(--m-type);z-index:3;user-select:none}
+  /* 이름은 볼드. 굵어진 만큼 자간을 한 단계 더 조인다(-.03 → -.045) */
+  .type{position:absolute;left:3.4%;top:2.5%;line-height:.86;font-size:clamp(90px,17.6vw,262px);letter-spacing:-.045em;font-weight:700;color:var(--m-type);z-index:3;user-select:none}
   .type small{display:block}
   body.color .type small{color:var(--c-type);--cd:1.3s}
   .band{grid-row:2;position:relative;background:var(--m-band);z-index:1}
