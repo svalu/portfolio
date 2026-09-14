@@ -9,7 +9,11 @@
 if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) location.replace('m/' + location.hash);
 </script>
 <style>
-  @font-face{font-family:"Pretendard";src:url("assets/fonts/PretendardVariable.woff2") format("woff2-variations");font-weight:100 900;font-display:swap}
+  /* 가변 한 파일을 늘려 쓰지 않고, 굵기마다 따로 그려진 정적판을 쓴다 (획 대비·속공간이 다르다) */
+  @font-face{font-family:"Pretendard";src:url("assets/fonts/Pretendard-ExtraLight.woff2") format("woff2");font-weight:200;font-display:swap}
+  @font-face{font-family:"Pretendard";src:url("assets/fonts/Pretendard-Light.woff2") format("woff2");font-weight:300;font-display:swap}
+  @font-face{font-family:"Pretendard";src:url("assets/fonts/Pretendard-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Pretendard";src:url("assets/fonts/Pretendard-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
 
   /* ═══════════════════════════════════════════════════════════════
      차원을 지나가는 여정
@@ -61,8 +65,8 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
   body.act2 .intro .dots i{transition-delay:var(--ad),var(--ad),var(--cd)}
   body.color .intro .dots i{background:var(--dc)}
   body.flow .intro .dots i{transition:none}
-  /* 이름은 볼드. 굵어진 만큼 자간을 한 단계 더 조인다(-.03 → -.045) */
-  .type{position:absolute;left:3.4%;top:2.5%;line-height:.86;font-size:clamp(90px,17.6vw,262px);letter-spacing:-.045em;font-weight:700;color:var(--m-type);z-index:3;user-select:none}
+  /* 이름은 Medium(500). 굵어진 만큼 자간을 조금 조인다 */
+  .type{position:absolute;left:3.4%;top:2.5%;line-height:.86;font-size:clamp(90px,17.6vw,262px);letter-spacing:-.04em;font-weight:500;color:var(--m-type);z-index:3;user-select:none}
   .type small{display:block}
   body.color .type small{color:var(--c-type);--cd:1.3s}
   .band{grid-row:2;position:relative;background:var(--m-band);z-index:1}
