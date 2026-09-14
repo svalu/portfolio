@@ -168,7 +168,7 @@
   <h2 class="h r"><small>BLUE</small><small>HORIZON</small></h2>
   <p class="hook r">관리자가 자리에 없어도 본다.</p>
   <p class="sub r">클라우드 컨택센터 운영 플랫폼 · 디자인 리뉴얼 · 2026. 컨택센터 관리 화면은 늘 데스크톱 전용이었다. 그 전제를 깨고 같은 대시보드를 폰에 접어 넣었다. 지금 이 폰에서 도는 게 그 화면이다.</p>
-  <div class="phone r" data-vw="390" data-vh="844" data-title="Blue Horizon · 모바일"><div class="view"><iframe data-src="../work/blue-horizon/live.html" title="Blue Horizon"></iframe></div><button class="zoom" type="button">크게 보기</button></div>
+  <div class="phone r" data-vw="390" data-vh="844" data-title="Blue Horizon · 모바일"><div class="view"><iframe data-src="../work/blue-horizon/live.html?v=20260914" title="Blue Horizon"></iframe></div><button class="zoom" type="button">크게 보기</button></div>
   <button class="btn r" type="button" id="openLive">크게 보기 · admin 으로 로그인</button>
   <div class="facts r">
     <p><b>보는 화면과 조치하는 화면이 따로 있으면 판단이 끊긴다.</b> 실시간 지표·상담원 상태·채널 대기열을 한 흐름으로 묶었다.</p>
@@ -184,11 +184,11 @@
   <p class="hook r">화면이 아니라 책상을 줬다.</p>
   <p class="sub r">상담사는 창을 여러 개 띄워 놓고 일하는 사람이었다. 2023년 페이지 대신 창과 작업표시줄을 줬고, 2026년 같은 관점이 관리자 도구 전체로 번졌다. 같은 관점으로 3년, 두 번.</p>
   <div class="frame r" data-vw="1024" data-title="2026 · 관리자 OS"><div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
-    <div class="view"><iframe data-src="../work/os-ui/2026/index.html" title="Admin OS 2026"></iframe></div>
+    <div class="view"><iframe data-src="../work/os-ui/2026/index.html?v=20260914" title="Admin OS 2026"></iframe></div>
     <button class="zoom" type="button">크게 보기</button></div>
   <div class="cap r">2026 · 관리자 OS — 드래그·리사이즈·스냅·시작메뉴</div>
   <div class="frame small r" data-vw="1440" data-title="2023 · 상담사 화면"><div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
-    <div class="view"><iframe data-src="../work/os-ui/2023/main.html" title="Counseling OS 2023"></iframe></div>
+    <div class="view"><iframe data-src="../work/os-ui/2023/main.html?v=20260914" title="Counseling OS 2023"></iframe></div>
     <button class="zoom" type="button">크게 보기</button></div>
   <div class="cap r">2023 · 상담사 화면 — 창과 작업표시줄</div>
   <div class="facts r">
@@ -297,7 +297,7 @@ const worldXY = (x,y)=>[(x-0.5)*vwW, -(y-0.5)*vhW - 0.115*base];
 /* ── 히어로 타임라인: 0.4s 빨강 → 1.5s 응축 → 이름 → 색 ── */
 const T = {act1:.4, act2:1.75, color:3.0}; const SHRINK = 1.5;
 const t0 = performance.now()/1000; let fired={}, flowStart=0;
-function flowDots(now){ const hs=(now-flowStart)*38; for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now-flowStart)*2.2-i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
+function flowDots(now){ const hs = (now - flowStart)*10;   /* 색이 라인을 따라 아주 천천히 흐른다 */ for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now - flowStart)*0.9 - i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
 
 /* ── 카드 진입: 등장 + 오브젝트 색/자리 ── */
 const cards = [...document.querySelectorAll('.card')];

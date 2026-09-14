@@ -268,9 +268,9 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
       </div>
       <div class="try">둘 다 실물입니다 · admin 으로 로그인해 보세요</div>
       <div class="frame" data-vw="1440" data-title="Blue Horizon · 데스크톱"><button class="zoom" type="button">크게 보기</button><div class="bar"><i></i><i></i><i></i><span>blue-horizon / desktop</span></div>
-        <iframe data-src="work/blue-horizon/live.html" title="Blue Horizon desktop"></iframe></div>
+        <iframe data-src="work/blue-horizon/live.html?v=20260914" title="Blue Horizon desktop"></iframe></div>
       <div class="phone" id="phone01" data-vw="390" data-vh="844" data-title="Blue Horizon · 모바일"><button class="zoom" type="button">크게 보기</button>
-        <div class="view"><iframe data-src="work/blue-horizon/live.html" title="Blue Horizon mobile"></iframe></div>
+        <div class="view"><iframe data-src="work/blue-horizon/live.html?v=20260914" title="Blue Horizon mobile"></iframe></div>
         <div class="tag">MOBILE · 390px</div>
       </div>
       <div class="dband"></div><div class="dyear">.2026</div>
@@ -293,11 +293,11 @@ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) 
       <div class="try">둘 다 실물입니다 · 아이콘을 눌러 창을 열어보세요</div>
       <div class="frame scaled f2023" data-vw="1440" data-title="2023 · 상담사 화면"><button class="zoom" type="button">크게 보기</button><div class="label">2023 · 상담사 화면</div>
         <div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
-        <div class="view"><iframe data-src="work/os-ui/2023/main.html" title="Counseling OS 2023"></iframe></div></div>
+        <div class="view"><iframe data-src="work/os-ui/2023/main.html?v=20260914" title="Counseling OS 2023"></iframe></div></div>
       <div class="arrow"></div>
       <div class="frame scaled f2026" data-vw="1440" data-mvw="1024" data-title="2026 · 관리자 OS"><button class="zoom" type="button">크게 보기</button><div class="label">2026 · 관리자 OS</div>
         <div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
-        <div class="view"><iframe data-src="work/os-ui/2026/index.html" title="Admin OS 2026"></iframe></div></div>
+        <div class="view"><iframe data-src="work/os-ui/2026/index.html?v=20260914" title="Admin OS 2026"></iframe></div></div>
       <div class="dband"></div><div class="dyear">.2023 → 2026</div>
     </div>
   </section>
@@ -454,7 +454,7 @@ const SHRINK = 1.7;
 let t0 = performance.now()/1000, fired = {}, skipped = false, flowStart = 0;
 const easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
 const clamp01 = x => Math.min(Math.max(x,0),1);
-function flowDots(now){ const hs=(now-flowStart)*38; for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now-flowStart)*2.2-i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
+function flowDots(now){ const hs = (now - flowStart)*10;   /* 색이 라인을 따라 아주 천천히 흐른다 */ for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now - flowStart)*0.9 - i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
 function unlock(){ B.classList.remove('locked'); }
 function reset(){ scrollTo(0,0); B.classList.add('snap','locked'); B.classList.remove('act1','act2','color','flow'); B.classList.add('act0'); dotEls.forEach(d=>d.style.background=''); fired={}; skipped=false; t0=performance.now()/1000; requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
 function skip(){ if(skipped) return; skipped=true; B.classList.add('snap','act1','act2','color','flow'); fired={act1:1,act2:1,color:1,flow:1}; flowStart=performance.now()/1000; unlock(); requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
