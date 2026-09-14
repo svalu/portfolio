@@ -4,7 +4,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
     <title>Counseling OS · 2023</title>
-    <link rel="stylesheet" type="text/css" href="./css/main.css?v=3">
+    <link rel="stylesheet" type="text/css" href="./css/main.css?v=5">
     <script type="text/javascript" src="./js/jquery-1.6.2.min.js"></script>
 
     <!--    드래그 소스-->
@@ -14,6 +14,13 @@
 
 <style>
 /* 포폴 데모용 실적 창 — 기존 색 변수를 그대로 쓴다 */
+
+/* 창 여닫기 모션 — display:none 에서 벗어나는 순간 브라우저가 알아서 재생한다(클래스 조작·타이머 불필요) */
+.popup_wrap,.popup_alert_wrap{transform-origin:50% 30%;animation:winIn .26s cubic-bezier(.2,.8,.25,1) both}
+@keyframes winIn{from{opacity:0;transform:scale(.965) translateY(10px)}to{opacity:1;transform:none}}
+.popup_wrap.win_out,.popup_alert_wrap.win_out{animation:winOut .2s ease-in both;pointer-events:none}
+@keyframes winOut{from{opacity:1;transform:none}to{opacity:0;transform:scale(.97) translateY(6px)}}
+@media (prefers-reduced-motion:reduce){.popup_wrap,.popup_alert_wrap,.popup_wrap.win_out{animation:none}}
 #pw17 .iframe_body{width:660px}
 .perf{padding:14px 16px 16px;font-family:"font_na"}
 .perf_head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
@@ -2057,13 +2064,24 @@
   function open(id, x, y){
     var el = document.getElementById(id); if(!el) return;
     var fresh = el.classList.contains('display_none');
-    el.classList.remove('display_none');
-    if(fresh){                              /* 처음 열 때만 자리를 잡아준다. 옮겨둔 창은 그 자리 유지 */
+    if(fresh){
       if(x === undefined){ x = 150 + (step%6)*34; y = 70 + (step%6)*30; step++; }
       el.style.left = x + 'px'; el.style.top = y + 'px';
+      el.classList.remove('win_out');
+      el.classList.remove('display_none');   /* 여기서 winIn 이 자동 재생된다 */
     }
     el.style.zIndex = topmost();
   }
+  function close(el){
+    if(!el || el.classList.contains('display_none')) return;
+    el.classList.add('win_out');
+    setTimeout(function(){ el.classList.add('display_none'); el.classList.remove('win_out'); }, 240);
+  }
+  /* 기존 닫기(즉시 사라짐)를 걷어내고 모션을 태운다 */
+  if(window.jQuery){ jQuery('.popup_bu_icon.esc').off('click'); }
+  document.querySelectorAll('.popup_bu_icon.esc').forEach(function(b){
+    b.addEventListener('click', function(){ close(b.closest('.popup_wrap, .popup_alert_wrap')); });
+  });
   document.querySelectorAll('.bg_icon_wrap').forEach(function(w){
     var moved = false, sx = 0, sy = 0;
     w.addEventListener('mousedown', function(e){ moved = false; sx = e.clientX; sy = e.clientY; });
