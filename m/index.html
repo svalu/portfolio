@@ -54,7 +54,8 @@
   .card.in .r:nth-child(5){transition-delay:.4s} .card.in .r:nth-child(6){transition-delay:.5s} .card.in .r:nth-child(7){transition-delay:.6s}
 
   /* ── 0 · 히어로 ── */
-  .hero{--bg:#fff;padding-top:0;display:grid;grid-template-rows:60svh 6svh 34svh}
+  /* 패딩 0 — 안쪽 .top/.bot 이 이미 자기 여백을 갖는다. 바깥 패딩은 띠와 하단을 화면 끝까지 못 가게 막을 뿐 */
+  .hero{--bg:#fff;padding:0;display:grid;grid-template-rows:60svh 6svh 34svh}
   .hero .top{position:relative;padding:5svh 6vw 0}
   .hero .dots{position:absolute;left:44%;right:5vw;top:3.4svh;display:flex;justify-content:space-between}
   .hero .dots i{width:6px;height:6px;border-radius:50%;background:#c9c9c9;opacity:0;transform:translateY(8px);transition:opacity .6s var(--in),transform .8s var(--in),background 1.2s var(--ease)}
