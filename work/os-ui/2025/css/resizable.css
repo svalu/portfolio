@@ -1,0 +1,38 @@
+.ui-icon-gripsmall-diagonal-se { background-position: -64px -224px; }
+/* states and images */
+.ui-icon {
+    width: 16px;
+    height: 16px;
+}
+.ui-icon,
+.ui-widget-content .ui-icon {
+    background-image: url("../img/ui-icons_444444_256x240.png");
+}
+.ui-widget-header .ui-icon {
+    background-image: url("../img/ui-icons_444444_256x240.png");
+}
+.ui-resizable-se {
+    cursor: se-resize;
+    width: 12px;
+    height: 12px;
+    right: 1px;
+    bottom: 1px;
+}
+
+.ui-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -.25em;
+    position: relative;
+    text-indent: -99999px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+}
+.ui-resizable-handle {
+    position: absolute;
+    font-size: 0.1px;
+    display: block;
+    -ms-touch-action: none;
+    touch-action: none;
+}
+.ui-resizable-helper { border: 2px dotted #00F; }

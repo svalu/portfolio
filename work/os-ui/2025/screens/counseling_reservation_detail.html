@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/counseling/reservationDetail.js"></script>
+    <script type="text/javascript" src="../js/counseling/postProcess.js"></script>
+    <script type="text/javascript" src="../js/common/validator.js"></script>
+</head>
+
+<body>
+    <div class="iframe_body postProcessManager">
+	 <div class="after_treatment_wrap" id="postProcessDiv">
+	 	
+    </div>
+
+        <div class="workspace">
+            <div id="postProcWrap" class="con_line oj_right">
+                <div class="oj_flex">
+                    <button class="menu_bu display_none">후처리</button>
+                </div>
+            </div>
+            <div class="table_style user_lookup">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="td_title_1">이름</td>
+                            <td id="td_UserNm" class="text_l"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">생년월일</td>
+                            <td id="td_userDOB" class="text_l"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">전화번호</td>
+                            <td id="td_userMobile" class="text_l"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">희망일시</td>
+                            <td id="td_userHopeDateHour" class="text_l"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">비고</td>
+                            <td class="text_l text_sen">
+                                <textarea id="ta_rsvtnContent" class="textarea_style type_2" readonly></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

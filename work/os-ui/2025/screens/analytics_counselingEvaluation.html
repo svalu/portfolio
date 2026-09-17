@@ -1,0 +1,114 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/configuration/boilerplate.js"></script>
+    <script>
+        function tmp() {
+            let eventData = {
+                type: "openNewWindow",
+                params: {
+                    url: "analytics/counselingHistoryDetail",
+                    menuId: `detailView`,
+                    menuName: `상담평가`,
+                    sendParams: {
+                        id: ""
+                    }
+                }
+            }
+            window.parent.postMessage(eventData, "*");
+        }
+    </script>
+</head>
+<div class="iframe_body">
+    <div class="workspace">
+        <div class="popup_subtitle_line">
+            <div class="con_subtitle_text"> • 고객정보</div>
+        </div>
+        <div class="table_style chat_1">
+            <table>
+                <tbody>
+                <tr class="table_title_line">
+                    <td>고객명</td>
+                    <td>고객 전화번호</td>
+                    <td colspan="2">상담분류</td>
+                </tr>
+                <tr>
+                    <td>비회원</td>
+                    <td>010-1234-1234</td>
+                    <td colspan="2">주문관련 ▶ 상품문의 ▶ 사무용품</td>
+                </tr>
+                <tr class="table_title_line">
+                    <td>상담원</td>
+                    <td>상담시간</td>
+                    <td>상담유형</td>
+                    <td>종료대상</td>
+                </tr>
+                <tr>
+                    <td>박시연</td>
+                    <td>2022-04-01(11:00 ~ 11:15)</td>
+                    <td class="text_red">채팅</td>
+                    <td>고객</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="popup_subtitle_line">
+            <div class="con_subtitle_text"> • 상담내용</div>
+        </div>
+        <textarea class="textarea_style hight_40"></textarea>
+
+        <div>
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 고객평가</div>
+            </div>
+            <div class="table_style">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td class="td_title_1">5 / 5</td>
+                        <td class="text_l">친절하고 문의한 사항을 잘 답변해주심</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 상담평가</div>
+            </div>
+            <textarea class="textarea_style hight_40"></textarea>
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 고객정보</div>
+            </div>
+            <div class="table_style">
+                <table>
+                    <tbody>
+                    <tr class="table_title_line">
+                        <td>평가자</td>
+                        <td>평가점수</td>
+                        <td>평가일시</td>
+                        <td>평가 상세내용</td>
+                    </tr>
+                    <tr>
+                        <td>김혜수</td>
+                        <td>100 / 100</td>
+                        <td>2022-04-02(11:24)</td>
+                        <td>
+                            <button class="popup_bu_icon evaluation" onclick="tmp()"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

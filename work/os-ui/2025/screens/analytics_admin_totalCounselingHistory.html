@@ -1,0 +1,146 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../vendor/zTree/css/zTreeStyle/zTreeStyle.css">
+    <script type="text/javascript" src="../vendor/zTree/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript" src="../vendor/zTree/js/jquery.ztree.exedit.js"></script>
+    <script type="text/javascript" src="../vendor/zTree/js/jquery.ztree.excheck.js"></script>
+    <script type="text/javascript" src="../vendor/zTree/js/jquery.ztree.exhide.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/common/commonPaging.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/common/commonSorting.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+    <script type="text/javascript" src="../js/common/commonDownload.js"></script>
+    <script type="text/javascript" src="../js/analytics/admin/totalCounselingHistory.js"></script>
+    <script>
+        const mbrType = "SYS_ADMIN";
+    </script>
+</head>
+
+<body>
+    <div class="iframe_body">
+        
+        <div class="popup_setting_line">
+            <div class="setting_line_oj">
+                <span class="">메뉴</span>
+            </div>
+        </div>
+        <div class="work_grid_wrap">
+            <div class="workspace min_hight_330">
+                <div class="na_flex_row">
+                    <div class="table_style">
+                        <div class="treey_container">
+                            <ul id="treeCounsellingClassifier" class="ztree"></ul>
+                        </div>
+                    </div>
+                    <div class="contour_col_type_2"></div>
+                    <div class="workspace_oj">
+                        <div class="popup_function_line border_b_l">
+                            <div class="popup_inline left_wrap">
+                                <div class="oj_flex display_none" id="searchGroupDiv">
+                                    <div class="con_name">그룹</div>
+                                    <div class="con_name">:</div>
+                                    <select id="searchMbrGrp" class="input_style">
+                                    </select>
+                                </div>
+                                <div class="contour_col display_none"></div>
+
+                                <div class="oj_flex">
+                                    <div class="con_name">조회조건</div>
+                                    <div class="con_name">:</div>
+                                    <select id="searchCondition" class="input_style">
+                                        <option value="">전체</option>
+                                        <option value="userName">고객명</option>
+                                        <option value="postProcTitle">제목</option>
+                                        <option value="postProcContent">내용</option>
+                                        <option value="mbrName">상담원</option>
+                                    </select>
+                                    <input id="searchStr" class="input_style" placeholder="택스트 입력">
+                                    <div name="dupNameWrap" class="function_line_out_table_wrap display_none">
+                                        <div class="popup_subtitle_line">
+                                            <div name="inputDupName" class="con_subtitle_text"></div>
+                                        </div>
+                                        <div class="table_style out_table">
+                                            <table id="dupNameTbl">
+                                                <tr class="table_title_line">
+                                                    <td>이름</td>
+                                                    <td>계정</td>
+                                                    <td>그룹</td>
+                                                    <td>휴대전화</td>
+                                                </tr>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="contour_col"></div>
+                                <div class="oj_flex">
+                                    <div class="con_name">조회기간</div>
+                                    <div class="con_name">:</div>
+                                    <input id="searchStartDt" class="input_style" type="date">
+                                    <div class="con_name">~</div>
+                                    <input id="searchEndDt" class="input_style" type="date">
+                                    <select id="periodSelector" class="input_style">
+                                        <option value="-1">선택</option>
+                                        <option value="5">오늘</option>
+                                        <option value="0">이번주</option>
+                                        <option value="1">저번주</option>
+                                        <option value="2">이번달</option>
+                                        <option value="3">전달</option>
+                                        <option value="4">올해</option>
+                                    </select>
+                                </div>
+                                <div class="contour_col"></div>
+                                <div class="oj_flex">
+                                    <button id="searchBtn" class="menu_bu">조 회</button>
+                                    <input id="currCategLevel" type="hidden" value="0">
+                                    <input id="currCategId" type="hidden">
+                                </div>
+                                <div class="oj_flex">
+                                    <button id="resetBtn" class="menu_bu">초기화</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table_style margin_t_10">
+                            <table id="cnslHistTable">
+                                <tr class="table_title_line ">
+                                    <td>No.</td>
+                                    <td>그룹</td>
+                                    <td>상담원</td>
+                                    <td>고객명</td>
+                                    <td>고객 전화번호</td>
+                                    <td>상담시간</td>
+                                    <td>상담분류</td>
+                                    <td>상담내용</td>
+                                    <td>등록일시</td>
+                                    <td>상담유형</td>
+                                    <td>고객평가</td>
+                                    <td>상담평가</td>
+                                    
+                                </tr>
+
+                            </table>
+                            <div class="pageing_wrap">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,449 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="../js/chart.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/analytics/admin/totalPerformance.js"></script>
+    <script type="text/javascript" src="../js/analytics/analyticsChat.js"></script>
+    <script>
+        const mbrType = "SYS_ADMIN";
+    </script>
+</head>
+
+<body>
+    <div class="iframe_body">
+       
+        <div class="workspace performance min_hight_330 height_100_over">
+            <div class="workspace_sub margin_b_10">
+                <div class="popup_function_line">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex display_none" id="searchGroupDiv">
+                            <div class="con_name">그룹선택</div>
+                            <div class="con_name">:</div>
+                            <select id="mbrGrpCombo" class="input_style">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="contour_col display_none"></div>
+                        <div class="oj_flex display_none" id="searchMbrNameDiv">
+                            <div class="con_name">이 름</div>
+                            <div class="con_name">:</div>
+                            <input id="searchStr" class="input_style" type="text" autocomplete="off">
+                            <div name="dupNameWrap" class="function_line_out_table_wrap display_none">
+                                <div class="popup_subtitle_line">
+                                    <div name="inputDupName" class="con_subtitle_text"></div>
+                                </div>
+                                <div class="table_style out_table">
+                                    <table id="dupNameTbl">
+                                        <tr class="table_title_line">
+                                            <td>이름</td>
+                                            <td>계정</td>
+                                            <td>그룹</td>
+                                            <td>휴대전화</td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">조회기간</div>
+                            <div class="con_name">:</div>
+                            <input id="searchStartDt" class="input_style" type="date">
+                            <div class="con_name"> ~ </div>
+                            <input id="searchEndDt" class="input_style" type="date">
+                            <select id="periodSelector" class="input_style">
+                                <option value="5">오늘</option>
+                                <option value="0">이번주</option>
+                                <option value="1">저번주</option>
+                                <option value="2">이번달</option>
+                                <option value="3">전달</option>
+                                <option value="4">올해</option>
+                            </select>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <button id="searchBtn" class="menu_bu">조 회</button>
+                        </div>
+                        <div class="oj_flex">
+                            <button id="resetBtn" class="menu_bu">초기화</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup_function_line">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <div class="con_name">상담건수</div>
+                            <div class="con_name">:</div>
+                            <div class="con_name" id="totalCnslCnt"></div>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">채팅상담</div>
+                            <div class="con_name">:</div>
+                            <div class="con_name" id="totalChatCnt"></div>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">예약상담</div>
+                            <div class="con_name">:</div>
+                            <div class="con_name" id="totalRsvtnCnt"></div>
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">평균상담 시간</div>
+                            <div class="con_name">:</div>
+                            <div class="con_name" id="totAvgCnslDuration"></div>
+                        </div>
+
+                        <div class="contour_col"></div>
+                        <div class="oj_flex">
+                            <div class="con_name">평균평점</div>
+                            <div class="con_name">:</div>
+                            <div class="con_name" id="totAvgCnslReviewGrade"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text_3">요일별 상담분포</div>
+                </div>
+                <div class="bar_graph_wrap performance">
+                    <div class="per_line_wrap">
+                        <span>100%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>80%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>60%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>40%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>20%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>0%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div id="dayBarWrap" class="bar_wrap">
+                        <div name="mon" class="bar_item_wrap">
+                            <span name="barText">월 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="tue" class="bar_item_wrap">
+                            <span name="barText">화 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="wed" class="bar_item_wrap">
+                            <span name="barText">수 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="thu" class="bar_item_wrap">
+                            <span name="barText">목 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="fri" class="bar_item_wrap">
+                            <span name="barText">금 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="sat" class="bar_item_wrap">
+                            <span name="barText">토 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="sun" class="bar_item_wrap">
+                            <span name="barText">일 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text_3">시간대별 상담분포</div>
+                </div>
+                <div class="bar_graph_wrap performance">
+                    <div class="per_line_wrap">
+                        <span>100%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>80%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>60%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>40%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>20%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>0%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div id="timeBarWrap1" class="bar_wrap size_s">
+
+                    </div>
+                </div>
+                <div class="bar_graph_wrap performance">
+                    <div class="per_line_wrap">
+                        <span>100%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>80%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>60%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>40%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>20%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>0%</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div id="timeBarWrap2" class="bar_wrap size_s">
+
+                    </div>
+                </div>
+
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text_3">요일별 평균 평점</div>
+                </div>
+                <div class="bar_graph_wrap performance">
+                    <div class="per_line_wrap">
+                        <span>5</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>4</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>3</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>2</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>1</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div class="per_line_wrap">
+                        <span>0</span>
+                        <div class="per_line"></div>
+                    </div>
+                    <div id="gardeBarWrap" class="bar_wrap">
+                        <div name="mon" class="bar_item_wrap">
+                            <span name="barText">월 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="tue" class="bar_item_wrap">
+                            <span name="barText">화 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="wed" class="bar_item_wrap">
+                            <span name="barText">수 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="thu" class="bar_item_wrap">
+                            <span name="barText">목 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="fri" class="bar_item_wrap">
+                            <span name="barText">금 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="sat" class="bar_item_wrap">
+                            <span name="barText">토 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                        <div name="sun" class="bar_item_wrap">
+                            <span name="barText">일 (0건)</span>
+                            <div name="barItem" class="bar_oj_wrap " style="height: 0%;">
+                                <div class="bar_oj color_1_1"></div>
+                                <div class="bar_oj color_1_2"></div>
+                                <div class="bar_oj color_1_3"></div>
+                                <div name="barValue" class="per_text color_1">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="workspace_sub">
+                <div class="popup_function_line border_b_l">
+                    <div class="popup_inline left_wrap">
+
+                        <div class="oj_flex display_none" id="searchMonthGroupDiv">
+                            <div class="con_name">그룹선택</div>
+                            <div class="con_name">:</div>
+                            <select id="mbrMonthGrpCombo" class="input_style">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <div class="contour_col display_none"></div>
+
+                        <div class="oj_flex display_none" id="searchMonthMbrNameDiv">
+                            <div class="con_name">이 름</div>
+                            <div class="con_name">:</div>
+                            <input id="searchStr2" class="input_style" type="text">
+                            <div name="dupNameWrap2" class="function_line_out_table_wrap display_none">
+                                <div class="popup_subtitle_line">
+                                    <div name="inputDupName2" class="con_subtitle_text"></div>
+                                </div>
+                                <div class="table_style out_table">
+                                    <table id="dupNameTbl2">
+                                        <tr class="table_title_line">
+                                            <td>이름</td>
+                                            <td>계정</td>
+                                            <td>그룹</td>
+                                            <td>휴대전화</td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contour_col display_none"></div>
+
+                        <div class="oj_flex">
+                            <div class="con_name">조회기간</div>
+                            <div class="con_name">:</div>
+                            <input id="monthInput" class="input_style" type="month">
+                        </div>
+
+                        <div class="contour_col display_none"></div>
+                        <div class="oj_flex">
+                            <button id="searchBtn2" class="menu_bu">조 회</button>
+                        </div>
+                        <div class="oj_flex">
+                            <button id="resetBtn2" class="menu_bu">초기화</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="border_b_dot margin_b_10">
+                    <div class="popup_subtitle_line space">
+                        <div class="con_subtitle_text_3">상담 건수 그래프</div>
+                    </div>
+                    <canvas class="chart_dashboard margin_b_10" id="monthlyCountChart" width="800" height="200"></canvas>
+                </div>
+
+                <div>
+                    <div class="popup_subtitle_line space">
+                        <div class="con_subtitle_text_3">평균 상담 시간 그래프(분)</div>
+                    </div>
+                    <canvas class="chart_dashboard" id="monthlyAvgHourChart" width="800" height="200"></canvas>
+                </div>
+
+                <div>
+                    <div class="popup_subtitle_line space">
+                        <div class="con_subtitle_text_3">평균 평점 그래프</div>
+                    </div>
+                    <canvas class="chart_dashboard" id="monthlyAvgGradeChart" width="800" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

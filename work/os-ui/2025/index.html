@@ -1,0 +1,130 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="shortcut icon" type="image/jpg" href="img/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/resizable.css">
+    <script type="text/javascript" src="vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="vendor/jquery/jquery-ui.js"></script>
+    <script type="text/javascript" src="mock/mock-api.js"></script>
+    <script type="text/javascript" src="js/common/acs.js"></script>
+    <script type="text/javascript" src="js/common/taskbar.js"></script>
+    <script type="text/javascript" src="js/common/iframeWindow.js"></script>
+    <script type="text/javascript" src="js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="js/main/main.js"></script>
+    <script type="text/javascript" src="vendor/sockjs-client-1.6.1/sockjs-client.min.js"></script>
+    <script type="text/javascript" src="vendor/webstomp-1.2.6/webstomp.min.js"></script>
+    <script type="text/javascript" src="js/common/websocket-stomp.js"></script>
+    <script type="text/javascript" src="js/chat/global/global-connection.js"></script>
+    <script type="text/javascript" src="js/common/constants.js"></script>
+    <script type="text/javascript" src="js/common/server-sent-event.js"></script>
+</head>
+
+<body class="body_size logo_canter ">
+    <div id="logoutPopup" class="iframe_in_popup display_none">
+        <div class="popup_alert_wrap">
+            <div class="popup_alert_title_1">Logout</div>
+            
+            <div class="popup_con_text_1">로그아웃 시 진행중인 상담 또는 프로그램이 강제 종료됩니다.<br>
+                로그아웃을 진행 하시겠습니까?</div>
+            <div class="popup_buttom_bu_wrap">
+                <button id="logoutBu_confirm" class="popup_bu color_1">확 인</button>
+                <button id="logoutBu_cancle" class="popup_bu color_2">취 소</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="top_work_line">
+        <div class="menu_container">
+            <div class="main_menu_bu"></div>
+            <div class="cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face left"></div>
+                <div class="face right"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+            </div>
+            <div id="topMenuWrapper" class="main_menu_wrap">
+            </div>
+        </div>
+        <div id="taskbar" class="wrok_line_wrap">
+        </div>
+        <div class="work_line_time_wrap">
+            <div class="icon_20 clock"></div>
+            <div class="time_oj_wrap">
+                <div id="hour" class="time_oj_1">오전 11:00</div>
+                <div id="YMD" class="time_oj_2">2023-11-24</div>
+            </div>
+        </div>
+    </div>
+    <div class="logo_right_bottom"></div>
+    <div class="work_body">
+        <div id="menuWrapper" class="bg_icon_container display_none">
+
+        </div>
+
+        <!--        아이콘 그룹화 (마이노)-->
+        <div class="bg_icon_container ">
+            <div class="main_icon_group_container">
+                <div class="main_icon_group_wrap">
+                    <div class="main_group_title">
+                        <span name="parentMenuName">개인 관리</span>
+                        <button class="main_group_title_bu">▲</button>
+                    </div>
+                    <div name="parentMenuWrapper" class="main_icon_group_oj">
+                       
+                    </div>
+                </div>
+                <div class="main_icon_group_wrap">
+                    <div class="main_group_title">
+                        <span name="parentMenuName">사용자 관리</span>
+                        <button class="main_group_title_bu">▲</button>
+                    </div>
+                    <div name="parentMenuWrapper" class="main_icon_group_oj">
+
+                    </div>
+                </div>
+                <div class="main_icon_group_wrap">
+                    <div class="main_group_title">
+                        <span name="parentMenuName">운영 정보</span>
+                        <button class="main_group_title_bu">▲</button>
+                    </div>
+                    <div name="parentMenuWrapper" class="main_icon_group_oj">
+
+                    </div>
+                </div>
+                <div class="main_icon_group_wrap">
+                    <div class="main_group_title">
+                        <span name="parentMenuName">운영 관리</span>
+                        <button class="main_group_title_bu">▲</button>
+                    </div>
+                    <div name="parentMenuWrapper" class="main_icon_group_oj">
+
+                    </div>
+                </div>
+                <div class="main_icon_group_wrap">
+                    <div class="main_group_title">
+                        <span name="parentMenuName">기타</span>
+                        <button class="main_group_title_bu">▲</button>
+                    </div>
+                    <div name="parentMenuWrapper" class="main_icon_group_oj">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<!--메뉴버튼 큐브 인테렉션-->

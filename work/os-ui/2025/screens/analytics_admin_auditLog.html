@@ -1,0 +1,174 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+    <script type="text/javascript" src="../js/analytics/admin/auditLog.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/common/commonPaging.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/common/commonSorting.js"></script>
+    <script type="text/javascript" src="../js/common/commonDownload.js"></script>
+</head>
+
+<body>
+    <div class="iframe_body">
+
+        <div class="popup_setting_line">
+            <div class="setting_line_oj target_3">
+                <span class="">메뉴</span>
+            </div>
+        </div>
+
+        <div class="workspace user_inquiry min_hight_330">
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 감사로그 조회</div>
+            </div>
+            <div class="popup_function_line" id="searchDiv">
+                <div class="popup_inline left_wrap">
+                    <div class="oj_flex">
+                        <div class="con_name">이름</div>
+                        <div class="con_name">:</div>
+                        <input class="input_style" placeholder="택스트 입력" id="auditLogTgtName" autocomplete="off">
+                        <div name="dupNameWrap" class="function_line_out_table_wrap display_none">
+                            <div class="popup_subtitle_line">
+                                <div name="inputDupName" class="con_subtitle_text"></div>
+                            </div>
+                            <div class="table_style out_table">
+                                <table id="dupNameTbl">
+                                    <tr class="table_title_line">
+                                        <td>이름</td>
+                                        <td>계정</td>
+                                        <td>그룹</td>
+                                        <td>휴대전화</td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">조회기간</div>
+                        <div class="con_name">:</div>
+                        <input class="input_style" type="date" id="startDate">
+                        <div class="con_name">~</div>
+                        <input class="input_style" type="date" id="endDate">
+                        <select id="periodSelector" class="input_style">
+                            <option value="5">오늘</option>
+                            <option value="0">이번주</option>
+                            <option value="1">저번주</option>
+                            <option value="2">이번달</option>
+                            <option value="3">전달</option>
+                            <option value="4">올해</option>
+                        </select>
+                    </div>
+                    <div class="oj_flex">
+                        <button class="menu_bu" id="searchBtn">조 회</button>
+                    </div>
+                    <div class="oj_flex">
+                        <button class="menu_bu" id="initBtn">초기화</button>
+                    </div>
+                </div>
+            </div>
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 감사로그 목록</div>
+            </div>
+            <div class="table_style user_inquiry">
+                <table id="logTable">
+                    <tbody>
+                        <tr class="table_title_line">
+                            <td>No.</td>
+                            <td>사용일시</td>
+                            <td>접속 IP</td>
+                            <td>사용자</td>
+                            <td>계정</td>
+                            <td>사용메뉴</td>
+                            <td>사용기능</td>
+                            <td>대상</td>
+                            <td>사유</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2020.10.06(10:20:12</td>
+                            <td>127.01.01.01</td>
+                            <td>김혜수</td>
+                            <td>svalu</td>
+                            <td>상담사 관리</td>
+                            <td>로그인</td>
+                            <td>박시연</td>
+                            <td><button class="table_icon file"></button></td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2020.10.06(10:20:12</td>
+                            <td>127.01.01.01</td>
+                            <td>김혜수</td>
+                            <td>svalu</td>
+                            <td>상담사 관리</td>
+                            <td>로그인</td>
+                            <td>박시연</td>
+                            <td><button class="table_icon file"></button></td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2020.10.06(10:20:12</td>
+                            <td>127.01.01.01</td>
+                            <td>김혜수</td>
+                            <td>svalu</td>
+                            <td>상담사 관리</td>
+                            <td>로그인</td>
+                            <td>박시연</td>
+                            <td><button class="table_icon file"></button></td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2020.10.06(10:20:12</td>
+                            <td>127.01.01.01</td>
+                            <td>김혜수</td>
+                            <td>svalu</td>
+                            <td>상담사 관리</td>
+                            <td>로그인</td>
+                            <td>박시연</td>
+                            <td><button class="table_icon file"></button></td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2020.10.06(10:20:12</td>
+                            <td>127.01.01.01</td>
+                            <td>김혜수</td>
+                            <td>svalu</td>
+                            <td>상담사 관리</td>
+                            <td>로그인</td>
+                            <td>박시연</td>
+                            <td><button class="table_icon file"></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pageing_wrap">
+                    <!--
+                    <div class="page_oj_icon">◀◀</div>
+                    <div class="page_oj_icon">◀</div>
+                    <div class="page_oj">1</div>
+                    <div class="page_oj">2</div>
+                    <div class="page_oj">3</div>
+                    <div class="page_oj_icon">▶</div>
+                    <div class="page_oj_icon">▶▶</div> 
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

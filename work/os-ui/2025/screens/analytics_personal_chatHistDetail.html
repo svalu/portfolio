@@ -1,0 +1,103 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+    <script type="text/javascript" src="../js/analytics/chatHistDetail.js"></script>
+    <script>
+    </script>
+</head>
+<div class="iframe_body">
+    <div class="workspace">
+        <div class="popup_subtitle_line">
+            <div class="con_subtitle_text"> • 고객정보</div>
+        </div>
+        <div class="table_style chat_1">
+            <table>
+                <tbody>
+                <tr class="table_title_line">
+                    <td>고객명</td>
+                    <td>고객 전화번호</td>
+                    <td colspan="2">상담분류</td>
+                </tr>
+                <tr>
+                    <td id="userName">비회원</td>
+                    <td id="userMobile">010-1234-1234</td>
+                    <td colspan="2" id="categName">주문관련 ▶ 상품문의 ▶ 사무용품</td>
+                </tr>
+                <tr class="table_title_line">
+                    <td>상담원</td>
+                    <td>상담시간</td>
+                    <td>상담유형</td>
+                    <td>종료대상</td>
+                </tr>
+                <tr>
+                    <td id="mbrName">박시연</td>
+                    <td id="cnslDate">2022-04-01(11:00 ~ 11:15)</td>
+                    <td class="text_red" id="postProcType">채팅</td>
+                    <td id="closeChat">고객</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="popup_subtitle_line">
+            <div class="con_subtitle_text"> • 상담내용</div>
+        </div>
+        <input id="postProcTitle" class="input_style width_100per" readonly>
+        <textarea id="postProcContent" class="textarea_style hight_40 margin_t_10" readonly></textarea>
+
+        <div id="evaluationDiv" class="display_none">
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 고객평가</div>
+            </div>
+            <div class="table_style">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td class="td_title_1" id="cnslReviewGrade">5 / 5</td>
+                        <td class="text_l">
+                            <textarea class="work_bord" id="cnslReviewDesc" readonly></textarea>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 상담평가</div>
+            </div>
+            <textarea class="textarea_style hight_40" id="evalComment" readonly></textarea>
+            
+            <div class="table_style">
+                <table>
+                    <tbody>
+                    <tr class="table_title_line">
+                        <td>평가자</td>
+                        <td>평가점수</td>
+                        <td>평가일시</td>
+                        <td>평가 상세내용</td>
+                    </tr>
+                    <tr>
+                        <td id="evaluator">김혜수</td>
+                        <td id="cnslEvalResult">100 / 100</td>
+                        <td id="regDate">2022-04-02(11:24)</td>
+                        <td>
+                            <button class="popup_bu_icon evaluation" id="btnEvalView"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

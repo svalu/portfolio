@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.0" id="레이어_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" viewBox="0 0 133.9 89.2" style="enable-background:new 0 0 133.9 89.2;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#SVGID_1_);}
+	.st1{fill:#C6C5C5;}
+	.st2{fill:url(#SVGID_00000106854209919820918040000005869448082203951801_);}
+	
+		.st3{fill:url(#SVGID_00000116198136378562698980000004765738106291396795_);stroke:#C6C5C5;stroke-width:3.0228;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+</style>
+<g>
+	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="35.4876" y1="27.3142" x2="-12.0659" y2="119.7422">
+			<stop  offset="0" style="stop-color:#FFFFFF"/>
+			<stop  offset="1" style="stop-color:#B9B9BA"/>
+		</linearGradient>
+		<polygon class="st0" points="1.8,3.9 72.3,44.6 1.8,85.3 		"/>
+		<path class="st1" d="M3.3,6.5l65.9,38.1L3.3,82.7V6.5 M0.3,1.3v86.6l75-43.3L0.3,1.3L0.3,1.3z"/>
+	</g>
+	<g>
+		
+			<linearGradient id="SVGID_00000118374361193344886190000003747155030115369391_" gradientUnits="userSpaceOnUse" x1="95.0254" y1="23.0204" x2="280.5511" y2="145.2531">
+			<stop  offset="0" style="stop-color:#FFFFFF"/>
+			<stop  offset="1" style="stop-color:#B9B9BA"/>
+		</linearGradient>
+		<polygon style="fill:url(#SVGID_00000118374361193344886190000003747155030115369391_);" points="61.6,44.6 132.1,3.9 132.1,85.3 
+					"/>
+		<path class="st1" d="M130.6,6.5v76.1L64.7,44.6L130.6,6.5 M133.6,1.3l-75,43.3l75,43.3V1.3L133.6,1.3z"/>
+	</g>
+	
+		<linearGradient id="SVGID_00000101784288524218892850000003977149180756337544_" gradientUnits="userSpaceOnUse" x1="56.6709" y1="41.6405" x2="83.0472" y2="161.0465">
+		<stop  offset="0" style="stop-color:#FFFFFF"/>
+		<stop  offset="1" style="stop-color:#B9B9BA"/>
+	</linearGradient>
+	
+		<path style="fill:url(#SVGID_00000101784288524218892850000003977149180756337544_);stroke:#C6C5C5;stroke-width:3.0228;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="
+		M132.2,87.9c0-0.1,0.4-6.1-6.2-12.7c-6.5-6.5-47.2-40.5-48.5-41.6l0,0c-3-2.9-6.8-4.4-10.7-4.4c-3.9,0-7.7,1.5-10.7,4.4l0,0
+		c-1.4,1.1-42,35.1-48.5,41.6c-6.6,6.6-6.2,12.6-6.2,12.7H132.2"/>
+</g>
+</svg>

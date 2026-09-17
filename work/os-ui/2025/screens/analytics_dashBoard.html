@@ -1,0 +1,120 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/chart.js"></script>
+    <script type="text/javascript" src="../js/common/server-sent-event.js"></script>
+    <script type="text/javascript" src="../js/common/commonSorting.js"></script>
+    <script type="text/javascript" src="../js/analytics/dashboard.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+</head>
+
+<body>
+    <div class="iframe_body dashboard">
+        
+        <div class="workspace dashboard">
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 실시간 상담 요약</div>
+            </div>
+            <div class="popup_function_line">
+                <div class="popup_inline left_wrap">
+                    <div class="oj_flex">
+                        <div class="con_name">상담건수</div>
+                        <div class="con_name">:</div>
+                        <div class="con_name" id="totalCnslCnt"></div>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">채팅상담</div>
+                        <div class="con_name">:</div>
+                        <div class="con_name" id="totalChatCnt"></div>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">예약상담</div>
+                        <div class="con_name">:</div>
+                        <div class="con_name" id="totalRsvtnCnt"></div>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">평균상담 시간</div>
+                        <div class="con_name">:</div>
+                        <div class="con_name" id="totAvgCnslDuration"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="popup_subtitle_line border_t_l">
+                <div class="con_subtitle_text"> • 실시간 상담원 현황</div>
+            </div>
+            <div class="na_flex_row">
+                <div class="flex_row_item">
+                    <div class="table_style dashboard">
+                        <table id="memberTable">
+                            <tr class="table_title_line">
+                                <td>No.</td>
+                                <td>상담원</td>
+                                <td>그룹</td>
+                                <td>상태</td>
+                                <td>대기고객</td>
+                                <td>상담중</td>
+                                <td>상담종료</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="contour_col_type_2"></div>
+                <div class="flex_row_item">
+                    <div class="canvas_container">
+                        <canvas id="cnslStatusChart" width="" height=""></canvas>
+                    </div>
+                    <div class="chart_legend_wrap">
+                        <div class="chart_oj_wrap left">
+                            <div class="chart_oj">
+                                <div class="legend_color_box textColor_offline"></div>
+                                <div class="legend_text_1">오프라인</div>
+                                <div id="label_offlin" class="legend_text_2">22 (92%)</div>
+                            </div>
+                            <div class="chart_oj">
+                                <div class="legend_color_box textColor_chat"></div>
+                                <div class="legend_text_1">상담중</div>
+                                <div id="label_chat" class="legend_text_2">22 (92%)</div>
+                            </div>
+                            <div class="chart_oj">
+                                <div class="legend_color_box textColor_rsvtn"></div>
+                                <div class="legend_text_1">예약상담중</div>
+                                <div id="label_rsvtn" class="legend_text_2">22 (92%)</div>
+                            </div>
+
+                        </div>
+                        <div class="chart_oj_wrap right">
+                            <div class="chart_oj">
+                                <div class="legend_color_box textColor_online"></div>
+                                <div class="legend_text_1">상담대기</div>
+                                <div id="label_chatWait" class="legend_text_2">22 (92%)</div>
+                            </div>
+                            <div class="chart_oj">
+                                <div class="legend_color_box textColor_break"></div>
+                                <div class="legend_text_1">휴게시간</div>
+                                <div id="label_break" class="legend_text_2">22 (92%)</div>
+                            </div>
+                            <div class="chart_oj">
+                                <div class="legend_color_box textColor_lunch"></div>
+                                <div class="legend_text_1">식사시간</div>
+                                <div id="label_lunch" class="legend_text_2">22 (92%)</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

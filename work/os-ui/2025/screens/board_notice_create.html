@@ -1,0 +1,123 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" href="../vendor/trumbowyg/ui/trumbowyg.min.css">
+    <link rel="stylesheet" href="../vendor/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css">
+	<link rel="stylesheet" href="../vendor/trumbowyg/plugins/table/ui/trumbowyg.table.min.css">
+	
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/board/notice.js"></script>
+    <script type="text/javascript" src="../js/board/create.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+    
+    <!-- 에디터 스크립트 -->
+    <script type="text/javascript" src="../vendor/trumbowyg/trumbowyg.js"></script>
+    <script type="text/javascript" src="../vendor/trumbowyg/plugins/base64/trumbowyg.base64.min.js">
+    <script type="text/javascript" src="../vendor/trumbowyg/plugins/fontfamily/trumbowyg.fontfamily.min.js"></script>
+    <script type="text/javascript" src="../vendor/trumbowyg/plugins/fontsize/trumbowyg.fontsize.min.js"></script>
+    <script type="text/javascript" src ="../vendor/trumbowyg/plugins/colors/trumbowyg.colors.min.js"></script>
+	<script type="text/javascript" src ="../vendor/trumbowyg/plugins/noembed/trumbowyg.noembed.min.js"></script>
+    <script type="text/javascript" src ="../vendor/trumbowyg/plugins/pasteimage/trumbowyg.pasteimage.min.js"></script>
+	
+	
+	
+	<style>
+		.trumbowyg-editor table {
+	  		width: 100%; }
+		.trumbowyg-editor table td {
+	    	border: 1px dotted #e7eaec;
+	    	padding: 8px; }
+	
+		.trumbowyg-dropdown-table table {
+	  		margin: 10px;
+	  		display: inline-block; }
+	
+		.trumbowyg-dropdown-table table td {
+	  		display: inline-block;
+	  		height: 20px;
+	  		width: 20px;
+	  		margin: 1px;
+	  		padding: 0;
+	  		background-color: #fff;
+	  		box-shadow: 0 0 0 1px #cecece inset; }
+	  	
+	  	.trumbowyg-dropdown-table table td.active {
+	    	background-color: #00b393;
+	    	box-shadow: none;
+	    	cursor: pointer; }
+	
+		.trumbowyg-dropdown-table .trumbowyg-table-size {
+	  		text-align: center; }
+	</style>    
+</head>
+
+<body>
+<div class="iframe_body">
+    <div class="popup_setting_line">
+        <div class="setting_line_oj target_3">
+            <span class="">메뉴</span>
+        </div>
+    </div>
+    
+    <div class="workspace">
+        <div class="work_line_2 ">
+            <div class="popup_inline left_wrap">
+                <div class="oj_flex">
+                    <div class="con_name">공지상태</div>
+                    <div class="con_name">:</div>
+                    <select class="input_style" id="brdNoticeStatus">
+                    </select>
+                    
+                </div>
+                <div class="contour_col"></div>
+            </div>
+            <div class="oj_flex">
+                <div class="con_name">상단고정</div>
+                <div class="con_name">:</div>
+                <input type="checkbox" id="brdNoticeIsTop" value="true"> 
+            </div>
+
+            <div class="contour_col" name="noticePeriod_bar"></div>
+            <div class="oj_flex" name="noticePeriod_form">
+                <div class="con_name">게시기간</div>
+                <div class="con_name">:</div>
+                <input id="brdPostDateTimeStart" class="input_style"  type="datetime-local">
+                <input id="brdPostDateTimeEnd" class="input_style"  type="datetime-local">
+            </div>
+        </div>
+
+        <div class="work_line_2 ">
+            <div class="oj_flex">
+                <div class="con_name">등록자</div>
+                <div class="con_name">:</div>
+                <input id="mbrName" value="장유석" class="input_style readonly" readonly>
+            </div>
+            <div class="contour_col display_none" data="regDate"></div>
+            <div class="oj_flex display_none" data="regDate">
+                <div class="con_name">등록일시</div>
+                <div class="con_name">:</div>
+                <input id="regDate" class="input_style readonly" readonly>
+            </div>
+        </div>
+
+        <div class="work_line_2">
+            <input class="input_style title width_fill" data-max="50" type="text" placeholder="제목을 입력해주세요." id="brdNoticeTitle" maxlength="50" title="제목" required>
+        </div>
+        <div class="work_line_2">
+            <textarea class="textarea_style" data-max="3000" placeholder="내용을 입력해주세요." id="brdNoticeContent" title="내용" required></textarea>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

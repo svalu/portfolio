@@ -1,0 +1,98 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/common/commonPaging.js"></script>
+    <script type="text/javascript" src="../js/common/commonDownload.js"></script>
+    <script type="text/javascript" src="../js/common/commonSorting.js"></script>
+    <script type="text/javascript" src="../js/member/list.js"></script>
+</head>
+<body>
+    <div class="iframe_body in_menu">
+        <div class="popup_setting_line">
+            <div class="setting_line_oj target_3">
+                <span class="">메뉴</span>
+                <div class="setting_line_oj_item_wrap">
+                    <span>신규</span>
+                    <span>다운로드</span>
+                    <span>그룹설정</span>
+                </div>
+            </div>
+        </div>
+        <div class="workspace user_inquiry">
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 사용자 관리</div>
+            </div>
+            <div class="popup_function_line">
+                <div class="popup_inline left_wrap">
+                    <div class="oj_flex">
+                        <div class="con_name">그룹선택</div>
+                        <div class="con_name">:</div>
+                        <select data-id="mbrGrpCombo" class="input_style">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">권한선택</div>
+                        <div class="con_name">:</div>
+                        <select data-id="authCombo" class="input_style">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                    <div class="contour_col"></div>
+                    <div class="oj_flex">
+                        <div class="con_name">조회조건</div>
+                        <div class="con_name">:</div>
+                        <select data-id="condition" class="input_style">
+                            <option value="">전체</option>
+                            <option value="mbrName">이름</option>
+                            <option value="mbrId">계정</option>
+                        </select>
+                        <input data-id="searchStr" class="input_style" placeholder="택스트 입력" maxlength="20">
+                    </div>
+                    <div class="oj_flex">
+                        <button id="searchBtn" class="menu_bu">조 회</button>
+                    </div>
+                    <div class="oj_flex">
+                        <button id="resetBtn" class="menu_bu">초기화</button>
+                    </div>
+                </div>
+            </div>
+            <div class="popup_subtitle_line">
+                <div class="con_subtitle_text"> • 사용자 목록</div>
+            </div>
+            <div class="con_line">
+                <div data-id="totalCnt" class="con_text_2">(총 : 0명)</div>
+            </div>
+            <div class="table_style user_inquiry">
+                <table id="mbrTable">
+                    <tr class="table_title_line ">
+                        <td>No.</td>
+                        <td>이름</td>
+                        <td>권한</td>
+                        <td>계정</td>
+                        <td>그룹</td>
+                        <td>사번</td>
+                        <td>내선번호</td>
+                        <td>휴대전화</td>
+                        <td>이메일</td>
+                        <td>임시비밀번호 발송</td>
+                    </tr>
+                </table>
+                <div class="pageing_wrap">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+

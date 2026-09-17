@@ -1,0 +1,61 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="shortcut icon" type="image/jpg" href="../img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+
+    <script type="text/javascript" src="../vendor/axios-1.6.0/axios.min.js"></script>
+    <script type="text/javascript" src="../js/common/exception.js"></script>
+    <script type="text/javascript" src="../js/common/websocket-stomp.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+
+    <script type="text/javascript" src="../js/chat/client/employee-chat-client.js"></script>
+    <script type="text/javascript" src="../js/chat/processor/employee-chat-processor.js"></script>
+    <script type="text/javascript" src="../js/chat/employee-chat.js"></script>
+</head>
+
+<body>
+    <div class="iframe_body">
+        <div class="popup_setting_line">
+            <div class="setting_line_oj target_3">
+                <span class="">메뉴</span>
+                <div class="setting_line_oj_item_wrap">
+                    <span>신규</span>
+                    <span>신규 취소</span>
+                </div>
+            </div>
+            <div class="setting_line_oj_right">
+                <div class="chat_info_text_wrap">
+                    <span class="chat_info_text">비회원</span>
+                    <span class="chat_info_text">(11:23)</span>
+                    <span class="chat_info_text">+13</span>
+                </div>
+            </div>
+        </div>
+        <div class="workspace chat messenger">
+            <div class="chat_view_wrap">
+            <div class="contents">
+                <div class="chat_system_line">
+                    <span class="chat_system_text_1" id="currentTime">2023-07-13 11:23</span>
+                </div>
+
+            </div>
+            </div>
+            <div class="chating_text_input_wrap">
+                <textarea id="textarea" class="chating_textarea"></textarea>
+                <button id="messenger_send_bu" class="menu_bu size_w_f margin_t_10">보내기</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

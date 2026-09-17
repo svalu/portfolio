@@ -1,0 +1,198 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="shortcut icon" type="image/jpg" href="../img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../vendor/axios-1.6.0/axios.min.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/common/exception.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/chat/client/customer-chat-client.js"></script>
+    <script type="text/javascript" src="../js/chat/processor/customer-chat-processor.js"></script>
+    <script type="text/javascript" src="../js/chat/customer-chat.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/counseling/postProcess.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+    <script type="text/javascript" src="../js/common/validator.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+</head>
+<div class="iframe_body">
+    <div class="after_treatment_wrap" id="postProcessDiv">
+        <!--
+            <div class="side_bar">
+                <span>▶</span>
+            </div>
+            <div class="popup_subtitle_line border_0">
+                <div class="popup_top_line mode_2">
+                    <div class="con_title_text_1">후처리</div>
+                </div>
+            </div>
+            <div class="workspace">
+                <div class="work_line_2 border_t_l">
+                    <div class="oj_flex">
+                        <div class="con_name">상담분류</div>
+                        <div class="con_name">:</div>
+                        <div class="con_name">채팅</div>
+                    </div>
+                </div>
+                <div class="work_line_2 border_t_l">
+                    <div class="oj_flex">
+                        <div class="con_name">상담분류</div>
+                        <div class="con_name">:</div>
+                        <select class="input_style" id="cateMainId">
+                            <option>대분류</option>
+                        </select>
+                        <select class="input_style" id="cateMiddleId">
+                            <option>중분류</option>
+                        </select>
+                        <select class="input_style" id="cateSubId">
+                            <option>소분류</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="work_line_2">
+                    <textarea class="textarea_style size_1 " placeholder="제목을 입력해 주세요"></textarea>
+                </div>
+                <div class="work_line_2 margin_t_10">
+                    <textarea class="textarea_style " placeholder="내용을 입력해 주세요"></textarea>
+                </div>
+                <button class="menu_bu size_w_f margin_t_10">저 장</button>
+            </div>
+             -->
+    </div>
+
+    <div class="popup_setting_line">
+        <div class="setting_line_oj target_3">
+            <span class="">메뉴</span>
+            <div class="setting_line_oj_item_wrap">
+            </div>
+        </div>
+        <div class="setting_line_oj_right">
+            <div class="chat_info_text_wrap">
+                <span class="chat_info_text" id="customerKind">비회원</span>
+                <span class="chat_info_text" id="reqtTime">(11:23)</span>
+                <span class="chat_info_text" id="elapsedTime">+13</span>
+            </div>
+        </div>
+    </div>
+    <div class="workspace_flex_wrap">
+        <div class="workspace chat">
+
+            <div class="old_chatign_wrap">
+                <div class="old_chatign_unfold_bu"><span>채팅 내역 보기</span><span>▼</span></div>
+                <div class="old_chatign_view"></div>
+
+            </div>
+            <div class="chat_view_wrap">
+                <div class="chat_system_line">
+                    <span class="chat_system_text_1" id="currentTime">2023-07-13 11:23</span>
+                </div>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+            </div>
+            <div class="chating_text_input_wrap">
+                <div class="popup_function_line padding_l_r_0">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <select id="boilerplate_combo" class="input_style">
+                                <option value="">상용구</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="oj_flex">
+                        <button id="fillAttachReq" class="menu_bu size_w_f display_none">첨부요청</button>
+                        <button id="postProcess" class="menu_bu size_w_f ">후처리</button>
+                        <button id="chatHistory" class="menu_bu size_w_f ">상담이력</button>
+                    </div>
+
+                </div>
+                <textarea id="textarea" class="chating_textarea"></textarea>
+                <button id="messenger_send_bu" class="menu_bu size_w_f margin_t_10">보내기</button>
+            </div>
+        </div>
+
+        <div id="chatHistoryDiv" class="workspace chat_wrap fold">
+            <div>
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text"> • 상담이력</div>
+                </div>
+                <div class="popup_function_line">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <input data-id="" id="searchUserName" class="input_style" placeholder="이름 입력" maxlength="20">
+                            <input data-id="" id="searchUserMobile" maxlength="13" class="input_style" placeholder="전화번호 입력" maxlength="20">
+                        </div>
+                        <div class="oj_flex">
+                            <button id="searchHistoryBtn" class="menu_bu">조 회</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table_style chat_1">
+                    <table id="postProcHistoryTable">
+                        <tr class="table_title_line">
+                            <td>제목</td>
+                            <td>상담원</td>
+                            <td>상담유형</td>
+                            <td>등록일시</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+            </div>
+            <div class="contour_row_type_2"></div>
+
+            <div id="chatHistoryDetailDev" class="display_none">
+
+                <div class="popup_subtitle_line ">
+                    <div class="con_subtitle_text"> • 상담이력 상세내용</div>
+                </div>
+                <div class="table_style chat_2">
+                    <table>
+                        <tr>
+                            <td class="td_title_1">고객명</td>
+                            <td class="text_l" id="detail_userName"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">전화번호</td>
+                            <td class="text_l" id="detail_userMobile"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">상담시간</td>
+                            <td class="text_l" id="detail_cnslDate"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">상담분류</td>
+                            <td class="text_l" id="detail_categName"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">제목</td>
+                            <td class="text_l" id="detail_postProcTitle"></td>
+                        </tr>
+                        <tr>
+                            <td class="td_title_1">내용</td>
+                            <td class="text_l" id="detail_postProcContent"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <button id="foldBtn" class="menu_bu size_w_f margin_t_10">접 기</button>
+        </div>
+    </div>
+</div>

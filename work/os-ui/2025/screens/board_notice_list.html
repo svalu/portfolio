@@ -1,0 +1,86 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/constants.js"></script>
+    <script type="text/javascript" src="../js/board/notice.js"></script>
+    <script type="text/javascript" src="../js/board/list.js"></script>
+    <script type="text/javascript" src="../js/common/acs.js"></script>
+    <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
+    <script type="text/javascript" src="../js/common/dropDownMenuEvent.js"></script>
+    <script type="text/javascript" src="../js/common/commonPaging.js"></script>
+    <script type="text/javascript" src="../js/common/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/common/commonSorting.js"></script>
+</head>
+<div class="iframe_body">
+            <div class="popup_setting_line">
+                <div class="setting_line_oj target_3 display_none">
+                    <span class="">메뉴</span>
+                </div>
+            </div>
+            <div class="workspace user_inquiry">
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text"> • 공지사항 조회</div>
+                </div>
+                <div class="popup_function_line" id="searchDiv">
+                    <div class="popup_inline left_wrap">
+                        <div class="oj_flex">
+                            <div class="con_name">제목</div>
+                            <div class="con_name">:</div>
+                            <input id="brdNoticeTitle" class="input_style" placeholder="택스트 입력">
+                        </div>
+                        <div class="contour_col"></div>
+                        <div class="oj_flex" id="dateControls">
+                            <div class="con_name">조회기간</div>
+                            <div class="con_name">:</div>
+                            <input class="input_style" type="date" id="startDate">
+                            <div class="con_name">~</div>
+                            <input class="input_style" type="date" id="endDate">
+                        </div>
+                        <div class="oj_flex">
+                            <button class="menu_bu" id="searchBtn">조 회</button>
+                        </div>
+                        <div class="oj_flex">
+                            <button class="menu_bu" id="initBtn">초기화</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup_subtitle_line">
+                    <div class="con_subtitle_text"> • 공지사항 목록</div>
+                </div>
+                <div class="con_line">
+                    <div class="con_text_2">(총 : <span id="totalCnt">0</span>건)</div>
+                </div>
+                <div class="table_style user_inquiry">
+                    <table id="noticeTable">
+                        <tr class="table_title_line">
+                            <td>No.</td>
+                            <td class="display_none" data="isAdmin">공지상태</td>
+                            <td>제목</td>
+                            <td>등록자</td>
+                            <td>등록일시</td>
+                            <td>수정자</td>
+                            <td>수정일시</td>
+                        </tr>
+                        
+                    </table>
+                    <div class="pageing_wrap">
+                    	<!--
+                        <div class="page_oj_icon">◀◀</div>
+                        <div class="page_oj_icon">◀</div>
+                        <div class="page_oj">1</div>
+                        <div class="page_oj">2</div>
+                        <div class="page_oj">3</div>
+                        <div class="page_oj_icon">▶</div>
+                        <div class="page_oj_icon">▶▶</div>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </div>

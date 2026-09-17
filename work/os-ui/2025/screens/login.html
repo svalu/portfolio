@@ -1,0 +1,171 @@
+<spring:eval expression="@environment.getProperty('twofactorauth.is_use')" var="twoFactorIsUse"/>
+<spring:eval expression="@environment.getProperty('twofactorauth.sendType')" var="twoFactorSendType"/>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
+    <title>COUNSELING OS</title>
+    <link rel="shortcut icon" type="image/jpg" href="../img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../vendor/jquery/jquery-ui.js"></script>
+    <script type="text/javascript" src="../mock/mock-api.js"></script>
+    <script type="text/javascript" src="../js/common/commonPopup.js"></script>
+    <script type="text/javascript" src="../js/login/login.js"></script>
+    <script>
+        const twoFactorIsUse = "false";
+        const twoFactorSendType = "EMAIL";
+    </script>
+</head>
+
+<body class="text-center">
+    <!--   메일 에니메이션-->
+    <div id="mailSendAnim" class="email_container display_none">
+        <div class="email_wrap">
+            <div class="email_top">
+            </div>
+            <div class="email_body">
+                <div class="email_front"></div>
+                <div class="email_back"></div>
+                <div class="email_text_wrap">
+                    <div class="email_text_1"></div>
+                    <div class="email_text_2"></div>
+                    <div class="wing_left"></div>
+                    <div class="wing_right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--        알림 콘텐츠-->
+    <div id="textPopup" class="pass_popup_wrap display_none" style="z-index: 99">
+        <div class="pass_popup_con">
+            <div class="pass_popup_text_1">알 림</div>
+            <div id="textPopupContents" class="pass_popup_text_2">
+            </div>
+        </div>
+        <div class="pass_popup_bu_wrap">
+            <button id="findPwAlertCloseBtn" class="pass_popup_bu bu_1">확인</button>
+        </div>
+    </div>
+
+    <div id="textConfirmPopup" class="pass_popup_wrap display_none" style="z-index: 98">
+        <div class="pass_popup_con">
+            <div class="pass_popup_text_1">알 림</div>
+            <div id="textConfirmPopupContents" class="pass_popup_text_2 text_c">
+            </div>
+        </div>
+        <div class="pass_popup_bu_wrap">
+            <button id="textConfirmPopupOk" class="pass_popup_bu bu_1" onclick="javascript:closeTextConfirmPop(true);">확인</button>
+            <button id="textConfirmPopupCancle" class="pass_popup_bu bu_2" onclick="javascript:closeTextConfirmPop(false);">취소</button>
+        </div>
+    </div>
+
+    <div id="resetPwPop" class="pass_popup_wrap display_none" style="z-index: 98">
+        <div class="pass_popup_info">
+            <div class="pass_popup_info_icon">ⓘ 안내</div>
+            <textarea id="pwRuleContext" class="pass_popup_info_text" readonly=""></textarea>
+        </div>
+        <div class="pass_popup_con">
+            <div class="pass_popup_text_1">비밀번호 변경</div>
+
+            <div id="resetPwContent" class="pass_popup_text_2">
+            </div>
+
+            <!--                알림 발생시 클래스 active 추가-->
+            <div class="pass_popup_input_wrap">
+                <div class="pass_popup_container">
+                    <input type="password" id="newPwInput" class="pass_popup_input" placeholder="새 비밀번호">
+                    <div class="pass_popup_input_eye" onclick="javascript:switchPwInputType(this);"></div>
+                </div>
+                <div class="pass_popup_container">
+                    <div>
+                        <input type="password" id="newPwInput_re" class="pass_popup_input" placeholder="비밀번호 확인">
+                        <div class="pass_popup_input_eye" onclick="javascript:switchPwInputType(this);"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="pwWarningMsgWrap">
+            </div>
+
+        </div>
+        <div class="pass_popup_bu_wrap">
+            <button id="resetPw_confirmBtn" class="pass_popup_bu bu_1" onclick="javascript:validatePw();">변경</button>
+            <button class="pass_popup_bu bu_2" onclick="javascript:closeResetPwPop()">취소</button>
+        </div>
+    </div>
+
+    <!--   비밀번호 확인 팝업 시작-->
+        <!--       비밀번호 찾기 콘텐츠-->
+    <div id="findPwUserInfoPop" class="pass_popup_wrap display_none" style="z-index: 98">
+        <div class="pass_popup_con">
+
+            <div class="pass_popup_text_1">비밀번호 찾기</div>
+
+            <!--                알림 발생시 클래스 active 추가-->
+            <div class="pass_popup_text_2">· 가입정보와 입력하신 정보가 일치하면, 임시 비밀번호가 메일로 발송됩니다.</div>
+            <div class="pass_popup_text_3">
+                ID(이름, 이메일)를 입력해 주세요.
+            </div>
+            <div class="pass_popup_input_wrap">
+                <input id="findPw_id" class="pass_popup_input" placeholder="ID를 입력해주세요">
+                <input id="findPw_name" class="pass_popup_input" placeholder="이름을 입력해주세요">
+                <input id="findPw_email" class="pass_popup_input" placeholder="E-mail을 입력해주세요">
+            </div>
+        </div>
+        <div class="pass_popup_bu_wrap">
+            <button id="sendEmailBtn" class="pass_popup_bu bu_1">발송</button>
+            <button id="sendEmailCancleBtn" class="pass_popup_bu bu_2">취소</button>
+        </div>
+    </div>
+    <!--   비밀번호 확인 팝업 끝-->
+
+    <!--2차인증 시작-->
+    <div id="twoFactorAuthPop" class="pass_popup_wrap display_none" style="z-index: 98">
+        <div class="pass_popup_con">
+
+            <div class="pass_popup_text_1" id="twoFactorAuthSendType">이메일 인증</div>
+
+            <!--                알림 발생시 클래스 active 추가-->
+            <div class="pass_popup_text_2" id="twoFactorAuthContents">· 계정 보호를 위해 추가 인증이 필요합니다.</div>
+
+            <div class="pass_popup_input_wrap">
+                <input id="authenticationNum" class="pass_popup_input display_none readonly" placeholder="인증 번호를 입력해 주세요." readonly="">
+            </div>
+            <div id="twoFactorAuthPopupMessage" class="pass_popup_text_3">인증 번호 유효시간이 초과 되었습니다. 인증 번호 재발급 후 이용해 주세요.</div>
+        </div>
+
+        <div class="pass_popup_bu_wrap">
+            <button id="twoFactorSendEmailBtn" class="pass_popup_bu bu_1">발송</button>
+            <button id="twoFactorSendEmailCancleBtn" class="pass_popup_bu bu_2">취소</button>
+        </div>
+    </div>
+    <!--2차인증 끝-->
+
+    <div class="login_wrap">
+        <div class="login_logo_1"></div>
+        <div class="login_logo_2 ani_opacity"></div>
+        <div class="form-signin">
+            <div class="login_box ani_opacity">
+                <div class="id_save_wrap">
+                    <input id="saveUserIdCheck" type="checkbox"><span>SAVE ID</span>
+                </div>
+                <input id="userId" type="text">
+            </div>
+            <div class="login_box_text" id="pwd_div"></div>
+            <div class="login_box ani_opacity">
+                <input id="password" type="password">
+            </div>
+            <div class="login_text ani_opacity">
+                <span>Login</span>
+            </div>
+            <div class="login_text_2 ani_opacity">
+                <span>비밀번호를 칮어버리셨나요?</span>
+                <span id="openFindPw">비밀번호 찾기</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

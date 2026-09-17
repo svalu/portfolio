@@ -1,0 +1,65 @@
+<script type="text/javascript" src="../mock/mock-api.js"></script>
+
+    <div class="side_bar">
+        <span>▶</span>
+    </div>
+    <div class="popup_subtitle_line border_0">
+        <div class="popup_top_line mode_2">
+            <div class="con_title_text_1">후처리</div>
+        </div>
+    </div>
+    <div class="workspace">
+
+        <div class="work_line_2 border_t_l display_none" id="userNameDiv">
+            <div class="oj_flex">
+                <div class="con_name">이름</div>
+                <div class="con_name">:</div>
+                <div class="con_name"><input id="userName" type="text" class="input_correction" maxlength="20"></div>
+            </div>
+        </div>
+        <div class="work_line_2 border_t_l display_none" id="userMobileDiv">
+            <div class="oj_flex">
+                <div class="con_name">전화번호</div>
+                <div class="con_name">:</div>
+                <div class="con_name"><input id="userMobile" type="text" class="input_correction" maxlength="13"></div>
+            </div>
+        </div>
+
+        <div class="work_line_2 border_t_l">
+            <div class="oj_flex">
+                <div class="con_name">상담분류</div>
+                <div class="con_name">:</div>
+                <div class="con_name" id="postProcType"></div>
+            </div>
+        </div>
+        <div class="work_line_2 border_t_l display_none" id="closeChatDiv">
+            <div class="oj_flex">
+                <div class="con_name">종료대상</div>
+                <div class="con_name">:</div>
+                <div class="con_name" id="closeChat"></div>
+            </div>
+        </div>
+        <div class="work_line_2 border_t_l">
+            <div class="oj_flex">
+                <div class="con_name">상담분류</div>
+                <div class="con_name">:</div>
+                <select class="input_style" id="cateMainId">
+                    <option value="">대분류</option>
+                </select>
+                <select class="input_style" id="cateMiddleId">
+                    <option value="">중분류</option>
+                </select>
+                <select class="input_style" id="cateSubId">
+                    <option value="">소분류</option>
+                </select>
+            </div>
+        </div>
+        <div class="work_line_2">
+            <textarea class="textarea_style size_1"  id="postProcTitle" name="postProcTitle"  placeholder="제목을 입력해 주세요"></textarea>
+        </div>
+        <div class="work_line_2 margin_t_10">
+            <textarea class="textarea_style"  id="postProcContent" name="postProcContent"  placeholder="내용을 입력해 주세요"></textarea>
+        </div>
+        <button class="menu_bu size_w_f margin_t_10" id="postProcessSave">저 장</button>
+    </div>
+

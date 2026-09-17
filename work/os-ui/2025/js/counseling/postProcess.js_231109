@@ -1,0 +1,202 @@
+let targetId = "";
+let postProcType = "";
+let menuId = "postProcess_";
+let categData;
+
+$(document).ready(function() {
+	let queryParams = getQueryParameters();
+	targetId = queryParams.targetId;
+	postProcType = queryParams.postProcType;
+	menuId += targetId;
+	
+	if(!targetId || !postProcType) {
+		aicsAlert("잘못된 접근입니다.", function() {
+			closeIframe();
+		});
+		return;
+	}
+	$("#postProcType").html(postProcType == "RSVTN" ? "상담예약" : "채팅");	
+    getCategoryData();
+    initEvent();
+    
+});
+
+function getCategoryData() {
+    let queryParams = getQueryParameters();
+    
+    $.ajax({
+        url : "/rest/api/counselingClassifier/list",
+        type : "POST",
+        dataType : "json",
+        async : false,
+        success : function(ajaxData) {
+			categData = ajaxData.data;
+			setCategMain();
+			getPostProcessData();
+        },
+        error : function(error) {
+            console.log(error);
+        }
+    })
+}
+
+function initEvent() {
+	$(".btnSave").on("click", function(event) {
+		postProcessSaveValidation();
+	});
+	
+	$("#cateMainId").on("change", function() {
+		setSubCateg(this.value, 1);
+	});
+	
+	$("#cateMiddleId").on("change", function() {
+		setSubCateg(this.value, 2);
+	});
+}
+
+function getPostProcessData() {
+	var param = {
+		"postProcType" : postProcType
+	};
+	
+	$.ajax({
+        url : "/rest/api/counseling/postProcess/"+targetId,
+        type : "POST",
+        dataType : "json",
+        success : function(ajaxData) {
+			if(ajaxData.data) {
+				$(".btnSave").remove(); 
+				setPostProcessData(ajaxData.data);
+			} else {
+				$(".btnSave").removeClass("display_none");
+			}
+            
+        },
+        error : function(error) {
+            console.log(error);
+        }
+    })
+}
+
+function setPostProcessData(data) {
+	$("#cateMainId").val(data.cateMainId);
+	setSubCateg(data.cateMainId, 1);
+	$("#cateMiddleId").val(data.cateMiddleId);
+	setSubCateg(data.cateMiddleId, 2);
+	$("#cateSubId").val(data.cateSubId);
+	$("#postProcTitle").val(data.postProcTitle);
+	$("#postProcContent").val(data.postProcContent);
+	
+	$("textarea, select").prop("disabled", true);
+}
+
+function setCategMain() {
+	
+	var depth1 = $.grep(categData, e => e.categIsUse == "true" && e.categLevel == "0");
+	var sortData = depth1.sort( (a, b) => ( a.categSeq - b.categSeq ) );
+	
+	var html = "";
+	$(sortData).each(function(idx, obj) {
+		html += `<option value="${obj.id}">${obj.name}</option>`;
+	});
+	
+	$("#cateMainId").append(html);
+}
+
+function setSubCateg(categId, idx) {
+	var targetLevel = idx; 
+	var searchData = $.grep(categData, e => e.categIsUse == "true" && e.categLevel == targetLevel && e.parentId == categId);
+	var sortData = searchData.sort( (a, b) => ( a.categSeq - b.categSeq ) );
+	
+	var initOptionArr = ["대분류","중분류","소분류"];
+	var targetObj = ["cateMainId","cateMiddleId","cateSubId"];
+	
+	if(sortData.length > 0) {
+		var html = "";
+		$(sortData).each(function(idx, obj) {
+			html += `<option value="${obj.id}">${obj.name}</option>`;
+		});
+	
+		$("#"+targetObj[idx]).html(`<option value="">${initOptionArr[idx]}</option>`).append(html).attr("disabled", false);
+	} else {
+		$("#"+targetObj[idx]).html(`<option value="">${initOptionArr[idx]}</option>`).attr("disabled", true);
+		if(idx == 1) $("#"+targetObj[2]).html(`<option value="">소분류</option>`).attr("disabled", true);
+	}		
+}
+
+function closeIframe() {
+	$(parent.document).find("div[id="+menuId+"]").find("button[data-action=close]").click();
+}
+
+function postProcessSaveValidation() {
+	if($("#cateMainId").val() == "") {
+		aicsAlert("대분류를 선택해 주세요");
+		return;
+	}
+	
+	if(!$("#cateMiddleId").attr("disabled")) {
+		if($("#cateMiddleId").val() == "") {
+			aicsAlert("중분류를 선택해 주세요");
+			return;
+		}
+	}
+	
+	if(!$("#cateSubId").attr("disabled")) {
+		if($("#cateSubId").val() == "") {
+			aicsAlert("소분류를 선택해 주세요");
+			return;
+		}
+	}
+	
+	if($("#postProcTitle").val() == "") {
+		aicsAlert("제목을 입력해 주세요");
+		return;
+	}
+	
+	if($("#postProcContent").val() == "") {
+		aicsAlert("내용을 입력해 주세요");
+		return;
+	}
+	
+	let msg = "후처리 저장 시 상담왼료 처리됩니다.<br>(상담완료 후 수정불가)<br>저장 하시겠습니까?";
+	aicsConfirm(msg, function() {
+		postProcessSave();
+	});
+	
+}
+
+function postProcessSave() {
+	
+	
+	var param = {
+		"targetId" : targetId,
+		"postProcType" : postProcType,
+		"cateMainId" : $("#cateMainId").val(), 
+		"cateMiddleId" : $("#cateMiddleId").val(), 
+		"cateSubId" : $("#cateSubId").val(), 
+		"postProcTitle" : $.trim($("#postProcTitle").val()), 
+		"postProcContent" : $.trim($("#postProcContent").val()), 
+	};
+	
+	$.ajax({
+        url : "/rest/api/counseling/postProcess/save",
+        type : "POST",
+        dataType : "json",
+        data : param,
+        success : function(ajaxData) {
+
+			if(ajaxData.data == "success") {
+				aicsAlert("저장되었습니다.", () => closeIframe() );
+			} else {
+				aicsAlert("서버와의 통신에 실패하였습니다.");
+			}
+			
+        },
+        error : function(error) {
+            console.log(error);
+        }
+    })
+	
+	
+	
+}
