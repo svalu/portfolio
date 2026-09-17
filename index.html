@@ -142,8 +142,9 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
   /* 02: 옛집(2023) 작게 위, 새집(2026) 크게 아래에 겹쳐 */
   #d02 .frame{background:#fff;border-color:rgba(22,21,15,.12);box-shadow:0 24px 60px rgba(40,30,10,.18)}
   #d02 .frame .bar{background:#f1ede4;border-color:rgba(22,21,15,.08)} #d02 .frame .bar i{background:rgba(22,21,15,.14)} #d02 .frame .bar span{color:var(--ink3)}
-  #d02 .f2023{right:34%;top:12%;width:30%}
-  #d02 .f2026{right:4%;top:30%;width:46%;transition-delay:.25s}
+  #d02 .f2023{right:50%;top:6%;width:25%}
+  #d02 .f2025{right:29%;top:21%;width:29%;transition-delay:.12s}
+  #d02 .f2026{right:4%;top:38%;width:44%;transition-delay:.25s}
   #d02 .arrow{position:absolute;right:31%;top:41%;width:6vw;height:1px;background:var(--acc);opacity:0;transition:opacity 1s var(--in) .7s}
   #d02 .arrow::after{content:"";position:absolute;right:0;top:-3px;border:3.5px solid transparent;border-left:7px solid var(--acc)}
   #d02.in .arrow{opacity:1}
@@ -235,7 +236,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
     .phone::before{top:2.6vw;height:2.2vw}
 
     /* 02: 새집(2026) 하나만, 1024px 미니어처. 옛집·화살표는 데스크톱에서 */
-    #d02 .f2023,#d02 .arrow{display:none}
+    #d02 .f2023,#d02 .f2025,#d02 .arrow{display:none}
     #d02 .f2026{right:4%;left:4%;width:auto;top:auto;bottom:14%}
     #d02 .facts p:nth-child(2){display:block}
   }
@@ -305,13 +306,17 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
       <p class="sub">상담 화면을 OS처럼 · 같은 관점으로 3년, 두 번</p>
       <div class="facts">
         <p><b>2023.</b> 상담사는 창을 여러 개 띄워 놓고 일하는 사람이었다. 그래서 페이지 대신 창과 작업표시줄을 줬다. 화면을 옮겨다니지 않고 펼쳐 놓고 쓰게.</p>
+        <p><b>2025.</b> 넘긴 게 끝이 아니었다. 2023과 2025는 같은 CSS 파일이다. 제품이 되는 2년 동안 실적 그래프·상태 색·파일 첨부가 붙어 821줄이 더 자랐다.</p>
         <p><b>2026.</b> 같은 관점이 관리자 도구 전체로 번졌다. 드래그·리사이즈·스냅·시작메뉴·바탕화면. 화면이 아니라 일할 공간을 설계했다.</p>
         <p><b>화려해 보이지만 결국 구조 얘기다.</b> 사용자가 여러 일을 동시에 한다면, UI는 한 장의 페이지이기를 그만둬야 한다.</p>
       </div>
-      <div class="try">둘 다 실물입니다 · 아이콘을 눌러 창을 열어보세요</div>
+      <div class="try">셋 다 실물입니다 · 아이콘을 눌러 창을 열어보세요</div>
       <div class="frame scaled f2023" data-vw="1440" data-title="2023 · 상담사 화면"><button class="zoom" type="button">크게 보기</button><div class="label">2023 · 상담사 화면</div>
         <div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
         <div class="view"><iframe data-src="work/os-ui/2023/main.html?v=20260914" title="Counseling OS 2023"></iframe></div></div>
+      <div class="frame scaled f2025" data-vw="1440" data-title="2025 · 제품이 된 화면"><button class="zoom" type="button">크게 보기</button><div class="label">2025 · 제품이 된 화면</div>
+        <div class="bar"><i></i><i></i><i></i><span>counseling / 2025</span></div>
+        <div class="view"><iframe data-src="work/os-ui/2025/index.html?demo=1&amp;v=20260917" title="Counseling OS 2025"></iframe></div></div>
       <div class="arrow"></div>
       <div class="frame scaled f2026" data-vw="1440" data-mvw="1024" data-title="2026 · 관리자 OS"><button class="zoom" type="button">크게 보기</button><div class="label">2026 · 관리자 OS</div>
         <div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
