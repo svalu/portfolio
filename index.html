@@ -270,12 +270,12 @@
     .frame .grew{top:auto;bottom:-26px;right:auto;left:0}
     .zoom{opacity:1}
 
-    /* 01: 최종은 폰 실물, 시안 셋은 데스크톱 화면이라 가로 프레임으로 — 탭이 둘을 바꾼다 */
+    /* 01: 폰에선 실물이 폰 하나. 시안 셋도 첫 화면(로그인)이 390 폭에 들어오므로 같은 폰 안에서 바뀐다. 데스크톱 프레임은 접는다 */
     .phone{align-self:center;width:62vw;min-width:0;margin-top:30px;border-radius:9vw;border-width:.9vw;transform:translateY(30px)}
     .dim.in .phone{transform:none}
     .phone::before{top:2.6vw;height:2.2vw}
     .phone .zoom{bottom:10px}
-    #d01 .frame{display:none} #d01.shot .frame{display:block} #d01.shot .phone{display:none}
+    #d01 .frame{display:none}
 
     /* 02: 둘 다 세로로. 2023↔2025 위, 2026 아래. id 선택자의 right/top 을 여기서 다시 푼다 */
     #d01 .frame,#d02 .fgrow,#d02 .f2026{right:auto;top:auto;width:100%}
@@ -699,12 +699,10 @@ frame();
     var src=b.dataset.src + '?v=' + (fr.dataset.src||'').split('v=')[1];
     fr.dataset.src=src;
     if(NARROW){
-      /* 폰: 최종은 폰 실물로, 시안 셋은 데스크톱 화면이라 가로 프레임으로. 숨긴 쪽은 내린다 */
-      var isFinal=/live\.html/.test(b.dataset.src), d01=document.getElementById('d01'), pf=document.querySelector('#phone01 iframe');
-      d01.classList.toggle('shot', !isFinal);
-      if(isFinal){ fr.removeAttribute('src'); if(!pf.getAttribute('src')) pf.setAttribute('src', pf.dataset.src); }
-      else{ pf.removeAttribute('src'); fr.setAttribute('src', src); }
-      fitViews();
+      /* 폰: 실물은 폰 하나. 시안도 같은 폰 안에서 바뀐다(일관성 — 희랑). 데스크톱 프레임은 접혀 있으니 건드리지 않는다 */
+      var pf=document.querySelector('#phone01 iframe');
+      pf.dataset.src=src;
+      if(pf.getAttribute('src')) pf.setAttribute('src', src);
     }else if(fr.getAttribute('src')) fr.setAttribute('src', src);     /* 이미 떠 있으면 바로 갈아 끼운다 */
     var key=b.dataset.src.split('/').pop();
     if(bar) bar.textContent=names[key]||key;
