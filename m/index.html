@@ -105,6 +105,7 @@
   .frame .view iframe{border:0;display:block;background:#fff;width:100%;height:100%}
   .frame .tap{position:absolute;inset:0;z-index:3}
   .frame.small{width:58%}
+  .tabs+.frame.small{margin-top:12px}
   .cap{margin-top:8px;font-size:11px;letter-spacing:.2em;color:var(--fg3)}
 
   /* ── 팔레트 ── */
@@ -208,17 +209,17 @@
     <div class="view"><iframe data-src="../work/os-ui/2026/index.html?v=20260914" title="Admin OS 2026"></iframe></div>
     <button class="zoom" type="button">크게 보기</button></div>
   <div class="cap r">2026 · 관리자 OS — 드래그·리사이즈·스냅·시작메뉴</div>
-  <div class="frame small r" data-vw="1440" data-title="2023 · 상담사 화면"><div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
-    <div class="view"><iframe data-src="../work/os-ui/2023/main.html?v=20260914" title="Counseling OS 2023"></iframe></div>
+  <div class="tabs r" id="yrs02" role="tablist" aria-label="연도">
+    <button role="tab" aria-selected="true"  data-yr="2023" data-src="../work/os-ui/2023/main.html?v=20260918" data-title="2023 · 상담사 화면, 넘긴 날">2023 · 넘긴 날</button>
+    <button role="tab" aria-selected="false" data-yr="2025" data-src="../work/os-ui/2025/index.html?demo=1&amp;v=20260918" data-title="2025 · 2년 뒤, 제품이 된 화면">2025 · 2년 뒤</button>
+  </div>
+  <div class="frame small r" id="fgrow" data-vw="1440" data-title="2023 · 상담사 화면, 넘긴 날"><div class="bar"><i></i><i></i><i></i><span>counseling / 2023</span></div>
+    <div class="view"><iframe data-src="../work/os-ui/2023/main.html?v=20260918" title="Counseling OS"></iframe></div>
     <button class="zoom" type="button">크게 보기</button></div>
-  <div class="cap r">2023 · 상담사 화면 — 넘긴 것</div>
-  <div class="frame small r" data-vw="1440" data-title="2025 · 제품이 된 화면"><div class="bar"><i></i><i></i><i></i><span>counseling / 2025</span></div>
-    <div class="view"><iframe data-src="../work/os-ui/2025/index.html?demo=1&amp;v=20260917" title="Counseling OS 2025"></iframe></div>
-    <button class="zoom" type="button">크게 보기</button></div>
-  <div class="cap r">2025 · 제품이 된 화면 — 같은 파일이 821줄 더 자랐다</div>
+  <p class="cap r" id="growCap">2023 · 상담사 화면 — 개발팀에 넘긴 날</p>
   <div class="facts r">
-    <p><b>넘긴 게 끝이 아니었다.</b> 위 두 상담사 화면은 같은 CSS 파일이다. 인계한 뒤 제품 안에서 실적 그래프·상태 색·파일 첨부가 붙어 821줄이 늘었다.</p>
-    <p><b>셋 다 데스크톱 화면이라 폰에선 작게 보인다.</b> 탭하면 실물이 열리고, 창을 끌어보려면 데스크톱에서 여는 편이 낫다.</p>
+    <p><b>넘긴 게 끝이 아니었다.</b> 위 연도를 눌러 보세요. 2년 뒤 같은 파일이 제품이 된 모습이다. 서버는 사라졌지만 화면은 되살렸다.</p>
+    <p><b>둘 다 데스크톱 화면이라 폰에선 작게 보인다.</b> 크게 보기로 열면 확대해서 볼 수 있다.</p>
     <p><b>화려해 보이지만 결국 구조 얘기다.</b> 사용자가 여러 일을 동시에 한다면, UI는 한 장의 페이지이기를 그만둬야 한다.</p>
   </div>
   <div class="band"></div><div class="year">.2023 → 2026</div>
@@ -372,6 +373,22 @@ document.querySelectorAll('iframe[data-src]').forEach(f=>loadObs.observe(f));
       shot.dataset.title = 'Blue Horizon · ' + b.textContent.trim();
       fitViews();
     }
+  });
+})();
+
+
+/* ── 02 연도 토글 (모바일) ── */
+(function(){
+  var wrap=document.getElementById('yrs02'), host=document.getElementById('fgrow'); if(!wrap||!host) return;
+  var fr=host.querySelector('iframe'), bar=host.querySelector('.bar span'), cap=document.getElementById('growCap');
+  var caps={'2023':'2023 · 상담사 화면 — 개발팀에 넘긴 날','2025':'2025 · 2년 뒤 — 같은 파일이 제품이 됐다 · +821줄'};
+  wrap.addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    wrap.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-selected', String(x===b)); });
+    fr.dataset.src=b.dataset.src;
+    if(fr.getAttribute('src')) fr.setAttribute('src', b.dataset.src);
+    if(bar) bar.textContent='counseling / '+b.dataset.yr;
+    host.dataset.title=b.dataset.title; if(cap) cap.textContent=caps[b.dataset.yr];
   });
 })();
 

@@ -4,7 +4,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
     <title>Counseling OS · 2023</title>
-    <link rel="stylesheet" type="text/css" href="./css/main.css?v=7">
+    <link rel="stylesheet" type="text/css" href="./css/main.css?v=8">
     <script type="text/javascript" src="./js/jquery-1.6.2.min.js"></script>
 
     <!--    드래그 소스-->
@@ -22,31 +22,6 @@
 .popup_wrap.win_out,.popup_alert_wrap.win_out{animation:winOut .2s ease-in both;pointer-events:none}
 @keyframes winOut{from{opacity:1;transform:none}to{opacity:0;transform:scale(.97) translateY(6px)}}
 @media (prefers-reduced-motion:reduce){.popup_wrap,.popup_alert_wrap,.popup_wrap.win_out{animation:none}}
-#pw17 .iframe_body{width:660px}
-.perf{padding:14px 16px 16px;font-family:"font_na"}
-.perf_head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.perf_range{font-size:12px;color:var(--point_color_4)}
-.perf_legend{font-size:11px;color:var(--point_color_4);display:flex;align-items:center;gap:4px}
-.perf_legend i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-left:10px}
-.perf_legend i.k1{background:var(--point_color_1)}
-.perf_legend i.k2{background:var(--point_color_3)}
-.perf_kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.perf_kpi div{border:1px solid var(--bg_color_4);padding:10px 12px}
-.perf_kpi b{display:block;font-family:"font_b";font-size:22px;color:var(--font_color_1);letter-spacing:-.02em}
-.perf_kpi b em{font-style:normal;font-size:13px;color:var(--point_color_3);margin-left:1px}
-.perf_kpi span{display:block;margin-top:3px;font-size:11px;color:var(--point_color_4)}
-.perf_chart{border:1px solid var(--bg_color_4);padding:10px 6px 6px}
-.perf_chart svg{width:100%;height:220px;display:block;overflow:visible}
-.perf_chart .grid line{stroke:var(--bg_color_4);stroke-width:1}
-.perf_chart .grid line.base{stroke:var(--bg_color_2)}
-.perf_chart .ylab text{font-size:9px;fill:var(--point_color_3);text-anchor:end;font-family:"font_na"}
-.perf_chart .xlab text{font-size:9px;fill:var(--point_color_4);text-anchor:middle;font-family:"font_na"}
-.perf_chart .bars rect{transform-box:fill-box;transform-origin:bottom;animation:perfGrow .85s cubic-bezier(.2,.7,.2,1) both}
-@keyframes perfGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-.perf_chart .trend{fill:none;stroke:var(--point_color_5);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
-  stroke-dasharray:900;animation:perfDraw 1.5s ease-out .5s both}
-@keyframes perfDraw{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
-@media (prefers-reduced-motion:reduce){.perf_chart .bars rect,.perf_chart .trend{animation:none}}
 </style>
 </head>
 
@@ -1828,50 +1803,6 @@
         </div>
     </div>
 
-<!-- 포폴 데모: 개인실적 (그래프) -->
-<div id="pw17" class="popup_wrap drag_oj display_none">
-    <div class="popup_top_line">
-        <div class="popup_inline left_wrap">
-            <div class="con_title_text_1">개인실적</div>
-        </div>
-        <div class="popup_inline right_wrap">
-            <button class="popup_bu_icon minus"></button>
-            <button class="popup_bu_icon esc"></button>
-        </div>
-    </div>
-    <div class="iframe_body">
-        <div class="perf">
-            <div class="perf_head">
-                <span class="perf_range">2023-07-06 ~ 2023-07-13</span>
-                <span class="perf_legend"><i class="k1"></i>상담완료<i class="k2"></i>예약상담</span>
-            </div>
-            <div class="perf_kpi">
-                <div><b>1,284</b><span>총 상담건수</span></div>
-                <div><b>96.4<em>%</em></b><span>응대율</span></div>
-                <div><b>3:12</b><span>평균 응대시간</span></div>
-                <div><b>4.7<em>/5</em></b><span>만족도</span></div>
-            </div>
-            <div class="perf_chart">
-                <svg viewBox="0 0 620 220" preserveAspectRatio="none" aria-label="일자별 상담 건수">
-                    <g class="grid">
-                        <line x1="44" y1="20"  x2="600" y2="20"/>
-                        <line x1="44" y1="65"  x2="600" y2="65"/>
-                        <line x1="44" y1="110" x2="600" y2="110"/>
-                        <line x1="44" y1="155" x2="600" y2="155"/>
-                        <line x1="44" y1="190" x2="600" y2="190" class="base"/>
-                    </g>
-                    <g class="ylab">
-                        <text x="36" y="24">200</text><text x="36" y="69">150</text>
-                        <text x="36" y="114">100</text><text x="36" y="159">50</text><text x="36" y="194">0</text>
-                    </g>
-                    <g class="bars"></g>
-                    <polyline class="trend" points=""/>
-                    <g class="xlab"></g>
-                </svg>
-            </div>
-        </div>
-    </div>
-</div>
     <div class="bg_icon_container">
         <div class="bg_icon_wrap" data-open="pw1" title="상담채팅">
             <div class="bg_icon ui_chat"></div>
@@ -1900,10 +1831,6 @@
         <div class="bg_icon_wrap" data-open="pw8" title="메모장">
             <div class="bg_icon ui_memo"></div>
             <div class="bg_icon_text">메모장</div>
-        </div>
-        <div class="bg_icon_wrap" data-open="pw17" title="개인실적">
-            <div class="bg_icon ui_chart"></div>
-            <div class="bg_icon_text">개인실적</div>
         </div>
         <div class="bg_icon_wrap" data-open="pw15" title="운영시간 관리">
             <div class="bg_icon ui_hours"></div>
@@ -2098,24 +2025,3 @@
 })();
 </script>
 
-<!-- 포폴 데모: 실적 그래프 그리기 -->
-<script>
-(function(){
-  var wrap = document.getElementById('pw17'); if(!wrap) return;
-  var days = ['07-06','07-07','07-08','07-09','07-10','07-11','07-12','07-13'];
-  var done = [118, 142, 96, 164, 151, 178, 133, 186];     /* 상담완료 */
-  var book = [ 28,  35, 22,  41,  33,  47,  30,  52];     /* 예약상담 */
-  var x0 = 56, span = 68, bw = 19, base = 190, top = 20, max = 200;
-  var y = function(v){ return base - (v/max)*(base-top); };
-  var bars = wrap.querySelector('.bars'), xlab = wrap.querySelector('.xlab'), trend = wrap.querySelector('.trend');
-  var b = '', l = '', pts = [];
-  for(var i=0;i<days.length;i++){
-    var cx = x0 + i*span;
-    b += '<rect x="'+(cx-bw-2)+'" y="'+y(done[i]).toFixed(1)+'" width="'+bw+'" height="'+(base-y(done[i])).toFixed(1)+'" fill="var(--point_color_1)" style="animation-delay:'+(i*0.06).toFixed(2)+'s"/>';
-    b += '<rect x="'+(cx+2)+'" y="'+y(book[i]).toFixed(1)+'" width="'+bw+'" height="'+(base-y(book[i])).toFixed(1)+'" fill="var(--point_color_3)" style="animation-delay:'+(i*0.06+0.05).toFixed(2)+'s"/>';
-    l += '<text x="'+cx+'" y="'+(base+14)+'">'+days[i]+'</text>';
-    pts.push(cx + ',' + y(done[i]+book[i]).toFixed(1));      /* 합계 추세선 */
-  }
-  bars.innerHTML = b; xlab.innerHTML = l; trend.setAttribute('points', pts.join(' '));
-})();
-</script>
