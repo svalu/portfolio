@@ -26,7 +26,7 @@
 - 클라우드/모바일 세션은 heerang-md 에 접근하지 못한다 → **`README.md` §4(판정 대기)·§5(다음 할 일)를 갱신하고 커밋 메시지에 결정을 적는다.** 데스크톱 드롱이 다음에 pull 해서 CONTEXT_NOW 로 옮긴다.
 
 ## 구조 요약 (자세히는 README)
-- `index.html` 한 파일. 섹션 = `.dim` (sticky 스택). 스크롤 진행도 `prog` → 다음 차원이 오브젤트 위치 중심 원으로 열림.
+- `index.html` 한 파일. 섹션 = `.dim` (sticky 스택). 스크롤 진행도 `prog` → 다음 차원이 오브젠트 위치 중심 원으로 열림.
 - 오브젠트 자리: `data-obj="x,y,크기,색"` (데스크톱). 폰은 `frame()` 의 `if(NARROW)` 식(우상단 고정) — 색만 차원 것을 쓴다.
 - 등장 애니메이션은 `.dim.in` 클래스로, 데스크톱은 원이 70% 이상 열리면, 폰은 IntersectionObserver(18%)가 붙인다.
 - 문장을 고쳤으면 `python tools/subset-fonts.py` (폰트 서브셋에 없는 글자는 시스템 폰트로 튄다).
