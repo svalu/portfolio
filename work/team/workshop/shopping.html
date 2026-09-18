@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffb347">
+<title>BH 팀 워크샵 · 장보기</title>
+<meta property="og:title" content="워크샵 장보기 리스트 🛒">
+<meta property="og:description" content="산 건 체크, 빠진 건 추가! 누구나 수정 가능.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=10">
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar"></header>
+
+  <section class="card tilt-r" style="margin-top:14px">
+    <span class="sticker coral">🛒</span>
+    <div class="eyebrow">장보기</div>
+    <h2>산 거 체크, 빠진 거 추가! 🧺</h2>
+    <div class="progress coral"><i id="bar" style="width:0%"></i></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:8px;flex-wrap:wrap">
+      <span style="font-weight:800;font-size:13px" id="barText">0 / 0 구매 완료</span>
+      <span class="sync"><i></i><b>연결 중…</b></span>
+    </div>
+    <div class="tags" id="shoppers"></div>
+    <button type="button" class="btn ghost sm" id="editShoppers" style="margin-top:10px">✏️ 장볼 사람 수정</button>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--ink-2);font-weight:600">항목 옆 <b>담당?</b>을 눌러 장볼 사람을 정하고, 사면 왼쪽 네모 체크! 항목 이름이나 ⋯ 를 누르면 수정·삭제.</p>
+  </section>
+
+  <div class="shop-grid">
+    <div class="shop-main">
+      <div class="filters" id="filters"></div>
+      <div id="list"><div class="empty">목록을 불러오는 중… 🛒</div></div>
+
+      <form class="add-bar" id="addForm" autocomplete="off">
+        <input type="text" id="addName" placeholder="추가할 것 (예: 얼음 2봉)" required maxlength="60">
+        <button type="submit" class="btn primary">＋ 추가</button>
+        <div class="row2">
+          <select id="addCat"></select>
+          <select id="addBuyer" data-people><option value="">담당 (선택)</option></select>
+        </div>
+      </form>
+    </div>
+
+    <aside class="shop-side">
+      <section class="card" style="padding:14px 16px">
+        <div class="eyebrow">🍽️ 식단 계획</div>
+        <h3 style="margin:6px 0 8px">저녁 🔥</h3>
+        <div class="meal" id="dinner"></div>
+        <h3 style="margin:14px 0 8px">아침 🌅</h3>
+        <div class="meal" id="breakfast"></div>
+      </section>
+    </aside>
+  </div>
+
+  <p class="footer" style="margin-top:18px">누구나 추가·수정·삭제 가능 · 변경은 모두에게 바로 공유돼요</p>
+</div>
+
+<!-- 장볼 사람 편집 시트 -->
+<div class="sheet-bg" id="shopperBg">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <h2>장볼 사람 🛒</h2>
+    <p class="hint">이름을 눌러서 켜고 끄면 돼요. 누구나 수정 가능!</p>
+    <div class="picker" id="shopperPick"></div>
+    <div class="field"><label>한마디 (선택)</label><input type="text" id="shopperNote" placeholder='예: 오수아: "난 빼줘" 🙅' maxlength="60"></div>
+    <div class="sheet-actions">
+      <button type="button" class="btn ghost" id="spCancel">닫기</button>
+      <button type="button" class="btn primary" id="spSave">저장 ✅</button>
+    </div>
+  </div>
+</div>
+
+<!-- 항목 편집 시트 -->
+<div class="sheet-bg" id="sheetBg">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <h2>항목 수정 ✏️</h2>
+    <p class="hint" id="edMeta"></p>
+    <div class="field"><label>이름</label><input type="text" id="edName" maxlength="60"></div>
+    <div class="field"><label>메모 (수량, 브랜드, 주의사항)</label><input type="text" id="edMemo" maxlength="120"></div>
+    <div class="field"><label>분류</label><select id="edCat"></select></div>
+    <div class="field"><label>담당 (장볼 사람)</label><select id="edBuyer" data-people><option value="">미정</option></select></div>
+    <div class="sheet-actions">
+      <button type="button" class="btn ghost" id="edDelete" style="flex:0 0 auto;color:var(--coral)">🗑 삭제</button>
+      <button type="button" class="btn ghost" id="edCancel">닫기</button>
+      <button type="button" class="btn primary" id="edSave">저장 ✅</button>
+    </div>
+  </div>
+</div>
+
+<script src="./assets/data.js?v=10"></script>
+<script src="./assets/app.js?v=10"></script>
+<script>
+(function () {
+  const C = window.WK_CONFIG, { $, $$, esc, toast, confetti, avatar, timeAgo, getMe, uid } = window.WK;
+  const store = WK.store, COL = "item";
+  WK.renderChrome("shopping");
+
+  const catMap = Object.fromEntries(C.categories.map((c) => [c.id, c]));
+  let items = {}, filter = "all", editingId = null, loadedOnce = false;
+  let popId = null;  // 방금 바꾼 항목만 통통 튀게
+  const popOnce = (id) => { popId = id; setTimeout(() => { popId = null; }, 700); };
+
+  // 식단
+  const dish = (d) => `<div class="dish ${d.by ? "by" : ""}">${esc(d.name)}${d.by ? `<small>👨‍🍳 ${esc(d.by)}</small>` : ""}${d.memo ? `<small>${esc(d.memo)}</small>` : ""}</div>`;
+  $("#dinner").innerHTML = C.mealPlan.dinner.map(dish).join("");
+  $("#breakfast").innerHTML = C.mealPlan.breakfast.map(dish).join("");
+  // ---- 장볼 사람 (공유 저장, 누구나 수정)
+  let shopperDoc = null, spPick = [];
+  const shopperNames = () => (shopperDoc && Array.isArray(shopperDoc.names) ? shopperDoc.names : C.shoppers);
+  const shopperNote = () => (shopperDoc && typeof shopperDoc.note === "string" ? shopperDoc.note : C.shopperNote);
+  function renderShoppers() {
+    const names = shopperNames(), note = shopperNote();
+    $("#shoppers").innerHTML = `<span class="tag" style="border-style:dashed">장볼 사람</span>` +
+      (names.length ? names.map((n) => `<span class="tag lemon">${avatar(n).emoji} ${esc(n)}</span>`).join("") : `<span class="tag">아직 미정 🤔</span>`) +
+      (note ? `<span class="tag">${esc(note)}</span>` : "");
+  }
+  function openShoppers() {
+    spPick = shopperNames().slice();
+    $("#shopperNote").value = shopperNote() || "";
+    paintPick();
+    $("#shopperBg").classList.add("open"); document.body.style.overflow = "hidden";
+  }
+  function paintPick() {
+    $("#shopperPick").innerHTML = WK.allPeople().map((n) =>
+      `<button type="button" class="chip ${spPick.includes(n) ? "on" : ""}" data-n="${esc(n)}">${avatar(n).emoji} ${esc(n)}</button>`).join("");
+  }
+  function closeShoppers() { $("#shopperBg").classList.remove("open"); document.body.style.overflow = ""; }
+  $("#editShoppers").onclick = openShoppers;
+  $("#spCancel").onclick = closeShoppers;
+  $("#shopperBg").addEventListener("click", (e) => { if (e.target === e.currentTarget) closeShoppers(); });
+  $("#shopperPick").addEventListener("click", (e) => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    const n = b.dataset.n;
+    spPick = spPick.includes(n) ? spPick.filter((x) => x !== n) : [...spPick, n];
+    paintPick();
+  });
+  $("#spSave").onclick = (e) => {
+    const rec = { names: spPick.slice(), note: $("#shopperNote").value.trim(), updatedAt: Date.now(), by: getMe() || "" };
+    closeShoppers();
+    const r = e.target.getBoundingClientRect(); confetti(r.left + r.width / 2, r.top, 16);
+    toast(rec.names.length ? `장볼 사람: ${rec.names.join(", ")} 🛒` : "장볼 사람 미정으로 변경");
+    store.set("meta", "shoppers", rec);
+  };
+  store.subscribe("meta", (docs) => { shopperDoc = (docs || {}).shoppers || null; renderShoppers(); });
+  renderShoppers();
+
+  const catOpts = C.categories.map((c) => `<option value="${c.id}">${c.emoji} ${c.label}</option>`).join("");
+  $("#addCat").innerHTML = catOpts; $("#edCat").innerHTML = catOpts; $("#addCat").value = "bbq";
+  WK.refreshPeopleSelects();
+
+  // 서버가 비어 있으면 엑셀 목록으로 한 번 채움 (오프라인이면 화면에만 보여줌)
+  let seededRemote = false;
+  const seedDocs = () => { const t = Date.now(); return C.seedItems.map((it, i) => ({ id: "seed" + String(i).padStart(2, "0"), cat: it.cat, name: it.name, memo: it.memo || "", buyer: "", done: false, addedBy: "엑셀", createdAt: t + i, order: i })); };
+  function seedIfEmpty() {
+    if (Object.keys(items).length) return;
+    if (store.provider !== "local" && !store.status.online) { seedDocs().forEach((d) => store.setLocal(COL, d.id, d)); return; }
+    if (seededRemote) return; seededRemote = true;
+    seedDocs().forEach((d) => store.set(COL, d.id, d));
+    toast("엑셀 장보기 목록을 불러왔어요 📋");
+  }
+  document.addEventListener("wk:status", (e) => { if (loadedOnce && e.detail.online && !e.detail.busy) seedIfEmpty(); });
+
+  const sorted = () => Object.values(items).filter((i) => i && i.id).sort((a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
+
+  function render() {
+    const list = sorted();
+    const total = list.length, done = list.filter((i) => i.done).length;
+    $("#bar").style.width = (total ? Math.round(done / total * 100) : 0) + "%";
+    $("#barText").textContent = `${done} / ${total} 구매 완료 ${total && done === total ? "🎉 끝!" : ""}`;
+
+    const counts = { all: total };
+    list.forEach((i) => counts[i.cat] = (counts[i.cat] || 0) + 1);
+    $("#filters").innerHTML = [{ id: "all", label: "전체", emoji: "🧺" }, ...C.categories].map((c) =>
+      `<button type="button" class="chip ${filter === c.id ? "on" : ""}" data-f="${c.id}">${c.emoji} ${c.label} <small>${counts[c.id] || 0}</small></button>`).join("");
+
+    const cats = filter === "all" ? C.categories : [catMap[filter] || C.categories[0]];
+    let html = "";
+    cats.forEach((c) => {
+      const grp = list.filter((i) => (catMap[i.cat] ? i.cat : "etc") === c.id);
+      if (!grp.length && filter === "all") return;
+      const d = grp.filter((i) => i.done).length;
+      grp.sort((a, b) => (a.done - b.done) || ((a.order ?? a.createdAt) - (b.order ?? b.createdAt)));
+      html += `<div class="group-title">${c.emoji} ${esc(c.label)} <span class="cnt">${d}/${grp.length}</span></div>`;
+      html += grp.length ? `<ul class="items">${grp.map(itemHtml).join("")}</ul>` : `<div class="empty">아직 없음. 아래에서 추가!</div>`;
+    });
+    $("#list").innerHTML = html || (loadedOnce ? `<div class="empty">목록이 비어 있어요. 아래에서 추가!</div>` : `<div class="empty">목록을 불러오는 중… 🛒</div>`);
+  }
+  function itemHtml(i) {
+    const av = i.buyer ? avatar(i.buyer).emoji + " " : "";
+    const meta = [i.done && i.doneBy ? `✅ ${i.doneBy}` : "", i.addedBy && i.addedBy !== "엑셀" ? `${i.addedBy} 추가` : "", i.updatedAt ? timeAgo(i.updatedAt) : ""].filter(Boolean).join(" · ");
+    return `<li class="item ${i.done ? "done" : ""} ${i.id === popId ? "pop" : ""}" data-id="${esc(i.id)}">
+      <button type="button" class="chk" data-act="toggle" aria-label="구매 체크">${i.done ? "✓" : ""}</button>
+      <div class="body" data-act="edit"><div class="nm">${esc(i.name)}</div>${i.memo ? `<div class="mm">${esc(i.memo)}</div>` : ""}${meta ? `<div class="meta">${esc(meta)}</div>` : ""}</div>
+      <div class="side">
+        <button type="button" class="buyer ${i.buyer ? "has" : ""}" data-act="buyer">${i.buyer ? av + esc(i.buyer) : "담당?"}</button>
+        <button type="button" class="more" data-act="edit" aria-label="수정">⋯</button>
+      </div>
+    </li>`;
+  }
+
+  $("#filters").addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (!b) return; filter = b.dataset.f; render(); });
+  $("#list").addEventListener("click", (e) => {
+    const li = e.target.closest(".item"); if (!li) return;
+    const act = e.target.closest("[data-act]")?.dataset.act; const it = items[li.dataset.id]; if (!it) return;
+    if (act === "toggle") {
+      const willDone = !it.done;
+      if (willDone) { const r = e.target.getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2, 14); }
+      popOnce(it.id);
+      store.set(COL, it.id, { ...it, done: willDone, doneBy: willDone ? (getMe() || "") : "", updatedAt: Date.now() });
+    } else if (act === "buyer") openEdit(it.id, true);
+    else if (act === "edit") openEdit(it.id);
+  });
+
+  $("#addForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = $("#addName").value.trim(); if (!name) return;
+    const maxOrder = Math.max(0, ...Object.values(items).map((x) => x.order ?? 0));
+    const rec = { id: uid(), cat: $("#addCat").value, name, memo: "", buyer: $("#addBuyer").value, done: false, addedBy: getMe() || "익명", createdAt: Date.now(), updatedAt: Date.now(), order: maxOrder + 1 };
+    $("#addName").value = ""; $("#addBuyer").value = "";
+    const r = e.submitter ? e.submitter.getBoundingClientRect() : { left: innerWidth / 2, top: innerHeight - 160, width: 0 };
+    confetti(r.left + r.width / 2, r.top, 16); toast(`"${name}" 추가! 🛒`);
+    if (filter !== "all" && filter !== rec.cat) filter = rec.cat;
+    popOnce(rec.id);
+    store.set(COL, rec.id, rec);
+  });
+
+  function openEdit(id, focusBuyer) {
+    const it = items[id]; if (!it) return; editingId = id;
+    $("#edName").value = it.name; $("#edMemo").value = it.memo || ""; $("#edCat").value = catMap[it.cat] ? it.cat : "etc"; $("#edBuyer").value = it.buyer || "";
+    $("#edMeta").textContent = [it.addedBy ? `${it.addedBy} 추가` : "", it.updatedAt ? `마지막 수정 ${timeAgo(it.updatedAt)}` : ""].filter(Boolean).join(" · ");
+    $("#sheetBg").classList.add("open"); document.body.style.overflow = "hidden";
+    if (focusBuyer) setTimeout(() => $("#edBuyer").focus(), 50);
+  }
+  function closeEdit() { $("#sheetBg").classList.remove("open"); document.body.style.overflow = ""; editingId = null; }
+  $("#edCancel").onclick = closeEdit;
+  $("#sheetBg").addEventListener("click", (e) => { if (e.target === e.currentTarget) closeEdit(); });
+  $("#edSave").onclick = () => {
+    const it = items[editingId]; if (!it) return;
+    const rec = { ...it, name: $("#edName").value.trim() || it.name, memo: $("#edMemo").value.trim(), cat: $("#edCat").value, buyer: $("#edBuyer").value, updatedAt: Date.now() };
+    closeEdit(); toast("수정 저장 ✅");
+    popOnce(it.id);
+    store.set(COL, it.id, rec);
+  };
+  $("#edDelete").onclick = () => {
+    const it = items[editingId]; if (!it) return;
+    if (!confirm(`"${it.name}" 항목을 삭제할까요?`)) return;
+    closeEdit(); toast("삭제됨 🗑");
+    store.remove(COL, it.id);
+  };
+
+  store.subscribe(COL, (docs) => { items = docs || {}; render(); });
+  document.addEventListener("wk:me", render);
+  document.addEventListener("wk:people", () => { render(); renderShoppers(); });
+  store.subscribe("person", (docs) => {
+    const names = Object.values(docs || {}).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).map((p) => p.name).filter(Boolean);
+    WK.setExtraPeople(names);
+  });
+  store.startPolling([COL, "person", "meta"]);
+  store.pull(COL, { silent: true }).then(() => { loadedOnce = true; seedIfEmpty(); render(); });
+})();
+</script>
+</body>
+</html>

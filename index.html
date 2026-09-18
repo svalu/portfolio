@@ -171,14 +171,15 @@
   #d03{--paper:#0f1412;--acc:#2fd3a0;--acc2:#8ff0cf;--band-c:#14241e}
   #d04{--paper:#070a12;--ink:#f0eef5;--ink2:rgba(240,238,245,.62);--ink3:rgba(240,238,245,.62);--line:rgba(240,238,245,.12);--acc:#c0203a;--acc2:#ff7a90;--band-c:#1a0d14}
 
-  /* 03: 오른쪽 열 — 워크샵 프레임(위) + 실측 숫자 카드(아래). 프레임은 자리 표시(더미) */
-  #d03 .frame{right:4%;top:9%;width:40%}
-  #d03 .frame .win{background:#f5f2ea}
-  .dim .nums{position:absolute;right:4%;top:58%;width:40%;display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  /* 03: 01과 같은 편집 — 데스크톱 프레임(주간업무, 자리 표시) 왼쪽으로, 폰(워크샵 앱 실물)이 우하단에 겹쳐 선다.
+     실측 숫자 카드는 프레임 아래 한 줄. 폰이 카드 끝을 1% 덮는 건 01에서 폰이 프레임을 덮는 것과 같은 문법 */
+  #d03 .frame{right:16%;top:9%;width:48%}
+  #d03 .frame .win{background:#EFEDE8}
+  .dim .nums{position:absolute;right:16%;top:63%;width:48%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
     opacity:0;transform:translateY(16px);transition:opacity .8s var(--in),transform 1s var(--in)}
   .dim.in .nums{opacity:1;transform:none;transition-delay:.55s}
-  .nums div{padding:18px 16px;border:1px solid var(--line);border-radius:14px}
-  .nums b{display:block;font-size:clamp(22px,2.1vw,32px);font-weight:300;letter-spacing:-.02em;color:var(--acc2)}
+  .nums div{padding:16px 14px;border:1px solid var(--line);border-radius:14px}
+  .nums b{display:block;font-size:clamp(18px,1.5vw,24px);font-weight:300;letter-spacing:-.02em;color:var(--acc2)}
   .nums span{display:block;margin-top:6px;font-size:clamp(11px,.9vw,13px);line-height:1.55;color:var(--ink2);font-weight:300}
 
   /* 맺음 — 차원 스택이 끝나면 종이색으로 돌아온다. 오브젠트는 인트로 자리에 빨강으로 남는다 */
@@ -290,7 +291,7 @@
     .dim.in .phone{transform:none}
     .phone::before{top:2.6vw;height:2.2vw}
     .phone .zoom{bottom:10px}
-    #d01 .frame{display:none}
+    #d01 .frame,#d03 .frame{display:none}      /* 03 도 01 처럼: 폰에선 폰 실물 하나 */
 
     /* 02: 둘 다 세로로. 2023↔2025 위, 2026 아래. id 선택자의 right/top 을 여기서 다시 푼다 */
     #d01 .frame,#d02 .fgrow,#d02 .f2026,#d03 .frame{right:auto;top:auto;width:100%}
@@ -298,7 +299,7 @@
     #d02 .arrow{display:none}
 
     /* 03 */
-    .dim .nums{width:100%;margin-top:22px;gap:10px} .nums div{padding:14px 12px;border-radius:12px} .nums b{font-size:24px} .nums span{font-size:11px}
+    .dim .nums{width:100%;margin-top:22px;gap:10px;grid-template-columns:1fr 1fr} .nums div{padding:14px 12px;border-radius:12px} .nums b{font-size:24px} .nums span{font-size:11px}
 
     /* 맺음 */
     .foot{padding:10svh 6vw 12svh;min-height:0}
@@ -397,7 +398,7 @@
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.49,0.78,0.26,#2fd3a0">
+  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0">
     <div class="sheet">
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
@@ -406,18 +407,22 @@
       <p class="sub">AI는 대화가 끝나면 잊는다. 그래서 기억을 사람 밖에, 파일로 뒀다.</p>
       <div class="facts">
         <p><b>역할을 나눈 AI들이 같은 파일을 읽고 쓰며 서로 인계한다.</b> 사람은 방향만 준다. 계정을 옮긴 날에도 맥락이 끊기지 않았다.</p>
-        <p><b>AI 도입이 겉도는 건 도구가 없어서가 아니라 일하는 방식이 안 바뀌어서다.</b> 그 방식을 혼자 석 달 굴려봤고, 어디서 깨지는지는 옆의 숫자가 말한다.</p>
+        <p><b>같은 방식으로 팀 도구를 만들었다.</b> 엑셀로 돌던 주간업무와 카톡에 흩어지던 워크샵 준비를 웹앱으로 옮겼다. 팀이 실제로 썼다. 폰 안이 그 워크샵 앱이다.</p>
+        <p><b>AI 도입이 겉도는 건 도구가 없어서가 아니라 일하는 방식이 안 바뀌어서다.</b> 그 방식을 혼자 석 달 굴려봤고, 어디서 깨지는지는 숫자가 말한다.</p>
       </div>
-      <div class="frame scaled" data-vw="1440" data-title="워크샵 · 자리 표시"><button class="zoom" type="button">크게 보기</button><div class="label">WORKSHOP · 자리 표시 — 실제 자료로 교체 예정</div>
-        <div class="win"><div class="bar"><i></i><i></i><i></i><span>workshop / placeholder</span></div>
-        <div class="view"><iframe data-src="work/method/workshop.html?v=20260918" title="Workshop placeholder"></iframe></div></div></div>
+      <div class="frame scaled" data-vw="1440" data-title="Weekly · 주간업무 (자리 표시)"><button class="zoom" type="button">크게 보기</button><div class="label">WEEKLY · 주간업무 — 자리 표시, 데모 서버가 뜨면 실물로</div>
+        <div class="win"><div class="bar"><i></i><i></i><i></i><span>weekly / login</span></div>
+        <div class="view"><iframe data-src="work/team/weekly.html?v=20260918" title="Weekly placeholder"></iframe></div></div></div>
+      <div class="phone" id="phone03" data-vw="390" data-vh="844" data-title="워크샵 앱 · 모바일"><button class="zoom" type="button">크게 보기</button>
+        <div class="view"><iframe data-src="work/team/workshop/index.html?v=20260918" title="Workshop app"></iframe></div>
+      </div>
       <div class="nums">
         <div><b>3.4일 · 8분</b><span>실사용 로그 실측. "직전 3턴"은 근거 없는 단위였다 → 대화 단위를 시간으로 재설계</span></div>
         <div><b>17일치</b><span>빠진 기록을 AI가 스스로 발견하고 지난 작업을 훑어 채워 넣게 만들었다</span></div>
         <div><b>1회 롤백</b><span>학습 전에 판정 기준을 문서에 고정. 한 항목이 깨져서 버전 전체를 되돌렸다</span></div>
         <div><b>계정 이동</b><span>회사·개인 계정을 분리한 날, 새 대화가 그대로 이어받아 작업을 계속했다</span></div>
       </div>
-      <div class="try">숫자는 전부 실사용 로그 실측</div>
+      <div class="try">폰 안은 실물 · 숫자는 전부 실사용 로그 실측</div>
       <div class="dband"></div><div class="dyear">.2026</div>
     </div>
   </section>
@@ -667,7 +672,7 @@ function frame(){
 
   updateReach();
   /* 스크롤 → 차원 진행도 */
-  const target = Math.min(scrollY/innerHeight, N-1);
+  const target = innerHeight ? Math.min(scrollY/innerHeight, N-1) : 0;   /* 숨은 탭(뷰포트 0)에서 NaN 이 S[k] 를 깨뜨리지 않게 */
   prog += (target - prog)*.09;
   const k = Math.min(Math.floor(prog), N-2);          // 지금 열리는 중인 차원 = k+1
   const o = easeIO(clamp01((prog - k)/0.82));         // 열림 진행도 (스크롤 82% 구간에서 완전히 열림)

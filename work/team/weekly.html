@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Weekly — 자리 표시</title>
+<style>
+  /* 팀 주간업무 웹앱(Next.js + Supabase)의 로그인 화면을 정적으로 재현한 자리 표시.
+     실운영 서버는 팀원 실명으로 들어가므로 포트폴리오에 붙일 수 없다.
+     공개 레포의 데모 시드(지어낸 이름)로 데모 서버가 뜨면 이 파일을 그 주소로 갈아끼운다.
+     1440×900 고정, 부모가 축소한다 */
+  @font-face{font-family:"Pretendard";src:url("../../assets/fonts/Pretendard-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Pretendard";src:url("../../assets/fonts/Pretendard-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Pretendard";src:url("../../assets/fonts/Pretendard-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+  *{box-sizing:border-box;margin:0}
+  html,body{width:1440px;height:900px;overflow:hidden;background:#EFEDE8;font-family:"Pretendard","Malgun Gothic",system-ui,sans-serif;color:#1c1b19}
+  .stage{width:1440px;height:900px;display:grid;place-items:center;padding:40px}
+  .card{width:960px;display:grid;grid-template-columns:1fr 1fr;border-radius:28px;background:#fff;box-shadow:0 30px 80px rgba(40,30,10,.14);overflow:hidden}
+  .l{padding:48px 52px}
+  .r{padding:48px 44px;background:#F7F5F0;border-left:1px solid rgba(28,27,25,.08)}
+  .logo{width:40px;height:40px;border-radius:12px;background:#1c1b19;color:#fff;display:grid;place-items:center;font-weight:700;font-size:16px;letter-spacing:-.02em}
+  h1{margin-top:26px;font-size:30px;font-weight:700;letter-spacing:-.02em}
+  .lead{margin-top:10px;font-size:15px;line-height:1.6;color:rgba(28,27,25,.6)}
+  .label{margin-top:30px;font-size:12px;font-weight:500;letter-spacing:.06em;color:rgba(28,27,25,.55)}
+  .field{margin-top:8px;height:52px;border-radius:16px;border:1px solid rgba(28,27,25,.14);background:#fff;padding:0 18px;display:flex;align-items:center;font-size:15px;color:rgba(28,27,25,.38)}
+  .hint{margin-top:8px;font-size:12px;line-height:1.6;color:rgba(28,27,25,.5)}
+  .hint b{font-weight:600;color:rgba(28,27,25,.75)}
+  .btn{margin-top:14px;height:52px;border-radius:16px;background:#1c1b19;color:#fff;display:grid;place-items:center;font-size:15px;font-weight:600}
+  .note{margin-top:22px;font-size:12px;line-height:1.7;color:rgba(28,27,25,.5)}
+  .list{margin-top:12px}
+  .row{display:flex;align-items:center;gap:12px;padding:9px 8px;border-radius:14px}
+  .row:nth-child(1){background:#fff}
+  .av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;color:#fff}
+  .row b{display:block;font-size:13px;font-weight:600}
+  .row span{display:block;font-size:11px;color:rgba(28,27,25,.5)}
+  .ph{position:absolute;left:52px;bottom:34px;font-size:13px;letter-spacing:.2em;color:rgba(28,27,25,.42)}
+  .ph i{font-style:normal;margin-left:14px;padding:4px 12px;border:1px solid #e0762e;border-radius:999px;color:#b85a1c;letter-spacing:.1em;font-size:12px}
+  body{position:relative}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="card">
+    <div class="l">
+      <div class="logo">W</div>
+      <h1>Weekly</h1>
+      <p class="lead">이름만 넣으면 바로 들어갑니다. 비밀번호 없어요.</p>
+      <div class="label">이름 또는 이메일</div>
+      <div class="field">강민준 또는 kang.minjun@example.com</div>
+      <p class="hint">데모 계정입니다. 주소는 <b>@example.com</b>. 오른쪽 목록에서 골라도 됩니다.</p>
+      <div class="btn">들어가기</div>
+      <p class="note">사내에서만 쓰는 도구라 인증 절차가 없습니다. 링크를 아는 사람은 누구나 내용을 보고 고칠 수 있으니 외부에 공유하지 마세요.</p>
+    </div>
+    <div class="r">
+      <div class="label" style="margin-top:0">팀원 바로 선택</div>
+      <div class="list">
+        <div class="row"><i class="av" style="background:#c0203a">민준</i><div><b>강민준</b><span>최고 리더</span></div></div>
+        <div class="row"><i class="av" style="background:#4b6cff">지우</i><div><b>서지우</b><span>Sales · Biz 리더</span></div></div>
+        <div class="row"><i class="av" style="background:#2fd3a0">하윤</i><div><b>박하윤</b><span>AICC · 솔루션 리더</span></div></div>
+        <div class="row"><i class="av" style="background:#e0762e">도윤</i><div><b>이도윤</b><span>Development · 개발</span></div></div>
+        <div class="row"><i class="av" style="background:#8a0f78">서준</i><div><b>최서준</b><span>Development · 개발</span></div></div>
+        <div class="row"><i class="av" style="background:#12b3b9">하은</i><div><b>정하은</b><span>AICC · PM</span></div></div>
+        <div class="row"><i class="av" style="background:#8a9a2a">지호</i><div><b>윤지호</b><span>Development · 기획</span></div></div>
+        <div class="row"><i class="av" style="background:#3a3a3a">유석</i><div><b>장유석</b><span>Development · 디자인</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ph">WEEKLY · 로그인 화면 재현 <i>자리 표시 — 데모 서버가 뜨면 실물로</i></div>
+</body>
+</html>

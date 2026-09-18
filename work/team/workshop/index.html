@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ff6b6b">
+<title>BH 팀 워크샵 · 모임 & 숙소</title>
+<meta property="og:title" content="2026 하반기 BH 팀 워크샵 🏕️">
+<meta property="og:description" content="13시 동동국수 본점 집결 → 오빌펜션 1박 2일. 일정표·인원체크·장보기 여기서!">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍜</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=10">
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar"></header>
+
+  <section class="hero">
+    <div class="kicker">2026 · 2ND HALF · BLUE HORIZON UNIT</div>
+    <h1>워크샵<br>가자! 🏕️</h1>
+    <p id="heroSub">1박 2일 · 15명 · 곤지암</p>
+    <div id="dday" class="dday" hidden></div>
+    <div class="emoji-row">🍜🔥🍻</div>
+  </section>
+
+  <div class="ticket">
+    <div class="main">
+      <div class="eyebrow">📍 여기서 만나요</div>
+      <div class="where" id="meetName">동동국수 본점</div>
+      <div class="sub">13시 점심 → 14시 장보기 → 15시 펜션 입실</div>
+      <div class="tags"><span class="tag mint">전원 식당 집결</span><span class="tag lemon">늦으면 인원체크에 시간 적어줘</span></div>
+    </div>
+    <div class="stub">
+      <small>MEET AT</small>
+      <div class="time" id="meetTime">13:00</div>
+      <small>동동국수 🍜</small>
+    </div>
+  </div>
+
+  <div class="home-grid">
+  <div class="col">
+  <section class="card tilt-l">
+    <span class="sticker grape">코스</span>
+    <div class="eyebrow">당일 일정표</div>
+    <h2>이렇게 흘러가요 🗺️</h2>
+    <ol class="timeline" id="timeline"></ol>
+  </section>
+  </div>
+
+  <div class="col">
+  <section class="card" id="restaurantCard">
+    <span class="sticker coral">13:00 집결</span>
+    <div class="eyebrow">🍜 모임 장소</div>
+    <h2 id="rName"></h2>
+    <div id="rCat" style="font-weight:700;color:var(--ink-2)"></div>
+    <div class="addr"><span id="rAddr"></span><button type="button" id="rCopy">복사</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px">
+      <span class="rating">⭐ <span id="rRating"></span> <small id="rReviews" style="font-weight:600"></small></span>
+      <span id="rHours" style="font-size:13px;font-weight:700;color:var(--ink-2)"></span>
+    </div>
+    <div class="tags" id="rTags"></div>
+    <div class="btn-row">
+      <a class="btn kakao" id="rKakao" target="_blank" rel="noopener">🗺️ 카카오맵</a>
+      <a class="btn kakao" id="rNavi" target="_blank" rel="noopener">🚗 길찾기</a>
+      <a class="btn naver" id="rNaver" target="_blank" rel="noopener">N 네이버지도</a>
+      <a class="btn tel" id="rTel">📞 전화</a>
+    </div>
+    <iframe class="map" id="rMap" loading="lazy" title="동동국수 본점 지도" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--ink-2);font-weight:600" id="rAi"></p>
+
+    <h3>메뉴판 🧾 <small style="font-family:var(--font-body);font-size:12px;color:var(--muted);font-weight:700">카카오맵 등록 기준 · 현장 가격과 다를 수 있음</small></h3>
+    <div class="menu-grid" id="rMenu"></div>
+  </section>
+  </div>
+
+  <div class="col">
+  <section class="card tilt-r" id="pensionCard">
+    <span class="sticker mint">1박</span>
+    <div class="eyebrow">🏠 숙소</div>
+    <h2 id="pName"></h2>
+    <div id="pCat" style="font-weight:700;color:var(--ink-2)"></div>
+    <div class="addr"><span id="pAddr"></span><button type="button" id="pCopy">복사</button></div>
+    <div class="tags" id="pTags"></div>
+    <div class="btn-row">
+      <a class="btn kakao" id="pKakao" target="_blank" rel="noopener">🗺️ 카카오맵</a>
+      <a class="btn kakao" id="pNavi" target="_blank" rel="noopener">🚗 길찾기</a>
+      <a class="btn naver" id="pNaver" target="_blank" rel="noopener">N 네이버지도</a>
+      <a class="btn mint" id="pRoute" target="_blank" rel="noopener">🍜→🏠 식당에서 펜션</a>
+    </div>
+    <iframe class="map" id="pMap" loading="lazy" title="오빌펜션 지도" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">바로가기</div>
+    <h2>할 일 두 가지 ✌️</h2>
+    <div class="btn-row">
+      <a class="btn primary" href="./people.html">🙋 도착시간 적기</a>
+      <a class="btn mint" href="./shopping.html">🛒 장보기 리스트</a>
+    </div>
+  </section>
+  </div>
+  </div>
+
+  <p class="footer">BLUE HORIZON UNIT · 2026 하반기 워크샵 · 즐겁게 놀다 옵시다 🎉</p>
+</div>
+
+<script src="./assets/data.js?v=10"></script>
+<script src="./assets/app.js?v=10"></script>
+<script>
+(function () {
+  const C = window.WK_CONFIG, { $, esc, copy } = window.WK;
+  WK.renderChrome("home");
+  document.title = C.title + " · 모임 & 숙소";
+  $("#heroSub").textContent = C.subtitle;
+  $("#meetTime").textContent = C.meetTime;
+  $("#meetName").textContent = C.places.restaurant.name;
+  $(".sticker.coral").textContent = C.meetTime + " 집결";
+
+  // 일정표
+  $("#timeline").innerHTML = (C.schedule || []).map((s) => `
+    <li${s.hi ? ' class="hi"' : ""}><span class="pin">${s.pin || "•"}</span>
+      <div class="tt">${esc(s.time)}</div>
+      <div class="t">${esc(s.title)}</div>
+      ${s.desc ? `<div class="d">${esc(s.desc)}</div>` : ""}
+    </li>`).join("");
+
+  // D-day
+  if (C.date) {
+    const d = new Date(C.date + "T00:00:00"), now = new Date(); now.setHours(0, 0, 0, 0);
+    const diff = Math.round((d - now) / 86400000);
+    const el = $("#dday"); el.hidden = false;
+    const dow = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
+    el.innerHTML = (diff > 0 ? `D-${diff}` : diff === 0 ? "오늘이다! 🎉" : `끝난 지 ${-diff}일`) + ` <small>${d.getMonth() + 1}/${d.getDate()} (${dow})</small>`;
+  }
+
+  const won = (n) => n.toLocaleString("ko-KR") + "원";
+  const kakaoPlace = (id) => `https://place.map.kakao.com/${id}`;
+  const kakaoTo = (p) => `https://map.kakao.com/link/to/${encodeURIComponent(p.name)},${p.lat},${p.lng}`;
+  const naver = (p) => `https://map.naver.com/p/search/${encodeURIComponent(p.name + " " + p.address.split(" ").slice(0, 3).join(" "))}`;
+  const osm = (p) => `https://www.openstreetmap.org/export/embed.html?bbox=${p.lng - 0.012},${p.lat - 0.007},${p.lng + 0.012},${p.lat + 0.007}&layer=mapnik&marker=${p.lat},${p.lng}`;
+
+  // 식당
+  const r = C.places.restaurant;
+  $("#rName").textContent = r.name; $("#rCat").textContent = r.category; $("#rAddr").textContent = r.address;
+  $("#rRating").textContent = r.rating; $("#rReviews").textContent = `(${r.reviews})`; $("#rHours").textContent = "🕘 " + r.hours;
+  $("#rTags").innerHTML = r.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+  $("#rKakao").href = kakaoPlace(r.kakaoId); $("#rNavi").href = kakaoTo(r); $("#rNaver").href = naver(r);
+  $("#rTel").href = "tel:" + r.phone.replace(/-/g, ""); $("#rTel").textContent = "📞 전화하기"; $("#rTel").title = r.phone;
+  $("#rMap").src = osm(r); $("#rAi").textContent = "💬 " + r.aiSummary;
+  $("#rCopy").onclick = () => copy(r.address);
+  $("#rMenu").innerHTML = r.menu.map((m) => `
+    <div class="menu-item ${m.hot ? "hot" : ""}">${m.hot ? '<span class="hotmark">추천</span>' : ""}
+      <div class="n">${esc(m.name)}</div><div class="p">${won(m.price)}</div>${m.desc ? `<div class="d">${esc(m.desc)}</div>` : ""}
+    </div>`).join("");
+
+  // 스크롤하면서 하나씩 등장
+  WK.reveal(".timeline li");
+  WK.reveal(".menu-item");
+
+  // 숙소
+  const p = C.places.pension;
+  $("#pName").textContent = p.name; $("#pCat").textContent = p.category; $("#pAddr").textContent = p.address;
+  $("#pTags").innerHTML = p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+  $("#pKakao").href = kakaoPlace(p.kakaoId); $("#pNavi").href = kakaoTo(p); $("#pNaver").href = naver(p);
+  $("#pRoute").href = `https://map.kakao.com/link/from/${encodeURIComponent(r.name)},${r.lat},${r.lng}/to/${encodeURIComponent(p.name)},${p.lat},${p.lng}`;
+  $("#pMap").src = osm(p);
+  $("#pCopy").onclick = () => copy(p.address);
+})();
+</script>
+</body>
+</html>
