@@ -18,7 +18,7 @@
 ## 검증·배포
 - 로컬: `python -m http.server 5500` 후 `http://localhost:5500/`. `file://` 로는 폰트·iframe 이 깨진다.
 - 배포: `main` 에 push 하면 GitHub Pages 가 1~2분 뒤 **https://svalu.github.io/portfolio/** 에 반영. 별도 빌드 없음.
-- 폰 확인이 최종. 모바일(≤900px) 분기는 `index.html` 하단 `@media (max-width:900px)`.
+- 폰 확인이 최종. **PC/모바일 파일을 나누지 않는다**(희랑 원칙). 폰 분기는 `index.html` 안 `@media (max-width:900px)` 한 겹 + JS `const NARROW`. `m/` 은 리다이렉트만. 문장을 고칠 때 방향 표현(왼쪽/오른쪽) 금지 — 폰에선 세로다.
 - JS 를 고쳤으면 push 전에 구문 점검: `node -e "new Function(require('fs').readFileSync('index.html','utf8').split('<script>').pop().split('</script>')[0])"`.
 
 ## 기록
@@ -27,5 +27,6 @@
 
 ## 구조 요약 (자세히는 README)
 - `index.html` 한 파일. 섹션 = `.dim` (sticky 스택). 스크롤 진행도 `prog` → 다음 차원이 오브젤트 위치 중심 원으로 열림.
-- 오브젝트 자리: `data-obj="x,y,크기,색"` (데스크톱) / `data-mobj="x,y,크기"` (모바일).
-- 등장 애니메이션은 `.dim.in` 클래스로, 원이 70% 이상 열리면 붙는다.
+- 오브젠트 자리: `data-obj="x,y,크기,색"` (데스크톱). 폰은 `frame()` 의 `if(NARROW)` 식(우상단 고정) — 색만 차원 것을 쓴다.
+- 등장 애니메이션은 `.dim.in` 클래스로, 데스크톱은 원이 70% 이상 열리면, 폰은 IntersectionObserver(18%)가 붙인다.
+- 문장을 고쳤으면 `python tools/subset-fonts.py` (폰트 서브셋에 없는 글자는 시스템 폰트로 튄다).

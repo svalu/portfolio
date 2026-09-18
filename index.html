@@ -2,13 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c0203a">
 <title>희랑 — Portfolio</title>
-<script>
-/* 폰이면 모바일 모드로. ?desktop=1 이면 이 차원 여정을 그대로 본다 */
-if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) location.replace('m/' + location.hash);
-addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matches && !/desktop/.test(location.search)) location.replace('m/' + location.hash); });
-</script>
 <style>
   /* 가변 한 파일을 늘려 쓰지 않고, 굵기마다 따로 그려진 정적판을 쓴다 (획 대비·속공간이 다르다) */
   @font-face{font-family:"Pretendard";src:url("assets/fonts/Pretendard-ExtraLight.woff2") format("woff2");font-weight:200;font-display:swap}
@@ -87,6 +83,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
   .bottom{grid-row:3;position:relative;background:var(--m-bottom);z-index:1}
   .intro .body{position:absolute;left:1.6%;top:8%;width:59%;font-weight:300;font-size:clamp(11px,.95vw,15px);line-height:2.35;letter-spacing:.01em;color:var(--m-body);text-align:justify}
   body.color .intro .body{color:var(--c-body);--cd:1.0s}
+  .intro .body b{font-weight:inherit;color:inherit}   /* 데스크톱 본문은 한 굵기. 폰에서만 첫 문장이 선다 */
   .hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:6;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.7);opacity:0;transition:opacity 1s var(--ease) 2.4s;cursor:pointer;background:none;border:0;font-family:inherit}
   body.color .hint{opacity:1}
   .hint i{display:block;width:1px;height:22px;margin:8px auto 0;background:rgba(255,255,255,.5);animation:drop 1.6s ease-in-out infinite}
@@ -172,6 +169,22 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
   #d01{--paper:#0b1020;--acc:#4b6cff;--acc2:#9fb0ff;--band-c:#151d3f}
   #d02{--paper:#f5f2ea;--ink:#16150f;--ink2:rgba(22,21,15,.62);--ink3:rgba(22,21,15,.62);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band-c:#e9dcc6}
   #d03{--paper:#0f1412;--acc:#2fd3a0;--acc2:#8ff0cf;--band-c:#14241e}
+  #d04{--paper:#070a12;--ink:#f0eef5;--ink2:rgba(240,238,245,.62);--ink3:rgba(240,238,245,.62);--line:rgba(240,238,245,.12);--acc:#c0203a;--acc2:#ff7a90;--band-c:#1a0d14}
+
+  /* 03 숫자 카드 — 오브젝트 오른쪽. 실측 넷, 설명은 한 줄씩 */
+  .dim .nums{position:absolute;right:4%;top:46%;width:34%;display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    opacity:0;transform:translateY(16px);transition:opacity .8s var(--in),transform 1s var(--in)}
+  .dim.in .nums{opacity:1;transform:none;transition-delay:.55s}
+  .nums div{padding:18px 16px;border:1px solid var(--line);border-radius:14px}
+  .nums b{display:block;font-size:clamp(22px,2.1vw,32px);font-weight:300;letter-spacing:-.02em;color:var(--acc2)}
+  .nums span{display:block;margin-top:6px;font-size:clamp(11px,.9vw,13px);line-height:1.55;color:var(--ink2);font-weight:300}
+
+  /* 맺음 — 차원 스택이 끝나면 종이색으로 돌아온다. 오브젠트는 인트로 자리에 빨강으로 남는다 */
+  .foot{position:relative;background:#fff;color:#111;padding:16vh 3.6% 14vh;min-height:70vh}
+  .foot .fp{width:52%;font-size:clamp(16px,1.5vw,24px);font-weight:300;line-height:1.85;letter-spacing:-.01em;color:rgba(17,17,17,.7)}
+  .foot .fl{margin-top:34px;font-size:13px;letter-spacing:.12em}
+  .foot a{color:#8a0f78;text-decoration:none;border-bottom:1px solid currentColor}
+  .foot .sig{margin-top:14vh;font-size:clamp(26px,3vw,46px);font-weight:200;letter-spacing:-.02em}
 
 
 
@@ -213,45 +226,76 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
   /* 크기는 CSS 로 늘리지 않는다. JS 가 보이는 영역(visualViewport)만큼 px 로 직접 박는다 */
   #c{position:fixed;left:0;top:0;z-index:30;pointer-events:none}
 
-  /* ───────────── 모바일 (세로 폰) ─────────────
-     같은 편집 체계를 세로로 다시 편다: 번호 → 타이포 → 한 줄 소개 → 본문 2줄 → 실물 하나 → 띠 */
+  /* ───────────── 폰 (≤900px) — 같은 마크업을 세로로 편다 ─────────────
+     · 파일은 하나다. sticky 스택·원 전환·스크롤 잠금·정착을 끄고, 차원을 위에서 아래로 흐르는 카드로 바꾼다
+     · 편집 체계는 그대로: 번호 → 타이포 → 훅 → 소개 → 실물 → 본문 → 띠. 순서는 flex order 로만 바꾼다
+     · 오브젝트는 인트로에서 오른쪽 가운데 크게 응축하고, 첫 화면을 넘기면 우상단에 작게 앉아 차원마다 색을 먼저 입는다 */
   @media (max-width:900px){
-    :root{--ox:78%;--oy:50%}
+    :root{--ox:78%;--oy:44%}
+    body.locked{overflow:auto}
+    .track{height:auto !important}
+    .dim{position:relative;height:auto;min-height:100svh;margin-top:0;overflow:visible;-webkit-mask-image:none !important;mask-image:none !important}
+    .dim.intro{height:100svh;min-height:0;overflow:hidden}
+    .ctl{display:none}
+
+    /* 인트로 */
     .stage{grid-template-rows:56% 8% 36%}
     .type{font-size:clamp(64px,19vw,140px);top:2%}
     .dots{left:44%;top:3.4%}
+    .dots i{width:6px;height:6px;min-width:0;min-height:0}
     .mark{top:43%;width:40px}
     .year{font-size:16px;bottom:8%}
-    .intro .body{width:92%;font-size:11px;line-height:1.95;top:6%}
-    .ctl{display:none}
+    .intro .body{width:88%;font-size:14px;line-height:1.8;top:9%;text-align:left}
+    .intro .body .l2{display:none}
+    .intro .body b{font-weight:500;color:#fff}
+    .hint{bottom:14px}
 
-    .dim .no{top:3.6%;font-size:10px}
-    .dim .title,#d01 .title{top:7%;font-size:clamp(44px,15vw,92px);line-height:.92}
-    .dim .ddots{display:none}
-    .dim .hook{top:22%;width:92%;font-size:19px}
-    .dim .tabs{top:25.5%;left:4%;right:4%;flex-wrap:wrap}
-    .dim .tabs button{height:24px;padding:0 9px;font-size:10px}
-    .dim .sub{top:36%;width:92%;font-size:13px}
-    .dim .facts{top:44%;width:92%;gap:8px;padding-top:12px}
-    .dim .facts p{font-size:12px;line-height:1.6}
-    .dim .facts p:nth-child(3){display:none}
-    .dim .try{bottom:9.5%;font-size:10px;letter-spacing:.14em}
-    .dim .dband{width:100%;height:7%}
-    .dim .dyear{font-size:17px;bottom:1.8%}
-    .dim .frame .bar{height:26px;padding:0 10px} .dim .frame .bar span{font-size:10px}
-    .dim .frame .label,.phone .tag{font-size:10px;top:-2.4vh}
+    /* 차원: 세로 흐름 */
+    .dim .sheet{position:relative;inset:auto;min-height:100svh;display:flex;flex-direction:column;align-items:flex-start;padding:12svh 6vw 14svh}
+    .dim .no,.dim .title,#d01 .title,.dim .ddots,.dim .hook,.dim .sub,.dim .facts,.dim .try,.dim .tabs,.dim .frame,.dim .nums,.phone{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto}
+    .dim .no{font-size:10px}
+    .dim .title,#d01 .title{margin-top:10px;font-size:clamp(46px,15.5vw,96px);line-height:.9}
+    .dim .ddots{width:70%;margin-top:22px} .dim .ddots i{width:5px;height:5px;min-width:0;min-height:0}
+    .dim .hook{order:1;margin-top:22px;font-size:clamp(19px,5.4vw,26px)}
+    .dim .sub{order:2;margin-top:8px;font-size:13px;line-height:1.7}
+    .dim .tabs{order:3;margin-top:18px;flex-wrap:wrap} .tabs button{height:30px;padding:0 13px}
+    .dim .frame,.dim .nums,.phone{order:4}
+    .dim .facts{order:5;margin-top:22px;gap:10px;padding-top:14px} .dim .facts p{font-size:13px;line-height:1.65}
+    .dim .try{order:6;margin-top:18px;font-size:10px;letter-spacing:.14em}
+    .dim .dband{width:100%;height:5.5svh}
+    .dim .dyear{font-size:16px;bottom:1.2svh}
+    .dim .frame{width:100%;margin-top:46px}
+    .dim .frame .bar{height:24px;padding:0 10px} .dim .frame .bar span{font-size:10px}
+    .frame .label,.frame .yrs{top:-34px} .frame .yrs button{height:28px}
+    .frame .grew{top:auto;bottom:-26px;right:auto;left:0}
+    .zoom{opacity:1}
 
-    /* 01: 폰이 곧 실물. 데스크톱 프레임은 접는다 */
-    #d01 .frame{display:none}
-    .phone{right:auto;left:50%;bottom:13%;width:38vw;min-width:0;border-radius:6vw;border-width:.9vw;
-      transform:translate(-50%,30px)}
-    .dim.in .phone{transform:translate(-50%,0)}
+    /* 01: 최종은 폰 실물, 시안 셋은 데스크톱 화면이라 가로 프레임으로 — 탭이 둘을 바꾼다 */
+    .phone{align-self:center;width:62vw;min-width:0;margin-top:30px;border-radius:9vw;border-width:.9vw;transform:translateY(30px)}
+    .dim.in .phone{transform:none}
     .phone::before{top:2.6vw;height:2.2vw}
+    .phone .zoom{bottom:10px}
+    #d01 .frame{display:none} #d01.shot .frame{display:block} #d01.shot .phone{display:none}
 
-    /* 02: 새집(2026) 하나만, 1024px 미니어처. 옛집·화살표는 데스크톱에서 */
-    #d02 .fgrow,#d02 .arrow{display:none}
-    #d02 .f2026{right:4%;left:4%;width:auto;top:auto;bottom:14%}
-    #d02 .facts p:nth-child(2){display:block}
+    /* 02: 둘 다 세로로. 2023↔2025 위, 2026 아래. id 선택자의 right/top 을 여기서 다시 푼다 */
+    #d01 .frame,#d02 .fgrow,#d02 .f2026{right:auto;top:auto;width:100%}
+    #d02 .f2026{margin-top:74px}      /* 위 프레임의 '+821줄' 한 줄과 이 프레임 라벨이 겹치지 않게 */
+    #d02 .arrow{display:none}
+
+    /* 03 */
+    .dim .nums{width:100%;margin-top:22px;gap:10px} .nums div{padding:14px 12px;border-radius:12px} .nums b{font-size:24px} .nums span{font-size:11px}
+
+    /* 맺음 */
+    .foot{padding:10svh 6vw 12svh;min-height:0}
+    .foot .fp{width:auto;font-size:15px;line-height:1.8}
+    .foot .fl{margin-top:22px;font-size:12px}
+    .foot .sig{margin-top:30px;font-size:22px}
+
+    /* 크게 보기 */
+    .lb-bar{gap:8px;padding:10px 12px} .lb-bar label{display:none}
+    .lb-title{max-width:34vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.1em}
+    .lb-bar input[type=range]{width:74px;flex:0 0 auto} .lb-bar button{padding:0 11px;white-space:nowrap}
+    .lb-stage{padding:0 12px 18px}
   }
 </style>
 </head>
@@ -269,7 +313,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
         <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4"><path d="M8 40 L50 8 L92 40"/><path d="M22 40 H78"/><circle cx="50" cy="66" r="26"/><path d="M50 40 V92 M24 66 H76"/></svg>
       </div>
       <div class="bottom" id="bottom">
-        <p class="body" id="body">좋은 디자인이 옳은 디자인은 아니다. 보기 좋은 화면을 만드는 일과, 그 화면이 놓일 구조를 정하는 일은 다르다. 나는 화면을 그리다가 구조 쪽으로 넘어왔다. 상담사에게 페이지 대신 창과 작업표시줄을 준 것이 2023년, 같은 관점이 관리자 도구 전체로 번진 것이 2026년이다. 그 사이에 AI 여럿과 석 달을 이어서 일하는 방식을 짰고, 그 방식으로 내 말투를 배우는 모델을 키웠다. 여기 실린 화면은 캡처가 아니라 지금 눌러볼 수 있는 실물이다.</p>
+        <p class="body" id="body"><span class="l1"><b>좋은 디자인이 옳은 디자인은 아니다.</b> 보기 좋은 화면을 만드는 일과, 그 화면이 놓일 구조를 정하는 일은 다르다. 나는 화면을 그리다가 구조 쪽으로 넘어왔다.</span> <span class="l2">상담사에게 페이지 대신 창과 작업표시줄을 준 것이 2023년, 같은 관점이 관리자 도구 전체로 번진 것이 2026년이다. 그 사이에 AI 여럿과 석 달을 이어서 일하는 방식을 짰고, 그 방식으로 내 말투를 배우는 모델을 키웠다.</span> <span class="l3">여기 실린 화면은 캡처가 아니라 지금 눌러볼 수 있는 실물이다.</span></p>
       </div>
     </div>
     <div class="veil"></div>
@@ -278,8 +322,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
 
   <!-- ═══ 차원 1 · Blue Horizon ═══ -->
   <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
-  <!-- data-mobj = 모바일(≤900px)에서의 자리. 타이포 오른쪽 위 빈 곳 -->
-  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff" data-mobj="0.82,0.20,0.34">
+  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff">
     <div class="sheet">
       <div class="no">01 — INTERFACE</div>
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
@@ -293,7 +336,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
       <p class="hook">관리자가 자리에 없어도 본다.</p>
       <p class="sub">클라우드 컨택센터 운영 플랫폼 · 디자인 리뉴얼 · 2026</p>
       <div class="facts">
-        <p><b>컨택센터 관리 화면은 늘 데스크톱 전용이었다.</b> 그 전제를 깨고 같은 대시보드를 폰에 접어 넣었다. 오른쪽 폰 안에서 도는 게 그 화면이다.</p>
+        <p><b>컨택센터 관리 화면은 늘 데스크톱 전용이었다.</b> 그 전제를 깨고 같은 대시보드를 폰에 접어 넣었다. 폰 안에서 도는 게 그 화면이다.</p>
         <p><b>보는 화면과 조치하는 화면이 따로 있으면 판단이 끊긴다.</b> 실시간 지표·상담원 상태·채널 대기열을 한 흐름으로 묶어, 보고 판단하고 조치하는 일이 한 자리에서 끝나게 했다.</p>
         <p><b>디자인을 문서가 아니라 코드로 냈다.</b> 프레임워크 없는 단일 HTML 한 장. 돌아가는 상태로 만들어 넘겼고, 뒤의 배선은 개발팀이 이어받았다.</p>
         <p><b>시안 셋을 만들어 놓고 다크를 골랐다.</b> 관리자는 하루 종일 이 화면을 본다. 눈이 편한 쪽이 맞다. 다만 색만 뒤집은 다크는 어색해진다. 어색하지 않은 다크를 만드는 것이 일이었다. 위 탭으로 셋 다 볼 수 있다.</p>
@@ -309,7 +352,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
   </section>
 
   <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
-  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e" data-mobj="0.82,0.20,0.34">
+  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e">
     <div class="sheet">
       <div class="no">02 — SYSTEM</div>
       <div class="title"><small>OS</small><small>UI</small></div>
@@ -318,7 +361,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
       <p class="sub">상담 화면을 OS처럼 · 같은 관점으로 3년, 두 번</p>
       <div class="facts">
         <p><b>2023.</b> 상담사는 창을 여러 개 띄워 놓고 일하는 사람이었다. 그래서 페이지 대신 창과 작업표시줄을 줬다. 그리고 개발팀에 넘겼다.</p>
-        <p><b>넘긴 게 끝이 아니었다.</b> 왼쪽 프레임의 연도를 눌러 보세요. 2년 뒤 같은 파일이 제품이 된 모습이다. 서버는 사라졌지만 화면은 되살렸다.</p>
+        <p><b>넘긴 게 끝이 아니었다.</b> 연도를 눌러 보세요. 2년 뒤 같은 파일이 제품이 된 모습이다. 서버는 사라졌지만 화면은 되살렸다.</p>
         <p><b>2026.</b> 같은 관점이 관리자 도구 전체로 번졌다. 드래그·리사이즈·스냅·시작메뉴. 화면이 아니라 일할 공간을 설계했다. 결국 구조 얘기다.</p>
       </div>
       <div class="try">둘 다 실물입니다 · 아이콘을 눌러 창을 열어보세요</div>
@@ -338,7 +381,7 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.50,0.56,0.62,#2fd3a0" data-mobj="0.50,0.70,0.55">
+  <section class="dim next" id="d03" data-obj="0.50,0.56,0.62,#2fd3a0">
     <div class="sheet">
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
@@ -347,22 +390,50 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
       <p class="sub">AI는 대화가 끝나면 잊는다. 그래서 기억을 사람 밖에, 파일로 뒀다.</p>
       <div class="facts">
         <p><b>역할을 나눈 AI들이 같은 파일을 읽고 쓰며 서로 인계한다.</b> 사람은 방향만 준다. 계정을 옮긴 날에도 맥락이 끊기지 않았다.</p>
-        <p><b>실측이 구조를 바꿨다.</b> 사용 로그를 재보니 평균 3.4일 간격, 한 번에 8분이었다. "직전 3턴"은 근거 없는 단위였다. 대화의 단위를 턴에서 시간으로 다시 잡았다.</p>
-        <p><b>AI 도입이 겉도는 건 도구가 없어서가 아니라 일하는 방식이 안 바뀌어서다.</b> 그 방식을 혼자 석 달 굴려봤고, 어디서 깨지는지를 봤다.</p>
+        <p><b>AI 도입이 겉도는 건 도구가 없어서가 아니라 일하는 방식이 안 바뀌어서다.</b> 그 방식을 혼자 석 달 굴려봤고, 어디서 깨지는지는 옆의 숫자가 말한다.</p>
+      </div>
+      <div class="nums">
+        <div><b>3.4일 · 8분</b><span>실사용 로그 실측. "직전 3턴"은 근거 없는 단위였다 → 대화 단위를 시간으로 재설계</span></div>
+        <div><b>17일치</b><span>빠진 기록을 AI가 스스로 발견하고 지난 작업을 훑어 채워 넣게 만들었다</span></div>
+        <div><b>1회 롤백</b><span>학습 전에 판정 기준을 문서에 고정. 한 항목이 깨져서 버전 전체를 되돌렸다</span></div>
+        <div><b>계정 이동</b><span>회사·개인 계정을 분리한 날, 새 대화가 그대로 이어받아 작업을 계속했다</span></div>
       </div>
       <div class="try">숫자는 전부 실사용 로그 실측</div>
       <div class="dband"></div><div class="dyear">.2026</div>
     </div>
   </section>
 
+  <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
+  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a">
+    <div class="sheet">
+      <div class="no">04 — NEXT</div>
+      <div class="title"><small>SVALU</small></div>
+      <div class="ddots"></div>
+      <p class="hook">모델은 이미 돈다. 아직 없는 건 보여줄 화면이다.</p>
+      <p class="sub">말투를 배우는 로컬 AI · 아바타가 말하는 장면이 이 자리에 들어온다</p>
+      <div class="facts">
+        <p><b>API 없이 한 장의 GPU 안에서 산다.</b> 데이터가 밖으로 나가지 않는 구조를 택했다. 그 대가가 무엇인지는 공개할 때 숫자로 같이 적는다.</p>
+        <p><b>AI를 도구가 아니라 이어진 존재로 본다.</b> 앞 장에서 말한 방식으로 키운 것이 이 모델이다. 기준을 먼저 박고, 한 항목이 깨졌을 때 버전을 통째로 되돌린 기록도 여기 있다.</p>
+      </div>
+      <div class="try">녹화 준비 중 · 공개되면 이 자리에서 바로 재생됩니다</div>
+      <div class="dband"></div><div class="dyear">.soon</div>
+    </div>
+  </section>
 </div>
+
+<!-- ═══ 맺음 ═══ -->
+<section class="foot" id="foot">
+  <p class="fp">화면 만들 사람은 많다. 화면이 놓일 구조까지 정하는 사람은 드물다. 나는 뒤쪽이고, 지금 그 자리를 찾고 있다.</p>
+  <p class="fl"><a href="https://github.com/svalu" rel="me">github.com/svalu</a></p>
+  <p class="sig">장유석 / 희랑 · UX Engineer</p>
+</section>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="실물 크게 보기">
   <div class="lb-bar">
     <span class="lb-title" id="lbTitle"></span>
     <span class="sp"></span>
     <label for="lbZoom">배율</label>
-    <input type="range" id="lbZoom" min="30" max="150" step="5" value="100">
+    <input type="range" id="lbZoom" min="25" max="150" step="5" value="100">
     <span class="lb-title" id="lbPct">100%</span>
     <button type="button" id="lbFit">화면에 맞춤</button>
     <button type="button" id="lbClose">닫기 (Esc)</button>
@@ -375,17 +446,21 @@ addEventListener('resize', function(){ if(matchMedia('(max-width:900px)').matche
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const B = document.body, intro = document.getElementById('intro'), veil = document.querySelector('.veil');
-const dims = [...document.querySelectorAll('.dim')];          // [intro, d01, d02, d03]
+/* 폰(≤900px): 파일은 하나, 마크업도 하나. 원 전환·스크롤 잠금·정착만 끄고 세로로 흐른다. 모드가 바뀌면 다시 읽는다 */
+const NARROW = matchMedia('(max-width:900px)').matches;
+matchMedia('(max-width:900px)').addEventListener('change', ()=>location.reload());
+if(NARROW) B.classList.remove('locked');
+const dims = [...document.querySelectorAll('.dim')];          // [intro, d01, d02, d03, d04]
 const N = dims.length;
-/* 문서 높이: 차원 수 × 100vh + 마지막 차원에 머무는 여유 */
-document.getElementById('track').style.height = `calc(${N}00vh + 40vh)`;
+/* 문서 높이: 차원 수 × 100vh + 마지막 차원에 머무는 여유. 폰은 흐름이 높이를 만든다 */
+if(!NARROW) document.getElementById('track').style.height = `calc(${N}00vh + 40vh)`;
 
 /* 차원별 점 라인 */
 document.querySelectorAll('.ddots').forEach(w=>{ for(let i=0;i<22;i++){ const d=document.createElement('i'); d.style.setProperty('--i',i); w.appendChild(d);} });
 
 /* ── 인트로 점 라인 ── */
 const dots = document.getElementById('dots');
-const DOTS = 36, HUE0 = 50, HUE_SPAN = 230, dotEls = [];
+const DOTS = NARROW ? 22 : 36, HUE0 = 50, HUE_SPAN = 230, dotEls = [];   /* 폰 폭엔 22개가 맞다 */
 const dotHue = i => HUE0 - (i/(DOTS-1))*HUE_SPAN;
 for(let i=0;i<DOTS;i++){
   const d = document.createElement('i'); dotEls.push(d);
@@ -461,7 +536,7 @@ addEventListener('scroll', scheduleSnap, {passive:true});
 function scheduleSnap(){
   clearTimeout(snapTimer);
   snapTimer = setTimeout(()=>{
-    if(B.classList.contains('locked') || touching) return;
+    if(NARROW || B.classList.contains('locked') || touching) return;
     const ih = innerHeight, max = (N-1)*ih;
     const to = Math.min(Math.round(scrollY/ih)*ih, max);
     if(Math.abs(to - scrollY) > 4 && scrollY <= max + ih*.3) scrollTo({top:to, behavior:'smooth'});
@@ -471,27 +546,26 @@ function scheduleSnap(){
 /* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
 let S = [];
 function buildStates(){
-  const narrow = innerWidth <= 900;
   S = dims.map((d,i)=>{
-    if(i===0) return {x: narrow? .78 : .725, y: narrow? .50 : .525, s:1, c:RED.clone()};
+    if(i===0) return {x:.725, y:.525, s:1, c:RED.clone()};
     const [x,y,s,c] = d.dataset.obj.split(',');
-    const st = {x:+x, y:+y, s:+s, c:new THREE.Color(c.trim())};
-    if(narrow && d.dataset.mobj){ const [mx,my,ms] = d.dataset.mobj.split(','); st.x=+mx; st.y=+my; st.s=+ms; }
-    return st;
+    return {x:+x, y:+y, s:+s, c:new THREE.Color(c.trim())};
   });
 }
-buildStates(); addEventListener('resize', buildStates);
+buildStates();
 function worldXY(x,y){ return [ (x-0.5)*vwW, -(y-0.5)*vhW - 0.115*baseScale ]; }
 
 /* ── 인트로 타임라인 ── */
-const T = { act1:0.55, act2:2.25, color:4.05, flow:4.05+0.35+(DOTS-1)*0.028+1.4 };
-const SHRINK = 1.7;
+/* 폰은 3초 안에 훅: 빨강 → 응축 → 이름 → 색. 잠금이 없으니 밀면 바로 넘어간다 */
+const T = NARROW ? { act1:0.4, act2:1.75, color:3.0, flow:3.0+0.35+(DOTS-1)*0.028+1.2 }
+                 : { act1:0.55, act2:2.25, color:4.05, flow:4.05+0.35+(DOTS-1)*0.028+1.4 };
+const SHRINK = NARROW ? 1.5 : 1.7;
 let t0 = performance.now()/1000, fired = {}, skipped = false, flowStart = 0;
 const easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
 const clamp01 = x => Math.min(Math.max(x,0),1);
 function flowDots(now){ const hs = (now - flowStart)*10;   /* 색이 라인을 따라 아주 천천히 흐른다 */ for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now - flowStart)*0.9 - i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
 function unlock(){ B.classList.remove('locked'); }
-function reset(){ scrollTo(0,0); B.classList.add('snap','locked'); B.classList.remove('act1','act2','color','flow'); B.classList.add('act0'); dotEls.forEach(d=>d.style.background=''); fired={}; skipped=false; t0=performance.now()/1000; requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
+function reset(){ scrollTo(0,0); B.classList.add('snap'); if(!NARROW) B.classList.add('locked'); B.classList.remove('act1','act2','color','flow'); B.classList.add('act0'); dotEls.forEach(d=>d.style.background=''); fired={}; skipped=false; t0=performance.now()/1000; requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
 function skip(){ if(skipped) return; skipped=true; B.classList.add('snap','act1','act2','color','flow'); fired={act1:1,act2:1,color:1,flow:1}; flowStart=performance.now()/1000; unlock(); requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
 document.getElementById('replay').onclick = reset;
 document.getElementById('skip').onclick = skip;
@@ -504,6 +578,7 @@ intro.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON' && !fired.fl
 /* ── 만질 수 있는 차원은 하나뿐. 마스크는 시각만 가리고 클릭은 통과시키므로 직접 끈다.
       판정은 스크롤 위치로 즉시(부드러운 prog 를 기다리면 전환 중 클릭이 죽는다) ── */
 function updateReach(){
+  if(NARROW) return;                       /* 폰은 겹치지 않으니 전부 만질 수 있다 */
   const a = Math.max(0, Math.min(N-1, Math.round(scrollY / innerHeight)));
   for(let i=0;i<N;i++){
     const on = (i === a);
@@ -534,6 +609,21 @@ function loadNear(p){
   });
 }
 
+/* ── 폰: 원 대신 스크롤 관찰. 차원이 18% 보이면 등장, 화면 가운데 띠에 들어오면 오브젠트 색이 먼저 바뀐다.
+      실물 iframe 은 화면 위아래 60% 안에 들어오면 붙이고, 1.2화면 넘게 멀어지면 내린다 ── */
+const colTarget = RED.clone();
+if(NARROW){
+  const inObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.18});
+  const colObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) colTarget.copy(S[dims.indexOf(e.target)].c); }), {rootMargin:'-40% 0px -40% 0px', threshold:0});
+  dims.forEach(d=>{ inObs.observe(d); colObs.observe(d); });
+  const loadObs = new IntersectionObserver(es=>es.forEach(e=>{
+    const f = e.target;
+    if(e.isIntersecting){ if(!f.getAttribute('src')) f.setAttribute('src', f.dataset.src); }
+    else if(f.getAttribute('src') && Math.abs(e.boundingClientRect.top) > innerHeight*1.2) f.removeAttribute('src');
+  }), {rootMargin:'60% 0px 60% 0px'});
+  document.querySelectorAll('iframe[data-src]').forEach(f=>loadObs.observe(f));
+}
+
 /* ── 프레임 ── */
 let prog = 0;                       // 부드럽게 따라가는 스크롤 진행도 (차원 단위: 0=인트로 … N-1=마지막)
 const tmpC = new THREE.Color();
@@ -551,11 +641,19 @@ function frame(){
   const o = easeIO(clamp01((prog - k)/0.82));         // 열림 진행도 (스크롤 82% 구간에서 완전히 열림)
   const oc = clamp01((prog - k)/0.45);                // 색은 먼저 바뀐다
 
-  /* 오브젝트: 상태 S[k] → S[k+1] 보간. 직선이 아니라 살짝 떠서 건너간다(포물선) + 건너가는 중엔 조금 커진다 */
-  const a = S[k], b = S[k+1] || a;
-  const lift = Math.sin(o*Math.PI);
-  const ox = a.x + (b.x-a.x)*o, oy = a.y + (b.y-a.y)*o - lift*0.09, os = (a.s + (b.s-a.s)*o) * (1 + lift*0.14);
-  tmpC.copy(a.c).lerp(b.c, easeIO(oc)); mat.color.copy(tmpC);
+  let ox, oy, os;
+  if(NARROW){
+    /* 폰: 인트로에선 오른쪽 가운데 크게, 첫 화면을 넘기며 우상단에 작게 앉는다. 색은 관찰자가 정한 차원 색으로 */
+    const p = clamp01(scrollY/(innerHeight*0.9));
+    ox = .78 + (.84-.78)*p; oy = .44 + (.11-.44)*p; os = 1.45 - .85*p;   /* 인트로 화면 높이의 1/3, 카드에선 그 40% */
+    mat.color.lerp(colTarget, .04);
+  }else{
+    /* 오브젠트: 상태 S[k] → S[k+1] 보간. 직선이 아니라 살짝 떠서 건너간다(포물선) + 건너가는 중엔 조금 커진다 */
+    const a = S[k], b = S[k+1] || a;
+    const lift = Math.sin(o*Math.PI);
+    ox = a.x + (b.x-a.x)*o; oy = a.y + (b.y-a.y)*o - lift*0.09; os = (a.s + (b.s-a.s)*o) * (1 + lift*0.14);
+    tmpC.copy(a.c).lerp(b.c, easeIO(oc)); mat.color.copy(tmpC);
+  }
 
   /* 인트로 응축 — 베일 원과 오브젝트 크기가 같은 곡선으로 */
   const s = skipped ? 1 : easeIO(clamp01((t - T.act1)/SHRINK));
@@ -564,9 +662,9 @@ function frame(){
   group.scale.setScalar(sc);
   const [wx, wy] = worldXY(ox, oy); group.position.set(wx, wy, 0);
 
-  /* 각 차원의 문(원) — 중심은 오브젝트의 현재 화면 위치. 가장자리 60px 은 번지게 */
+  /* 각 차원의 문(원) — 중심은 오브젠트의 현재 화면 위치. 가장자리 60px 은 번지게. 폰은 문이 없다 */
   const diag = Math.hypot(innerWidth, innerHeight);
-  for(let i=1;i<N;i++){
+  for(let i=1;i<N && !NARROW;i++){
     const d = dims[i];
     let r;
     if(i < k+1) r = 1.2; else if(i === k+1) r = o*1.2; else r = 0;
@@ -577,7 +675,7 @@ function frame(){
     d.classList.toggle('in', r > 0.7);
   }
   /* 실물 iframe 은 가까운 차원만 살린다 — 다섯 개가 동시에 돌면 렌더러가 버거움 */
-  loadNear(prog);
+  if(!NARROW) loadNear(prog);
 
   /* 마우스 */
   const live = s;
@@ -600,7 +698,14 @@ frame();
     wrap.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-selected', String(x===b)); });
     var src=b.dataset.src + '?v=' + (fr.dataset.src||'').split('v=')[1];
     fr.dataset.src=src;
-    if(fr.getAttribute('src')) fr.setAttribute('src', src);     /* 이미 떠 있으면 바로 갈아 끼운다 */
+    if(NARROW){
+      /* 폰: 최종은 폰 실물로, 시안 셋은 데스크톱 화면이라 가로 프레임으로. 숨긴 쪽은 내린다 */
+      var isFinal=/live\.html/.test(b.dataset.src), d01=document.getElementById('d01'), pf=document.querySelector('#phone01 iframe');
+      d01.classList.toggle('shot', !isFinal);
+      if(isFinal){ fr.removeAttribute('src'); if(!pf.getAttribute('src')) pf.setAttribute('src', pf.dataset.src); }
+      else{ pf.removeAttribute('src'); fr.setAttribute('src', src); }
+      fitViews();
+    }else if(fr.getAttribute('src')) fr.setAttribute('src', src);     /* 이미 떠 있으면 바로 갈아 끼운다 */
     var key=b.dataset.src.split('/').pop();
     if(bar) bar.textContent=names[key]||key;
     host.dataset.title='Blue Horizon · '+b.textContent.trim();
@@ -636,7 +741,7 @@ frame();
   function fit(){
     var pad=48, aw=lbStage.clientWidth-pad, ah=lbStage.clientHeight-pad;
     var z=Math.floor(Math.min(aw/cur.w, ah/cur.h)*100);
-    z=Math.max(30,Math.min(150,z)); lbZoom.value=z; apply(z);
+    z=Math.max(25,Math.min(150,z)); lbZoom.value=z; apply(z);
   }
   function open(host){
     var src=host.querySelector('iframe[data-src],iframe[src]');
