@@ -338,7 +338,7 @@
 
   <!-- ═══ 차원 1 · Blue Horizon ═══ -->
   <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
-  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff" data-mat="0.06,1.00,0.00,0.002,1.15">
+  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff" data-mat="0.12,1.00,0.00,0.000,1.30,0.95,0.06">
     <div class="sheet">
       <div class="no">01 — INTERFACE</div>
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
@@ -368,7 +368,7 @@
   </section>
 
   <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
-  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e" data-mat="0.46,1.00,0.00,0.030,0.95">
+  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e" data-mat="0.46,1.00,0.00,0.012,0.95,1.00,0.06">
     <div class="sheet">
       <div class="no">02 — SYSTEM</div>
       <div class="title"><small>OS</small><small>UI</small></div>
@@ -394,7 +394,7 @@
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0" data-mat="0.22,0.00,1.00,0.006,0.80">
+  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0" data-mat="0.55,0.00,0.85,0.006,0.80,0.82,0.06">
     <div class="sheet">
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
@@ -424,7 +424,7 @@
   </section>
 
   <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
-  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.30,0.15,1.00,0.012,0.90">
+  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.45,0.00,1.00,0.012,0.90,0.75,0.05">
     <div class="sheet">
       <div class="no">04 — NEXT</div>
       <div class="title"><small>SVALU</small></div>
@@ -548,16 +548,19 @@ function grainTexture(){
 }
 
 const mat = new THREE.MeshPhysicalMaterial({
-  color: RED.clone(), roughness:.72, metalness:0,
-  clearcoat:0, clearcoatRoughness:.18, envMapIntensity:.55,
+  color: RED.clone().convertSRGBToLinear(), roughness:.82, metalness:0,
+  clearcoat:0, clearcoatRoughness:.06, envMapIntensity:.55,
   bumpMap: grainTexture(), bumpScale:.018,
 });
 const bodyM = new THREE.Mesh(lathe, mat);
 const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.position.y = 4.15;
 const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x333333, .55));
-const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(-4, 6, 8); scene.add(key);
-const rim = new THREE.DirectionalLight(0xffffff, .25); rim.position.set(5, -2, -6); scene.add(rim);
+/* 세기 총합이 1.0 을 넘으면 흰 확산이 타 버린다. 환경맵을 넣은 만큼 램프를 내렸다.
+   바닥색 0x333333 도 선형으로 0.2 나 되어 그림자 쪽이 어두워지지 않았다 → 0x0a0a0a */
+const KEY_I = .52, HEMI_I = .22, RIM_I = .12;
+const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, HEMI_I); scene.add(hemi);
+const key = new THREE.DirectionalLight(0xffffff, KEY_I); key.position.set(-4, 6, 8); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, RIM_I); rim.position.set(5, -2, -6); scene.add(rim);
 
 /* 비칠 것을 만들어 준다 — 위가 밝고 아래가 어두운 방 하나를 구워서 환경으로 쓴다.
    이게 없으면 금속감을 올릴수록 검게만 된다(반사할 대상이 없으니까) */
@@ -580,7 +583,7 @@ const rim = new THREE.DirectionalLight(0xffffff, .25); rim.position.set(5, -2, -
   room.add(dome);
   const panel = (x, y, z, w, h, i) => {                 /* 창 두 개 — 금속에 길게 늘어진 반사가 생긴다 */
     const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
-      new THREE.MeshBasicMaterial({color: 0xffffff}));
+      new THREE.MeshBasicMaterial({color: 0xffffff, toneMapped: false}));   /* 나중에 톤매핑을 켜도 이 베이크는 건드리지 않게 */
     m.material.color.multiplyScalar(i); m.position.set(x, y, z); m.lookAt(0, 0, 0); room.add(m);
   };
   panel(-6, 5, 5, 7, 3.0, 1.35);      /* 크롬에 길게 늘어질 창 하나 */
@@ -643,11 +646,11 @@ function scheduleSnap(){
 
 /* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
 let S = [];
-const INTRO_MAT = {r:.78, m:0, cc:0, b:.020, e:.55};   /* 인트로는 무광 석고 — 빛을 먹고 안 돌려준다 */
+const INTRO_MAT = {r:.82, m:0, cc:0, b:.020, e:.55, ex:1.0, ccr:.06};   /* 인트로는 무광 석고 — 빛을 먹고 안 돌려준다 */
 function matOf(d){
   if(!d.dataset.mat) return INTRO_MAT;
-  const [r,m,cc,b,e] = d.dataset.mat.split(',').map(Number);
-  return {r, m, cc, b, e:(e===undefined?1:e)};
+  const [r,m,cc,b,e,ex,ccr] = d.dataset.mat.split(',').map(Number);
+  return {r, m, cc, b, e:(e===undefined?1:e), ex:(ex===undefined?1:ex), ccr:(ccr===undefined?.06:ccr)};
 }
 function buildStates(){
   S = dims.map((d,i)=>{
@@ -716,6 +719,7 @@ function loadNear(p){
 /* ── 폰: 원 대신 스크롤 관찰. 차원이 18% 보이면 등장, 화면 가운데 띠에 들어오면 오브젠트 색이 먼저 바뀐다.
       실물 iframe 은 화면 위아래 60% 안에 들어오면 붙이고, 1.2화면 넘게 멀어지면 내린다 ── */
 const colTarget = RED.clone();
+const smCol = RED.clone();          /* 폰에서 sRGB 로 누적하는 색. mat.color 를 직접 lerp 하면 선형과 섞여 엉킨다 */
 let matTarget = INTRO_MAT;
 if(NARROW){
   const inObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.18});
@@ -731,6 +735,7 @@ if(NARROW){
 
 /* ── 프레임 ── */
 let prog = 0;                       // 부드럽게 따라가는 스크롤 진행도 (차원 단위: 0=인트로 … N-1=마지막)
+let expo = 1;                       // 차원별 노출 — 배경이 어두운 장에서 오브젠트만 튀지 않게
 const tmpC = new THREE.Color();
 function frame(){
   requestAnimationFrame(frame);
@@ -751,19 +756,21 @@ function frame(){
     /* 폰: 인트로에선 오른쪽 가운데 크게, 첫 화면을 넘기며 우상단에 작게 앉는다. 색은 관찰자가 정한 차원 색으로 */
     const p = clamp01(scrollY/(innerHeight*0.9));
     ox = .78 + (.84-.78)*p; oy = .44 + (.11-.44)*p; os = 1.45 - .85*p;   /* 인트로 화면 높이의 1/3, 카드에선 그 40% */
-    mat.color.lerp(colTarget, .04);
+    smCol.lerp(colTarget, .04); mat.color.copy(smCol).convertSRGBToLinear();   /* sRGB 로 쌓고 넣을 때만 선형 */
     /* 폰: 색과 마찬가지로 표면도 관찰자가 정한 차원 것으로 서서히 */
-    mat.roughness        += (matTarget.r  - mat.roughness) * .04;
-    mat.metalness        += (matTarget.m  - mat.metalness) * .04;
-    mat.clearcoat        += (matTarget.cc - mat.clearcoat) * .04;
-    mat.bumpScale        += (matTarget.b  - mat.bumpScale) * .04;
-    mat.envMapIntensity  += (matTarget.e  - mat.envMapIntensity) * .04;
+    mat.roughness        += (matTarget.r   - mat.roughness) * .04;
+    mat.metalness        += (matTarget.m   - mat.metalness) * .04;
+    mat.clearcoat        += (matTarget.cc  - mat.clearcoat) * .04;
+    mat.bumpScale        += (matTarget.b   - mat.bumpScale) * .04;
+    mat.envMapIntensity  += (matTarget.e   - mat.envMapIntensity) * .04;
+    mat.clearcoatRoughness += (matTarget.ccr - mat.clearcoatRoughness) * .04;
+    expo                 += (matTarget.ex  - expo) * .04;
   }else{
     /* 오브젠트: 상태 S[k] → S[k+1] 보간. 직선이 아니라 살짝 떠서 건너간다(포물선) + 건너가는 중엔 조금 커진다 */
     const a = S[k], b = S[k+1] || a;
     const lift = Math.sin(o*Math.PI);
     ox = a.x + (b.x-a.x)*o; oy = a.y + (b.y-a.y)*o - lift*0.09; os = (a.s + (b.s-a.s)*o) * (1 + lift*0.14);
-    tmpC.copy(a.c).lerp(b.c, easeIO(oc)); mat.color.copy(tmpC);
+    tmpC.copy(a.c).lerp(b.c, easeIO(oc)); mat.color.copy(tmpC).convertSRGBToLinear();   /* 보간은 sRGB 에서, 넣을 때만 선형으로 */
     /* 표면도 색과 같은 곡선으로 건너간다 — 금속에서 종이로, 종이에서 수지로 */
     const e = easeIO(oc), at = a.t, bt = b.t;
     mat.roughness = at.r  + (bt.r  - at.r)  * e;
@@ -771,6 +778,8 @@ function frame(){
     mat.clearcoat = at.cc + (bt.cc - at.cc) * e;
     mat.bumpScale = at.b  + (bt.b  - at.b)  * e;
     mat.envMapIntensity = at.e + (bt.e - at.e) * e;
+    mat.clearcoatRoughness = at.ccr + (bt.ccr - at.ccr) * e;
+    expo = at.ex + (bt.ex - at.ex) * e;
   }
 
   /* 인트로 응축 — 베일 원과 오브젝트 크기가 같은 곡선으로 */
@@ -800,7 +809,11 @@ function frame(){
   vel.x = (mouse.x - sm.x)*.085; vel.y = (mouse.y - sm.y)*.085; sm.x += vel.x; sm.y += vel.y; spin += vel.x*2.2; spin *= .965;
   group.rotation.y = now*.16 + (sm.x*1.4 + spin)*live; group.rotation.x = -sm.y*.42*live; group.rotation.z = -sm.x*.28*live;
   ball.position.x = sm.x*1.6*live; ball.position.z = -sm.y*1.2*live; ball.position.y = 4.15 + Math.sin(now*1.3)*.12 + Math.abs(sm.x)*.35*live;
-  key.position.set(-4 + sm.x*14*live, 6 - sm.y*10*live, 8); rim.intensity = .25 + Math.abs(sm.x)*.5*live;
+  key.position.set(-4 + sm.x*14*live, 6 - sm.y*10*live, 8);
+  /* 금속은 확산이 0 이라 램프가 스파클만 만든다 → 금속감만큼 덜어낸다 */
+  key.intensity  = KEY_I * expo * (1 - .45*mat.metalness);
+  hemi.intensity = HEMI_I * expo;
+  rim.intensity  = (RIM_I + Math.abs(sm.x)*.22*live) * expo;
   renderer.render(scene, camera);
 }
 frame();
