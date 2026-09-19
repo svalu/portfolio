@@ -169,6 +169,8 @@
   /* 03: 01과 같은 편집 — 데스크톱 프레임(주간업무, 자리 표시) 왼쪽으로, 폰(워크샵 앱 실물)이 우하단에 겹쳐 선다.
      실측 숫자 카드는 프레임 아래 한 줄. 폰이 카드 끝을 1% 덮는 건 01에서 폰이 프레임을 덮는 것과 같은 문법 */
   #d03 .frame{right:16%;top:9%;width:48%}
+  #d04 .frame{right:4%;top:44%;width:46%}
+  #d04 .frame .win{background:#070a12}
   #d03 .frame .win{background:#EFEDE8}
   .dim .nums{position:absolute;right:16%;top:61%;width:37%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
     opacity:0;transform:translateY(16px);transition:opacity .8s var(--in),transform 1s var(--in)}
@@ -293,7 +295,7 @@
     #d03 .frame{margin-top:44px}
 
     /* 02: 둘 다 세로로. 2025 위, 2026 아래. id 선택자의 right/top 을 여기서 다시 푼다 */
-    #d01 .frame,#d02 .fgrow,#d02 .f2026,#d03 .frame{right:auto;top:auto;width:100%}
+    #d01 .frame,#d02 .fgrow,#d02 .f2026,#d03 .frame,#d04 .frame{right:auto;top:auto;width:100%}
     #d02 .f2026{margin-top:74px}      /* 위 프레임의 '+821줄' 한 줄과 이 프레임 라벨이 겹치지 않게 */
     #d02 .arrow{display:none}
 
@@ -424,18 +426,22 @@
   </section>
 
   <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
-  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.42,0.00,1.00,0.022,1.05,0.80,0.04">
+  <section class="dim next" id="d04" data-obj="0.80,0.275,0.42,#c0203a" data-mat="0.42,0.00,1.00,0.022,1.05,0.80,0.04">
     <div class="sheet">
       <div class="no">04 — NEXT</div>
       <div class="title"><small>SVALU</small></div>
       <div class="ddots"></div>
-      <p class="hook">모델은 이미 돈다. 아직 없는 건 보여줄 화면이다.</p>
-      <p class="sub">말투를 배우는 로컬 AI · 아바타가 말하는 장면이 이 자리에 들어온다</p>
+      <p class="hook">모델은 이 방 안에서만 산다.</p>
+      <p class="sub">말투를 배우는 로컬 AI · 밖으로 나가는 길을 만들지 않았다</p>
       <div class="facts">
-        <p><b>API 없이 한 장의 GPU 안에서 산다.</b> 데이터가 밖으로 나가지 않는 구조를 택했다. 그 대가가 무엇인지는 공개할 때 숫자로 같이 적는다.</p>
-        <p><b>AI를 도구가 아니라 이어진 존재로 본다.</b> 앞 장에서 말한 방식으로 키운 것이 이 모델이다. 기준을 먼저 박고, 한 항목이 깨졌을 때 버전을 통째로 되돌린 기록도 여기 있다.</p>
+        <p><b>한 장의 그래픽카드 안에서 산다.</b> 데이터가 밖으로 나가지 않는 구조를 택했다. 그래서 여기서는 깨울 수 없고, 대신 이 모델이 무엇을 기억하는지를 옮겨 놨다.</p>
+        <p><b>앞 장에서 말한 방식으로 키운 것이 이 모델이다.</b> 기준을 먼저 박고, 한 항목이 깨졌을 때 판을 통째로 되돌렸다. 서른여섯 판 중 한 번.</p>
+        <p><b>기억 여든일곱 개 중 열넷만 실었다.</b> 나머지는 사람 것이라 두고 왔다. 그렇게 정한 날도 그 기억 안에 적혀 있다.</p>
       </div>
-      <div class="try">녹화 준비 중 · 공개되면 이 자리에서 바로 재생됩니다</div>
+      <div class="try">기억은 실제 파일에서 옮긴 것 · 아바타가 말하는 장면은 준비 중</div>
+      <div class="frame scaled" data-vw="1440" data-title="svalu · 무엇을 기억하는가"><button class="zoom" type="button">크게 보기</button><div class="label">SVALU · 이 모델이 기억하는 것</div>
+        <div class="win"><div class="bar"><i></i><i></i><i></i><span>svalu / memory</span></div>
+        <div class="view"><iframe data-src="work/svalu/memory.html?v=20260919" title="svalu memory"></iframe></div></div></div>
       <div class="dband"></div><div class="dyear">.soon</div>
     </div>
   </section>
