@@ -191,8 +191,6 @@
   .foot .hist ol{list-style:none;margin-top:22px;border-top:1px solid rgba(17,17,17,.14)}
   .foot .hist li{display:grid;grid-template-columns:96px 1fr;gap:18px;padding:14px 0;border-bottom:1px solid rgba(17,17,17,.1);font-size:clamp(13px,1vw,15px);line-height:1.6;color:rgba(17,17,17,.72);font-weight:300}
   .foot .hist time{color:#111;font-weight:500;letter-spacing:.02em}
-  .foot .hist li.dummy{color:rgba(17,17,17,.38)} .foot .hist li.dummy time{color:rgba(17,17,17,.38)}
-  .foot .hist li.dummy span{position:relative} .foot .hist li.dummy i{grid-column:2;height:10px;width:70%;border-radius:5px;background:rgba(17,17,17,.08)}
   .foot .fl{margin-top:34px;font-size:13px;letter-spacing:.12em}
   .foot a{color:#8a0f78;text-decoration:none;border-bottom:1px solid currentColor}
   .foot .sig{margin-top:14vh;font-size:clamp(26px,3vw,46px);font-weight:200;letter-spacing:-.02em}
@@ -336,7 +334,7 @@
 
   <!-- ═══ 차원 1 · Blue Horizon ═══ -->
   <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
-  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff">
+  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff" data-mat="0.14,0.26,1.0,0.003">
     <div class="sheet">
       <div class="no">01 — INTERFACE</div>
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
@@ -366,7 +364,7 @@
   </section>
 
   <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
-  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e">
+  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e" data-mat="0.92,0.00,0.05,0.055">
     <div class="sheet">
       <div class="no">02 — SYSTEM</div>
       <div class="title"><small>OS</small><small>UI</small></div>
@@ -392,7 +390,7 @@
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0">
+  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0" data-mat="0.32,0.18,0.80,0.010">
     <div class="sheet">
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
@@ -422,7 +420,7 @@
   </section>
 
   <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
-  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a">
+  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.48,0.06,0.95,0.022">
     <div class="sheet">
       <div class="no">04 — NEXT</div>
       <div class="title"><small>SVALU</small></div>
@@ -450,9 +448,6 @@
       <li><time>2025</time><span>상담사 화면 제품 출시 — 2023 퍼블리싱본의 연장, 화면 50장</span></li>
       <li><time>2024</time><span>챗봇 관리자 — 시나리오 에디터 커스텀 노드 36종, SVG 실시간 모니터링</span></li>
       <li><time>2023</time><span>상담 화면 OS화 — 페이지 대신 창과 작업표시줄, 돌아가는 화면으로 인계</span></li>
-      <li class="dummy"><time>주간</time><span>주간업무 보고 · 자리 표시 — 실제 자료로 교체 예정</span><i></i></li>
-      <li class="dummy"><time>주간</time><span>주간업무 보고 · 자리 표시</span><i></i></li>
-      <li class="dummy"><time>주간</time><span>주간업무 보고 · 자리 표시</span><i></i></li>
     </ol>
   </details>
   <p class="fl"><a href="https://github.com/svalu" rel="me">github.com/svalu</a></p>
@@ -517,13 +512,78 @@ const prof = [[0,-4.6],[1.0,-4.5],[1.55,-3.9],[1.65,-3.1],[1.35,-2.35],[0.85,-1.
 const curve = new THREE.SplineCurve(prof.map(p=>new THREE.Vector2(p[0],p[1])));
 const lathe = new THREE.LatheGeometry(curve.getPoints(90), 96); lathe.computeVertexNormals();
 const RED = new THREE.Color(0x9c0a18);
-const mat = new THREE.MeshStandardMaterial({color:RED.clone(), roughness:.7, metalness:0});
+
+/* 요철맵 — 표면의 결. 차원마다 이 깊이(bumpScale)를 바꿔 종이·금속·수지를 가른다.
+   외부 이미지를 받지 않고 캔버스에 노이즈 세 겹을 겹쳐 굽는다(첫 로드에 한 번, 4ms) */
+function grainTexture(){
+  const N = 256, c = document.createElement('canvas'); c.width = c.height = N;
+  const g = c.getContext('2d'), img = g.createImageData(N, N);
+  const lay = [];                                     // [칸 크기, 세기] — 큰 결 위에 잔 결
+  for(const [cell, amp] of [[32, 46], [8, 26], [2, 16]]){
+    const m = N/cell, v = [];
+    for(let i=0;i<(m+1)*(m+1);i++) v.push(Math.random());
+    lay.push({cell, amp, m, v});
+  }
+  for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+    let h = 128;
+    for(const L of lay){
+      const fx = x/L.cell, fy = y/L.cell, ix = Math.floor(fx), iy = Math.floor(fy);
+      const tx = fx-ix, ty = fy-iy, ex = tx*tx*(3-2*tx), ey = ty*ty*(3-2*ty);
+      const at = (a,b)=>L.v[(b%(L.m+1))*(L.m+1) + (a%(L.m+1))];
+      const top = at(ix,iy) + (at(ix+1,iy)-at(ix,iy))*ex;
+      const bot = at(ix,iy+1) + (at(ix+1,iy+1)-at(ix,iy+1))*ex;
+      h += (top + (bot-top)*ey - 0.5) * L.amp;
+    }
+    const i = (y*N+x)*4, u = Math.max(0, Math.min(255, h));
+    img.data[i] = img.data[i+1] = img.data[i+2] = u; img.data[i+3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2.4, 2.4);
+  return t;
+}
+
+const mat = new THREE.MeshPhysicalMaterial({
+  color: RED.clone(), roughness:.72, metalness:0,
+  clearcoat:0, clearcoatRoughness:.22, envMapIntensity:.85,
+  bumpMap: grainTexture(), bumpScale:.018,
+});
 const bodyM = new THREE.Mesh(lathe, mat);
 const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.position.y = 4.15;
 const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x333333, .55));
 const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(-4, 6, 8); scene.add(key);
 const rim = new THREE.DirectionalLight(0xffffff, .25); rim.position.set(5, -2, -6); scene.add(rim);
+
+/* 비칠 것을 만들어 준다 — 위가 밝고 아래가 어두운 방 하나를 구워서 환경으로 쓴다.
+   이게 없으면 금속감을 올릴수록 검게만 된다(반사할 대상이 없으니까) */
+(function(){
+  const room = new THREE.Scene();
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(12, 24, 16), new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: `varying vec3 vP;
+      void main(){
+        float h = normalize(vP).y * 0.5 + 0.5;
+        vec3 c = mix(vec3(0.05,0.06,0.08), vec3(0.62,0.66,0.74), smoothstep(0.30, 0.95, h));
+        c = mix(c, vec3(0.16,0.18,0.24), smoothstep(0.34, 0.06, h));
+        gl_FragColor = vec4(c, 1.0);
+      }`,
+  }));
+  room.add(dome);
+  const panel = (x, y, z, w, h, i) => {                 /* 창 두 개 — 금속에 길게 늘어진 반사가 생긴다 */
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({color: 0xffffff}));
+    m.material.color.multiplyScalar(i); m.position.set(x, y, z); m.lookAt(0, 0, 0); room.add(m);
+  };
+  panel(-6, 5, 5, 7, 3.4, 2.6);
+  panel(5.5, 1.5, -6, 5, 5, 1.1);
+  const pm = new THREE.PMREMGenerator(renderer);
+  pm.compileEquirectangularShader();
+  scene.environment = pm.fromScene(room, 0.03).texture;
+  dome.geometry.dispose(); dome.material.dispose();
+  pm.dispose();
+})();
 
 let baseScale=1, vwW=1, vhW=1;
 /* 기준은 innerHeight 가 아니라 캔버스 자신의 크기다. 둘이 다르면(모바일 주소창) x 투영이 어긋난다 */
@@ -576,11 +636,17 @@ function scheduleSnap(){
 
 /* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
 let S = [];
+const INTRO_MAT = {r:.72, m:0, cc:0, b:.018};          /* 인트로는 무광 석고 — 처음의 몸 */
+function matOf(d){
+  if(!d.dataset.mat) return INTRO_MAT;
+  const [r,m,cc,b] = d.dataset.mat.split(',').map(Number);
+  return {r, m, cc, b};
+}
 function buildStates(){
   S = dims.map((d,i)=>{
-    if(i===0) return {x:.725, y:.525, s:1, c:RED.clone()};
+    if(i===0) return {x:.725, y:.525, s:1, c:RED.clone(), t:INTRO_MAT};
     const [x,y,s,c] = d.dataset.obj.split(',');
-    return {x:+x, y:+y, s:+s, c:new THREE.Color(c.trim())};
+    return {x:+x, y:+y, s:+s, c:new THREE.Color(c.trim()), t:matOf(d)};
   });
 }
 buildStates();
@@ -643,9 +709,10 @@ function loadNear(p){
 /* ── 폰: 원 대신 스크롤 관찰. 차원이 18% 보이면 등장, 화면 가운데 띠에 들어오면 오브젠트 색이 먼저 바뀐다.
       실물 iframe 은 화면 위아래 60% 안에 들어오면 붙이고, 1.2화면 넘게 멀어지면 내린다 ── */
 const colTarget = RED.clone();
+let matTarget = INTRO_MAT;
 if(NARROW){
   const inObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.18});
-  const colObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) colTarget.copy(S[dims.indexOf(e.target)].c); }), {rootMargin:'-40% 0px -40% 0px', threshold:0});
+  const colObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ const st = S[dims.indexOf(e.target)]; colTarget.copy(st.c); matTarget = st.t; } }), {rootMargin:'-40% 0px -40% 0px', threshold:0});
   dims.forEach(d=>{ inObs.observe(d); colObs.observe(d); });
   const loadObs = new IntersectionObserver(es=>es.forEach(e=>{
     const f = e.target;
@@ -678,12 +745,23 @@ function frame(){
     const p = clamp01(scrollY/(innerHeight*0.9));
     ox = .78 + (.84-.78)*p; oy = .44 + (.11-.44)*p; os = 1.45 - .85*p;   /* 인트로 화면 높이의 1/3, 카드에선 그 40% */
     mat.color.lerp(colTarget, .04);
+    /* 폰: 색과 마찬가지로 표면도 관찰자가 정한 차원 것으로 서서히 */
+    mat.roughness        += (matTarget.r  - mat.roughness) * .04;
+    mat.metalness        += (matTarget.m  - mat.metalness) * .04;
+    mat.clearcoat        += (matTarget.cc - mat.clearcoat) * .04;
+    mat.bumpScale        += (matTarget.b  - mat.bumpScale) * .04;
   }else{
     /* 오브젠트: 상태 S[k] → S[k+1] 보간. 직선이 아니라 살짝 떠서 건너간다(포물선) + 건너가는 중엔 조금 커진다 */
     const a = S[k], b = S[k+1] || a;
     const lift = Math.sin(o*Math.PI);
     ox = a.x + (b.x-a.x)*o; oy = a.y + (b.y-a.y)*o - lift*0.09; os = (a.s + (b.s-a.s)*o) * (1 + lift*0.14);
     tmpC.copy(a.c).lerp(b.c, easeIO(oc)); mat.color.copy(tmpC);
+    /* 표면도 색과 같은 곡선으로 건너간다 — 금속에서 종이로, 종이에서 수지로 */
+    const e = easeIO(oc), at = a.t, bt = b.t;
+    mat.roughness = at.r  + (bt.r  - at.r)  * e;
+    mat.metalness = at.m  + (bt.m  - at.m)  * e;
+    mat.clearcoat = at.cc + (bt.cc - at.cc) * e;
+    mat.bumpScale = at.b  + (bt.b  - at.b)  * e;
   }
 
   /* 인트로 응축 — 베일 원과 오브젝트 크기가 같은 곡선으로 */
