@@ -21,7 +21,7 @@ function Bars({ data, color }) {
 function Donut({ segments, size = 160 }) {
   const total = segments.reduce((a, s) => a + s.v, 0);
   let acc = 0;
-  const R = 70, r = 50;
+  const R = size * 0.44, r = size * 0.31;      /* size 에 비례 — 전에는 고정값이라 size 를 바꾸면 어긋났다 */
   const cx = size/2, cy = size/2;
   const arcs = segments.map((s, i) => {
     const a0 = (acc / total) * Math.PI * 2 - Math.PI/2;
@@ -37,7 +37,7 @@ function Donut({ segments, size = 160 }) {
   return (
     <svg width={size} height={size}>
       {arcs}
-      <text x={cx} y={cy - 4} textAnchor="middle" fontSize="22" fontWeight="600" fill="var(--text)" fontFamily="Inter">{total.toLocaleString()}</text>
+      <text x={cx} y={cy - 3} textAnchor="middle" fontSize={size * 0.135} fontWeight="600" fill="var(--text)" fontFamily="Inter">{total.toLocaleString()}</text>
       <text x={cx} y={cy + 14} textAnchor="middle" fontSize="11" fill="var(--text-dim)" fontFamily="Inter">Total sessions</text>
     </svg>
   );
@@ -94,9 +94,9 @@ function Analytics() {
           </div>
           <div className="panel">
             <div className="panel-h"><h3>Sources</h3></div>
-            <div style={{display:'flex', alignItems:'center', gap:18}}>
-              <Donut segments={segments} />
-              <div style={{flex:1, fontSize:12}}>
+            <div style={{display:'flex', alignItems:'center', gap:22, flexWrap:'wrap'}}>
+              <Donut segments={segments} size={148} />
+              <div style={{flex:1, minWidth:150, fontSize:12}}>
                 {segments.map(s => (
                   <div key={s.label} style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid var(--border)'}}>
                     <span><span style={{display:'inline-block',width:8,height:8,borderRadius:8,background:s.color,marginRight:8,verticalAlign:'middle'}}/>{s.label}</span>

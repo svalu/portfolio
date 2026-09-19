@@ -630,7 +630,9 @@ body { background: #000; }
 .kpi .kpi-trend { font-size: 11px; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
 .kpi .kpi-trend.up { color: var(--green); }
 .kpi .kpi-trend.down { color: var(--red); }
-.kpi .kpi-spark { position: absolute; right: 10px; bottom: 8px; width: 72px; height: 28px; opacity: 0.8; }
+/* 스파크라인은 카드 맨 아래 한 줄로. 전에는 absolute 로 띄워 추세 텍스트 위에 겹쳤다 */
+.kpi .kpi-spark { margin-top: 12px; height: 34px; width: 100%; }
+.kpi .kpi-spark svg { display: block; width: 100%; height: 34px; }
 
 .panel {
   background: var(--surface-elev);
@@ -653,7 +655,7 @@ body { background: #000; }
   text-decoration: none;
 }
 
-.grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(210px, 1fr); gap: 14px; align-items: start; }   /* 두 패널이 서로 높이를 끌지 않게, 오른쪽 글이 4줄로 쪼개지지 않게 */
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 
 /* Table */
@@ -828,8 +830,9 @@ table.t tr:hover td { background: var(--surface-2); }
 /* ---------- Analytics bars ---------- */
 .chart-wrap {
   position: relative;
-  height: 220px;
   width: 100%;
+  height: 240px;
+  min-height: 180px;
 }
 
 /* Notifications panel */
