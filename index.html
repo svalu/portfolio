@@ -270,6 +270,7 @@
     .dim .sub{order:2;margin-top:8px;font-size:13px;line-height:1.7}
     .dim .tabs{order:3;margin-top:18px;flex-wrap:wrap} .tabs button{height:30px;padding:0 13px}
     .dim .frame,.dim .nums,.phone{order:4}
+    #d03 .phone{order:4} #d03 .frame{order:5} #d03 .nums{order:6} #d03 .facts{order:7} #d03 .try{order:8}
     .dim .facts{order:5;margin-top:22px;gap:10px;padding-top:14px} .dim .facts p{font-size:13px;line-height:1.65}
     .dim .try{order:6;margin-top:18px;font-size:10px;letter-spacing:.14em}
     .dim .dband{width:100%;height:5.5svh}
@@ -286,7 +287,10 @@
     .dim.in .phone{transform:none}
     .phone::before{top:2.6vw;height:2.2vw}
     .phone .zoom{bottom:10px}
-    #d01 .frame,#d03 .frame{display:none}      /* 03 도 01 처럼: 폰에선 폰 실물 하나 */
+    /* 01 은 탭이 폰 안에서 시안을 바꾸므로 데스크톱 프레임을 접는다.
+       03 은 도구가 둘(주간업무·워크샵)이라 접으면 하나를 못 보게 된다 → 둘 다 세로로 */
+    #d01 .frame{display:none}
+    #d03 .frame{margin-top:44px}
 
     /* 02: 둘 다 세로로. 2025 위, 2026 아래. id 선택자의 right/top 을 여기서 다시 푼다 */
     #d01 .frame,#d02 .fgrow,#d02 .f2026,#d03 .frame{right:auto;top:auto;width:100%}
@@ -813,10 +817,20 @@ frame();
     var src=b.dataset.src + '?v=' + (fr.dataset.src||'').split('v=')[1];
     fr.dataset.src=src;
     if(NARROW){
-      /* 폰: 실물은 폰 하나. 시안도 같은 폰 안에서 바뀐다(일관성 — 희랑). 데스크톱 프레임은 접혀 있으니 건드리지 않는다 */
-      var pf=document.querySelector('#phone01 iframe');
-      pf.dataset.src=src;
-      if(pf.getAttribute('src')) pf.setAttribute('src', src);
+      /* 폰: 최종은 반응형이라 폰 안에서 그대로 돈다. 시안 셋은 데스크톱 화면이어서
+         390 폭에 넣으면 사이드바가 300px 을 먹고 본문이 한 글자씩 쪼개진다 → 크게 보기로 연다 */
+      var isFinal=/live\.html/.test(b.dataset.src), pf=document.querySelector('#phone01 iframe');
+      if(isFinal){
+        pf.dataset.src=src;
+        if(pf.getAttribute('src')) pf.setAttribute('src', src);
+      }else if(window.__openBig){
+        host.dataset.title='Blue Horizon · '+b.textContent.trim();
+        if(fr.getAttribute('src')) fr.setAttribute('src', src);
+        window.__openBig(host);
+        wrap.querySelectorAll('button').forEach(function(x){                 /* 폰 안은 늘 최종 */
+          x.setAttribute('aria-selected', String(/live\.html/.test(x.dataset.src)));
+        });
+      }
     }else if(fr.getAttribute('src')) fr.setAttribute('src', src);     /* 이미 떠 있으면 바로 갈아 끼운다 */
     var key=b.dataset.src.split('/').pop();
     if(bar) bar.textContent=names[key]||key;
@@ -853,7 +867,12 @@ frame();
     lbFrame.src=src.getAttribute('src')||src.dataset.src;
     lastFocus=document.activeElement;
     lb.hidden=false; requestAnimationFrame(function(){ lb.classList.add('on'); });
-    setTimeout(function(){ lb.classList.add('on'); fit(); document.getElementById('lbClose').focus(); }, 30);
+    setTimeout(function(){
+      lb.classList.add('on');
+      /* 폰에서 1440 화면을 맞추면 25% — 글자가 안 읽힌다. 읽히는 배율로 열고 왼쪽 위부터 보여준다 */
+      if(NARROW && cur.w > 900){ lbZoom.value=55; apply(55); lbStage.scrollTo(0,0); } else fit();
+      document.getElementById('lbClose').focus();
+    }, 30);
     document.body.style.overflow='hidden';
   }
   function close(){
@@ -863,6 +882,7 @@ frame();
   document.querySelectorAll('.zoom').forEach(function(b){
     b.addEventListener('click', function(e){ e.stopPropagation(); open(b.parentElement); });
   });
+  window.__openBig = open;          /* 폰에서 01 시안을 이걸로 연다 */
   lbZoom.addEventListener('input', function(){ apply(+lbZoom.value); });
   document.getElementById('lbFit').addEventListener('click', fit);
   document.getElementById('lbClose').addEventListener('click', close);
