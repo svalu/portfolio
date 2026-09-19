@@ -334,7 +334,7 @@
 
   <!-- ═══ 차원 1 · Blue Horizon ═══ -->
   <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
-  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff" data-mat="0.14,0.26,1.0,0.003">
+  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff" data-mat="0.06,1.00,0.00,0.002,1.15">
     <div class="sheet">
       <div class="no">01 — INTERFACE</div>
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
@@ -364,7 +364,7 @@
   </section>
 
   <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
-  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e" data-mat="0.92,0.00,0.05,0.055">
+  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e" data-mat="0.46,1.00,0.00,0.030,0.95">
     <div class="sheet">
       <div class="no">02 — SYSTEM</div>
       <div class="title"><small>OS</small><small>UI</small></div>
@@ -390,7 +390,7 @@
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0" data-mat="0.32,0.18,0.80,0.010">
+  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0" data-mat="0.22,0.00,1.00,0.006,0.80">
     <div class="sheet">
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
@@ -420,7 +420,7 @@
   </section>
 
   <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
-  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.48,0.06,0.95,0.022">
+  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.30,0.15,1.00,0.012,0.90">
     <div class="sheet">
       <div class="no">04 — NEXT</div>
       <div class="title"><small>SVALU</small></div>
@@ -545,7 +545,7 @@ function grainTexture(){
 
 const mat = new THREE.MeshPhysicalMaterial({
   color: RED.clone(), roughness:.72, metalness:0,
-  clearcoat:0, clearcoatRoughness:.22, envMapIntensity:.85,
+  clearcoat:0, clearcoatRoughness:.18, envMapIntensity:.55,
   bumpMap: grainTexture(), bumpScale:.018,
 });
 const bodyM = new THREE.Mesh(lathe, mat);
@@ -564,9 +564,12 @@ const rim = new THREE.DirectionalLight(0xffffff, .25); rim.position.set(5, -2, -
     vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
     fragmentShader: `varying vec3 vP;
       void main(){
-        float h = normalize(vP).y * 0.5 + 0.5;
-        vec3 c = mix(vec3(0.05,0.06,0.08), vec3(0.62,0.66,0.74), smoothstep(0.30, 0.95, h));
-        c = mix(c, vec3(0.16,0.18,0.24), smoothstep(0.34, 0.06, h));
+        vec3 n = normalize(vP);
+        float h = n.y * 0.5 + 0.5;
+        /* 금속은 이 방을 그대로 비춘다. 흰빛 하나로 채우면 표면이 하얘지므로 위아래로 색을 갈라 둔다 */
+        vec3 c = mix(vec3(0.07,0.08,0.11), vec3(0.44,0.48,0.56), smoothstep(0.32, 0.92, h));
+        c = mix(c, vec3(0.13,0.11,0.10), smoothstep(0.36, 0.04, h));
+        c += vec3(0.10,0.08,0.05) * smoothstep(0.55, 0.05, abs(n.x + 0.3));   /* 한쪽 벽에 따뜻한 기운 */
         gl_FragColor = vec4(c, 1.0);
       }`,
   }));
@@ -576,8 +579,8 @@ const rim = new THREE.DirectionalLight(0xffffff, .25); rim.position.set(5, -2, -
       new THREE.MeshBasicMaterial({color: 0xffffff}));
     m.material.color.multiplyScalar(i); m.position.set(x, y, z); m.lookAt(0, 0, 0); room.add(m);
   };
-  panel(-6, 5, 5, 7, 3.4, 2.6);
-  panel(5.5, 1.5, -6, 5, 5, 1.1);
+  panel(-6, 5, 5, 7, 3.0, 1.35);      /* 크롬에 길게 늘어질 창 하나 */
+  panel(5.5, 1.5, -6, 4.4, 4.4, 0.55);
   const pm = new THREE.PMREMGenerator(renderer);
   pm.compileEquirectangularShader();
   scene.environment = pm.fromScene(room, 0.03).texture;
@@ -636,11 +639,11 @@ function scheduleSnap(){
 
 /* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
 let S = [];
-const INTRO_MAT = {r:.72, m:0, cc:0, b:.018};          /* 인트로는 무광 석고 — 처음의 몸 */
+const INTRO_MAT = {r:.78, m:0, cc:0, b:.020, e:.55};   /* 인트로는 무광 석고 — 빛을 먹고 안 돌려준다 */
 function matOf(d){
   if(!d.dataset.mat) return INTRO_MAT;
-  const [r,m,cc,b] = d.dataset.mat.split(',').map(Number);
-  return {r, m, cc, b};
+  const [r,m,cc,b,e] = d.dataset.mat.split(',').map(Number);
+  return {r, m, cc, b, e:(e===undefined?1:e)};
 }
 function buildStates(){
   S = dims.map((d,i)=>{
@@ -750,6 +753,7 @@ function frame(){
     mat.metalness        += (matTarget.m  - mat.metalness) * .04;
     mat.clearcoat        += (matTarget.cc - mat.clearcoat) * .04;
     mat.bumpScale        += (matTarget.b  - mat.bumpScale) * .04;
+    mat.envMapIntensity  += (matTarget.e  - mat.envMapIntensity) * .04;
   }else{
     /* 오브젠트: 상태 S[k] → S[k+1] 보간. 직선이 아니라 살짝 떠서 건너간다(포물선) + 건너가는 중엔 조금 커진다 */
     const a = S[k], b = S[k+1] || a;
@@ -762,6 +766,7 @@ function frame(){
     mat.metalness = at.m  + (bt.m  - at.m)  * e;
     mat.clearcoat = at.cc + (bt.cc - at.cc) * e;
     mat.bumpScale = at.b  + (bt.b  - at.b)  * e;
+    mat.envMapIntensity = at.e + (bt.e - at.e) * e;
   }
 
   /* 인트로 응축 — 베일 원과 오브젝트 크기가 같은 곡선으로 */
