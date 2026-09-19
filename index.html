@@ -175,7 +175,7 @@
      실측 숫자 카드는 프레임 아래 한 줄. 폰이 카드 끝을 1% 덮는 건 01에서 폰이 프레임을 덮는 것과 같은 문법 */
   #d03 .frame{right:16%;top:9%;width:48%}
   #d03 .frame .win{background:#EFEDE8}
-  .dim .nums{position:absolute;right:16%;top:63%;width:48%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  .dim .nums{position:absolute;right:16%;top:61%;width:37%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
     opacity:0;transform:translateY(16px);transition:opacity .8s var(--in),transform 1s var(--in)}
   .dim.in .nums{opacity:1;transform:none;transition-delay:.55s}
   .nums div{padding:16px 14px;border:1px solid var(--line);border-radius:14px}
@@ -215,7 +215,7 @@
   .zoom{position:absolute;right:8px;top:5px;z-index:4;display:flex;align-items:center;gap:6px;
     height:24px;padding:0 10px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
     background:rgba(0,0,0,.28);color:#fff;font:11px/1 inherit;letter-spacing:.1em;cursor:pointer;
-    opacity:0;transition:opacity .3s var(--in),background .2s}
+    opacity:.55;transition:opacity .3s var(--in),background .2s}
   .frame:hover .zoom,.phone:hover .zoom,.zoom:focus-visible{opacity:1}
   .zoom:hover{background:rgba(0,0,0,.5)}
   #d02 .zoom{border-color:rgba(22,21,15,.2);background:rgba(255,255,255,.72);color:#16150f}
@@ -417,10 +417,10 @@
         <div class="view"><iframe data-src="work/team/workshop/index.html?v=20260918" title="Workshop app"></iframe></div>
       </div>
       <div class="nums">
-        <div><b>3.4일 · 8분</b><span>실사용 로그 실측. "직전 3턴"은 근거 없는 단위였다 → 대화 단위를 시간으로 재설계</span></div>
-        <div><b>17일치</b><span>빠진 기록을 AI가 스스로 발견하고 지난 작업을 훑어 채워 넣게 만들었다</span></div>
-        <div><b>1회 롤백</b><span>학습 전에 판정 기준을 문서에 고정. 한 항목이 깨져서 버전 전체를 되돌렸다</span></div>
-        <div><b>계정 이동</b><span>회사·개인 계정을 분리한 날, 새 대화가 그대로 이어받아 작업을 계속했다</span></div>
+        <div><b>3.4일 · 8분</b><span>실사용 로그 실측. 대화 단위를 턴에서 시간으로 다시 잡았다</span></div>
+        <div><b>17일치</b><span>빠진 기록을 AI가 스스로 찾아 채워 넣었다</span></div>
+        <div><b>1회 롤백</b><span>기준을 먼저 고정. 한 항목이 깨져 버전을 통째로 되돌렸다</span></div>
+        <div><b>계정 이동</b><span>계정을 옮긴 날, 새 대화가 그대로 이어받았다</span></div>
       </div>
       <div class="try">폰 안은 실물 · 숫자는 전부 실사용 로그 실측</div>
       <div class="dband"></div><div class="dyear">.2026</div>

@@ -144,7 +144,9 @@ button { cursor: pointer; }
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-weight: 800;
   border: 2.5px solid var(--ink); border-radius: 14px; padding: 12px 12px; background: #fff; box-shadow: var(--shadow-sm);
   transition: transform .08s ease, box-shadow .08s ease; font-size: 15px; line-height: 1.1; min-height: 46px;
+  white-space: nowrap;   /* 포트폴리오 사본: 폰 프레임(축소)에서 두 줄로 꺾이면 깨진 것처럼 보인다 */
 }
+@media (max-width: 400px) { .btn { font-size: 14px; padding: 12px 10px; gap: 5px; } }
 .btn:active { transform: translate(3px,3px); box-shadow: 0 0 0 var(--ink); }
 .btn.kakao { background: #fee500; }
 .btn.naver { background: #03c75a; color: #fff; }
