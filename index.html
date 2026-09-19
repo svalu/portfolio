@@ -338,7 +338,7 @@
 
   <!-- ═══ 차원 1 · Blue Horizon ═══ -->
   <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
-  <section class="dim next" id="d01" data-obj="0.53,0.80,0.26,#3d5cff" data-mat="0.12,1.00,0.00,0.000,1.30,0.95,0.06">
+  <section class="dim next" id="d01" data-obj="0.53,0.795,0.31,#3d5cff" data-mat="0.14,1.00,0.00,0.004,1.30,0.95,0.06">
     <div class="sheet">
       <div class="no">01 — INTERFACE</div>
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
@@ -368,7 +368,7 @@
   </section>
 
   <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
-  <section class="dim next" id="d02" data-obj="0.47,0.82,0.24,#e0762e" data-mat="0.46,1.00,0.00,0.012,0.95,1.00,0.06">
+  <section class="dim next" id="d02" data-obj="0.47,0.815,0.29,#e0762e" data-mat="0.44,1.00,0.00,0.030,1.05,1.00,0.06">
     <div class="sheet">
       <div class="no">02 — SYSTEM</div>
       <div class="title"><small>OS</small><small>UI</small></div>
@@ -394,7 +394,7 @@
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.50,0.855,0.17,#2fd3a0" data-mat="0.55,0.00,0.85,0.006,0.80,0.82,0.06">
+  <section class="dim next" id="d03" data-obj="0.50,0.845,0.21,#2fd3a0" data-mat="0.55,0.00,0.90,0.014,0.95,0.86,0.05">
     <div class="sheet">
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
@@ -424,7 +424,7 @@
   </section>
 
   <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
-  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.45,0.00,1.00,0.012,0.90,0.75,0.05">
+  <section class="dim next" id="d04" data-obj="0.725,0.525,1.0,#c0203a" data-mat="0.42,0.00,1.00,0.022,1.05,0.80,0.04">
     <div class="sheet">
       <div class="no">04 — NEXT</div>
       <div class="title"><small>SVALU</small></div>
@@ -543,7 +543,7 @@ function grainTexture(){
   }
   g.putImageData(img, 0, 0);
   const t = new THREE.CanvasTexture(c);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2.4, 2.4);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1.3, 1.3);   /* 작은 오브젠트에선 결을 크게 잡아야 보인다 */
   return t;
 }
 
@@ -557,7 +557,7 @@ const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.po
 const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
 /* 세기 총합이 1.0 을 넘으면 흰 확산이 타 버린다. 환경맵을 넣은 만큼 램프를 내렸다.
    바닥색 0x333333 도 선형으로 0.2 나 되어 그림자 쪽이 어두워지지 않았다 → 0x0a0a0a */
-const KEY_I = .52, HEMI_I = .22, RIM_I = .12;
+const KEY_I = .60, HEMI_I = .15, RIM_I = .14;   /* 총합은 그대로, 키라이트에 몰아 명암을 세운다 */
 const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, HEMI_I); scene.add(hemi);
 const key = new THREE.DirectionalLight(0xffffff, KEY_I); key.position.set(-4, 6, 8); scene.add(key);
 const rim = new THREE.DirectionalLight(0xffffff, RIM_I); rim.position.set(5, -2, -6); scene.add(rim);
@@ -586,8 +586,9 @@ const rim = new THREE.DirectionalLight(0xffffff, RIM_I); rim.position.set(5, -2,
       new THREE.MeshBasicMaterial({color: 0xffffff, toneMapped: false}));   /* 나중에 톤매핑을 켜도 이 베이크는 건드리지 않게 */
     m.material.color.multiplyScalar(i); m.position.set(x, y, z); m.lookAt(0, 0, 0); room.add(m);
   };
-  panel(-6, 5, 5, 7, 3.0, 1.35);      /* 크롬에 길게 늘어질 창 하나 */
-  panel(5.5, 1.5, -6, 4.4, 4.4, 0.55);
+  panel(-6.5, 5.2, 4.5, 8, 2.2, 2.10);   /* 크롬에 길게 늘어지는 밝은 창 */
+  panel(-3.0, -4.0, 6.0, 6, 1.4, 0.95);   /* 아래쪽에서 받쳐주는 띠 — 형태의 밑선이 산다 */
+  panel( 6.0, 1.2, -6, 4.4, 4.4, 0.60);   /* 뒤쪽 채움 */
   const pm = new THREE.PMREMGenerator(renderer);
   pm.compileEquirectangularShader();
   scene.environment = pm.fromScene(room, 0.03).texture;
@@ -646,7 +647,7 @@ function scheduleSnap(){
 
 /* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
 let S = [];
-const INTRO_MAT = {r:.82, m:0, cc:0, b:.020, e:.55, ex:1.0, ccr:.06};   /* 인트로는 무광 석고 — 빛을 먹고 안 돌려준다 */
+const INTRO_MAT = {r:.82, m:0, cc:0, b:.030, e:.60, ex:1.0, ccr:.06};   /* 인트로는 무광 석고 — 빛을 먹고 안 돌려준다 */
 function matOf(d){
   if(!d.dataset.mat) return INTRO_MAT;
   const [r,m,cc,b,e,ex,ccr] = d.dataset.mat.split(',').map(Number);
@@ -807,7 +808,7 @@ function frame(){
   /* 마우스 */
   const live = s;
   vel.x = (mouse.x - sm.x)*.085; vel.y = (mouse.y - sm.y)*.085; sm.x += vel.x; sm.y += vel.y; spin += vel.x*2.2; spin *= .965;
-  group.rotation.y = now*.16 + (sm.x*1.4 + spin)*live; group.rotation.x = -sm.y*.42*live; group.rotation.z = -sm.x*.28*live;
+  group.rotation.y = now*.22 + (sm.x*1.4 + spin)*live;   /* 반사가 흘러야 금속으로 읽힌다 */ group.rotation.x = -sm.y*.42*live; group.rotation.z = -sm.x*.28*live;
   ball.position.x = sm.x*1.6*live; ball.position.z = -sm.y*1.2*live; ball.position.y = 4.15 + Math.sin(now*1.3)*.12 + Math.abs(sm.x)*.35*live;
   key.position.set(-4 + sm.x*14*live, 6 - sm.y*10*live, 8);
   /* 금속은 확산이 0 이라 램프가 스파클만 만든다 → 금속감만큼 덜어낸다 */
