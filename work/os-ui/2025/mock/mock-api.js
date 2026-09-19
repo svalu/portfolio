@@ -606,12 +606,9 @@
         };
     });
 
-    // 웹소켓 / SSE — 뷰파일에는 서버가 없으므로 조용히 무력화
-    window.SockJS = function () { return { close: function () {} }; };
-    window.webstomp = { over: function () {
-        return { connect: function () {}, disconnect: function () {}, subscribe: function () {}, send: function () {} };
-    } };
-    window.EventSource = function () { return { close: function () {}, addEventListener: function () {} }; };
+    // 웹소켓 / SSE 무력화는 mock/mock-socket.js 가 한다.
+    // 여기서 덮어도 vendor 의 sockjs·webstomp 가 이 파일보다 뒤에 로드되어 되살아나고,
+    // global-connection.js 는 DOM ready 전에 이미 connect() 를 호출한다(그래서 /stomp/info 404 가 남았다).
 
     // =========================================================================
     // 라우트 → 정적 파일 매핑
@@ -627,13 +624,6 @@
     window.__toStaticView = toStatic;
 
     $(function () {
-        // sockjs / webstomp 본체는 mock 보다 뒤에 로드되므로 여기서 다시 덮는다
-        window.SockJS = function () { return { close: function () {} }; };
-        window.webstomp = { over: function () {
-            return { connect: function () {}, disconnect: function () {},
-                     subscribe: function () {}, send: function () {} };
-        } };
-
         if (window.iframeWindow && window.iframeWindow.openIframeWindow) {
             var origin = window.iframeWindow.openIframeWindow;
             window.iframeWindow.openIframeWindow = function (coordinate, params) {
