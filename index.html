@@ -230,7 +230,8 @@
     background:transparent;color:#e8ecf4;font:11px/1 inherit;letter-spacing:.14em;cursor:pointer}
   .lb-bar button:hover{background:rgba(232,236,244,.12)}
   .lb-stage{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:0 20px 24px}
-  .lb-view{transform-origin:top center;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+  .lb-box{flex:0 0 auto}
+  .lb-view{transform-origin:top left;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.6)}
   .lb-view iframe{display:block;border:0;background:#fff}
 
   /* 오브젝트 캔버스: 모든 차원 위에 */
@@ -385,7 +386,7 @@
         <div class="view"><iframe data-src="work/os-ui/2025/index.html?demo=1&amp;v=20260919b" title="Counseling OS 2025"></iframe></div></div></div>
       <div class="frame scaled f2026" data-vw="1440" data-mvw="1024" data-title="2026 · 관리자 OS"><button class="zoom" type="button">크게 보기</button><div class="label">2026 · 관리자 OS</div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
-        <div class="view"><iframe data-src="work/os-ui/2026/index.html?v=20260914" title="Admin OS 2026"></iframe></div></div></div>
+        <div class="view"><iframe data-src="work/os-ui/2026/index.html?v=20260919" title="Admin OS 2026"></iframe></div></div></div>
       <div class="dband"></div><div class="dyear">.2023 → 2026</div>
     </div>
   </section>
@@ -468,7 +469,7 @@
     <button type="button" id="lbFit">화면에 맞춤</button>
     <button type="button" id="lbClose">닫기 (Esc)</button>
   </div>
-  <div class="lb-stage" id="lbStage"><div class="lb-view" id="lbView"><iframe id="lbFrame" title="실물 크게 보기"></iframe></div></div>
+  <div class="lb-stage" id="lbStage"><div class="lb-box" id="lbBox"><div class="lb-view" id="lbView"><iframe id="lbFrame" title="실물 크게 보기"></iframe></div></div></div>
 </div>
 <canvas id="c"></canvas>
 <div class="ctl"><button id="replay">REPLAY</button><button id="skip">SKIP</button></div>
@@ -744,11 +745,15 @@ frame();
 /* ── 크게 보기: 새 창 대신 이 페이지 안에서, 배율을 조절하며 본다 ── */
 (function(){
   var lb=document.getElementById('lb'), lbFrame=document.getElementById('lbFrame'), lbView=document.getElementById('lbView'),
-      lbStage=document.getElementById('lbStage'), lbZoom=document.getElementById('lbZoom'), lbPct=document.getElementById('lbPct'),
+      lbStage=document.getElementById('lbStage'), lbBox=document.getElementById('lbBox'),
+      lbZoom=document.getElementById('lbZoom'), lbPct=document.getElementById('lbPct'),
       lbTitle=document.getElementById('lbTitle'), cur={w:1440,h:900}, lastFocus=null;
   function apply(z){
-    lbView.style.transform='scale('+(z/100)+')';
-    lbView.style.height=(cur.h*z/100)+'px';           /* 스케일한 만큼 자리도 줄여 스크롤이 맞게 */
+    var s=z/100;
+    lbView.style.width=cur.w+'px'; lbView.style.height=cur.h+'px';   /* 안쪽은 늘 실제 크기 — 줄이면 잘린다 */
+    lbView.style.transform='scale('+s+')';
+    lbBox.style.width=Math.round(cur.w*s)+'px';                      /* 자리는 겉(.lb-box)이 줄인다 */
+    lbBox.style.height=Math.round(cur.h*s)+'px';
     lbPct.textContent=z+'%';
   }
   function fit(){
@@ -760,7 +765,6 @@ frame();
     var src=host.querySelector('iframe[data-src],iframe[src]');
     if(!src) return;
     cur.w=+host.dataset.vw||1440; cur.h=+host.dataset.vh||Math.round(cur.w*0.625);
-    lbView.style.width=cur.w+'px';
     lbFrame.style.width=cur.w+'px'; lbFrame.style.height=cur.h+'px';
     lbTitle.textContent=host.dataset.title||'';
     lbFrame.src=src.getAttribute('src')||src.dataset.src;
