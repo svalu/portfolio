@@ -23,8 +23,8 @@
     --ox:72.5%; --oy:52.5%;
     --m-paper:#ffffff; --m-type:#111111; --m-dot:#c9c9c9; --m-band:#3a3a3a; --m-tri:#c2c2c2;
     --m-bottom:#050505; --m-body:#e6e6e6; --m-mark:#111111; --m-year:#ffffff;
-    --c-type:#8a0f78; --c-band1:#3fae7a; --c-band2:#12b3b9; --c-band3:#1f8fd6;
-    --c-tri:#6fc28f; --c-bottom1:#8a9a2a; --c-bottom2:#8d4a86; --c-body:#f4d54a; --c-mark:#b7a56b;
+    --c-type:#201a24; --c-band1:#3fae7a; --c-band2:#12b3b9; --c-band3:#1f8fd6;
+    --c-tri:#6fc28f; --c-bottom1:#20232d; --c-bottom2:#29212b; --c-body:#e8e5e9; --c-mark:#b7a56b;
     --red:#c0203a;
     --ease:cubic-bezier(.4,.05,.2,1); --in:cubic-bezier(.2,.7,.2,1); --dur:1.9s; --spread:2.3s;
   }
@@ -74,7 +74,7 @@
   .year{position:absolute;right:2%;bottom:6%;font-weight:300;letter-spacing:.02em;font-size:clamp(20px,3vw,46px);color:var(--m-year);z-index:3}
   .band::after,.bottom::after{content:"";position:absolute;inset:0;clip-path:circle(0% at var(--cx,72%) var(--cy,50%));transition:clip-path var(--spread) var(--ease)}
   .band::after{background:linear-gradient(90deg,var(--c-band1) 0%,var(--c-band2) 55%,var(--c-band3) 100%);transition-delay:.15s}
-  .bottom::after{background:linear-gradient(90deg,var(--c-bottom1) 0%,#6f7a3a 55%,var(--c-bottom2) 100%);transition-delay:.3s}
+  .bottom::after{background:linear-gradient(90deg,var(--c-bottom1) 0%,#24232b 55%,var(--c-bottom2) 100%);transition-delay:.3s}
   body.color .band::after,body.color .bottom::after{clip-path:circle(160% at var(--cx,72%) var(--cy,50%))}
   .bottom .body,.band .year{position:absolute;z-index:1}
   .mark{position:absolute;right:2.2%;top:47%;width:clamp(44px,6vw,90px);color:var(--m-mark);z-index:3}
@@ -88,6 +88,7 @@
   body.color .hint{opacity:1}
   .hint i{display:block;width:1px;height:22px;margin:8px auto 0;background:rgba(255,255,255,.5);animation:drop 1.6s ease-in-out infinite}
   @keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+  body.fast *,body.fast *::after{transition-duration:.45s!important;transition-delay:0s!important}
   body.snap *,body.snap *::after{transition-duration:0s !important;transition-delay:0s !important}
   .ctl{position:fixed;left:18px;bottom:16px;z-index:40;display:flex;gap:8px;opacity:.5}
   .ctl:hover{opacity:1}
@@ -288,7 +289,7 @@
     .phone{align-self:center;width:62vw;min-width:0;margin-top:30px;border-radius:9vw;border-width:.9vw;transform:translateY(30px)}
     .dim.in .phone{transform:none}
     .phone::before{top:2.6vw;height:2.2vw}
-    .phone .zoom{bottom:10px}
+    .phone .zoom{bottom:8px}
     /* 01 은 탭이 폰 안에서 시안을 바꾸므로 데스크톱 프레임을 접는다.
        03 은 도구가 둘(주간업무·워크샵)이라 접으면 하나를 못 보게 된다 → 둘 다 세로로 */
     #d01 .frame{display:none}
@@ -315,6 +316,95 @@
     .lb-bar input[type=range]{width:74px;flex:0 0 auto} .lb-bar button{padding:0 11px;white-space:nowrap}
     .lb-stage{padding:0 12px 18px}
   }
+
+  /* Text flows inside its own column, including on short laptop screens. */
+  .dim:not(.intro) .sheet{display:grid;grid-template-columns:minmax(0,40fr) minmax(0,56fr);gap:4%;padding:5vh 3.6% 12vh}
+  .story{min-width:0;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:10px;overscroll-behavior:contain}
+  .dim .story > .no,.dim .story > .title,.dim .story > .ddots,.dim .story > .tabs,.dim .story > .hook,.dim .story > .sub,.dim .story > .facts,.dim .story > .try{position:relative;inset:auto;width:auto}
+  .dim .story .title,#d01 .story .title{font-size:clamp(48px,6.4vw,96px);margin-top:18px}
+  #d03 .story .title{font-size:clamp(44px,5.6vw,88px)}
+  .dim .story .ddots{margin-top:30px;width:95%}
+  .dim .story .tabs{margin-top:22px;flex-wrap:wrap;gap:8px}
+  .tabs button{height:36px}
+  .dim .story .hook{margin-top:24px;font-size:clamp(22px,2vw,30px);text-wrap:balance}
+  .dim .story .sub{margin-top:12px;font-size:14px;line-height:1.7}
+  .dim .story .facts{margin-top:24px;padding-top:18px;gap:14px}
+  .dim .story .facts p{font-size:14px;line-height:1.75}
+  .dim .story .try{margin-top:24px;line-height:1.8;font-size:12px;letter-spacing:.04em}
+  .exhibit{position:relative;min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:42px}
+  :is(#d01,#d02,#d03,#d04) .exhibit .frame{position:relative;inset:auto;width:100%;flex:none;margin:0}
+  #d01 .exhibit .frame,#d03 .exhibit .frame{width:85%;margin-top:-10vh}
+  .exhibit .phone{right:0;bottom:0;width:26%;min-width:0;border-radius:28px}
+  #d02 .exhibit .frame{width:min(88%,calc((100svh - 280px)*.8));max-width:100%}
+  #d02 .f2026{align-self:flex-end}
+  .frame .label{top:-28px;font-size:11px;letter-spacing:.06em;max-width:100%;white-space:normal;line-height:1.4}
+  #d02 .fgrow .label{max-width:100%}
+  .frame .grew{top:auto;bottom:-24px;left:0;right:auto;font-size:11px;letter-spacing:0;white-space:normal}
+  #d04 .exhibit .frame{margin-top:18vh}
+  .dim .dband{height:7%;pointer-events:none}
+  .dim .dyear{font-size:clamp(16px,2vw,28px);pointer-events:none}
+  .evidence{position:absolute;left:0;bottom:0;width:68%;z-index:5;background:var(--paper);font-size:13px}
+  .evidence summary{padding:14px 0;cursor:pointer;color:var(--acc2);border-bottom:1px solid var(--line)}
+  .reason summary{padding:10px 0;cursor:pointer;color:var(--acc2);font-size:13px;line-height:1.6}
+  .reason[open] p+p{margin-top:12px}
+  .dim .evidence .nums{position:relative;inset:auto;width:100%;grid-template-columns:1fr 1fr;margin-top:10px;opacity:1;transform:none}
+  .evidence .nums div{padding:12px}
+  .exhibit > .try{display:none}
+  .zoom{height:30px;opacity:.9;font:12px/1 "Pretendard",sans-serif;letter-spacing:0}
+  .phone .zoom{bottom:8px}
+  .ctl{display:none}
+  button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--acc2,#8ea0ff);outline-offset:4px}
+  .lb-stage{display:block;min-height:0;overscroll-behavior:contain}
+  .lb-box{margin-inline:auto}
+  .lb-view iframe[hidden]{display:none}
+  .lb-title{letter-spacing:.02em}
+  #lbTitle{min-width:0;flex:1}
+  #lbPct{flex:none;min-width:4ch;text-align:right;font-variant-numeric:tabular-nums}
+  .lb-bar button{min-height:44px;letter-spacing:0;font-size:12px}
+  .lb-bar .sp{display:none}
+  @media (max-width:900px){
+    .dim:not(.intro) .sheet{display:flex;gap:0;padding:9svh 6vw 12svh}
+    .story,.exhibit{display:contents}
+    .dim .story .title,#d01 .story .title,#d03 .story .title{font-size:clamp(46px,15.5vw,96px);margin-top:14px}
+    .dim .story .no{max-width:70%}
+    .dim .story .ddots{width:70%;margin-top:24px}
+    .dim .story .hook{font-size:clamp(21px,5.4vw,28px);margin-top:24px}
+    .dim .story .sub{font-size:14px;margin-top:10px}
+    .dim .story .tabs{margin-top:18px;gap:8px}
+    .tabs button{height:44px;padding:0 13px;font-size:12px}
+    .dim .story .facts{margin-top:26px}
+    .dim .story .facts p{font-size:15px;line-height:1.8}
+    .dim .story .try{order:3;margin-top:18px;margin-bottom:8px;font-size:13px;letter-spacing:0}
+    .dim .exhibit .phone{position:relative;inset:auto;align-self:stretch;width:100%;margin:24px 0 0;border:1px solid #293142;border-radius:18px;aspect-ratio:auto;height:min(760px,88svh);overflow:visible;background:#0b0f18}
+    .phone .view{position:relative;width:100%;height:calc(100% - 56px);transform:none;overflow:hidden;border-radius:17px}
+    .phone .view iframe{width:100%;height:100%}
+    .phone::before{display:none}
+    .phone .zoom{top:auto;bottom:6px;height:44px;box-shadow:0 2px 12px #0008}
+    .dim .exhibit .frame,#d02 .exhibit .frame,#d03 .exhibit .frame,#d04 .exhibit .frame{width:100%;margin:46px 0 0}
+    #d02 .exhibit .f2026{margin-top:72px}
+    .frame .label{font-size:11px;line-height:1.5;top:-36px}
+    .frame .bar{height:44px!important}
+    .frame .bar span{max-width:calc(100% - 108px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-left:2px!important}
+    .frame .zoom{top:0;right:4px;height:44px;padding:0 12px;border:0}
+    .frame[data-responsive="true"] .view{height:70svh!important;max-height:720px;margin-bottom:0!important;transform:none!important;width:100%!important}
+    .dim .evidence{position:relative;inset:auto;width:100%;order:8;margin-top:24px}
+    .evidence summary{min-height:44px}
+    #d03 .exhibit > .try{display:block;position:relative;inset:auto;order:6;font-size:12px;margin-top:12px;line-height:1.6}
+    #d03 .exhibit > .try::before{display:none}
+    #d03 .story .try{order:3}
+    .lb-bar{display:grid;grid-template-columns:minmax(0,1fr) 5ch auto;gap:10px;padding:12px 14px}
+    #lbTitle{grid-column:1/3;grid-row:1;max-width:none;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #lbClose{grid-column:3;grid-row:1}
+    #lbZoom{grid-column:1;grid-row:2;width:100%;min-width:0;height:36px}
+    #lbPct{grid-column:2;grid-row:2;max-width:none;font-size:12px}
+    #lbFit{grid-column:3;grid-row:2}
+    .lb-stage{padding:0 12px max(16px,env(safe-area-inset-bottom))}
+    .lb-bar label{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+
 </style>
 </head>
 <body class="act0 locked">
@@ -331,7 +421,7 @@
         <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4"><path d="M8 40 L50 8 L92 40"/><path d="M22 40 H78"/><circle cx="50" cy="66" r="26"/><path d="M50 40 V92 M24 66 H76"/></svg>
       </div>
       <div class="bottom" id="bottom">
-        <p class="body" id="body"><span class="l1"><b>좋은 디자인이 옳은 디자인은 아니다.</b> 보기 좋은 화면을 만드는 일과, 그 화면이 놓일 구조를 정하는 일은 다르다. 나는 화면을 그리다가 구조 쪽으로 넘어왔다.</span> <span class="l2">상담사에게 페이지 대신 창과 작업표시줄을 준 것이 2023년, 같은 관점이 관리자 도구 전체로 번진 것이 2026년이다. 그 사이에 AI 여럿과 석 달을 이어서 일하는 방식을 짰고, 그 방식으로 내 말투를 배우는 모델을 키웠다.</span> <span class="l3">여기 실린 화면은 캡처가 아니라 지금 눌러볼 수 있는 실물이다.</span></p>
+        <p class="body" id="body"><span class="l1"><b>복잡한 기능도, 쓰는 사람에게는 쉬워야 한다.</b> 보기 좋은 화면을 만드는 일과, 그 화면이 놓일 구조를 정하는 일은 다르다. 나는 화면을 그리다가 구조 쪽으로 넘어왔다.</span> <span class="l2">상담사에게 페이지 대신 창과 작업표시줄을 준 것이 2023년, 같은 관점이 관리자 도구 전체로 번진 것이 2026년이다. 그 사이에 AI 여럿과 석 달을 이어서 일하는 방식을 짰고, 그 방식으로 내 말투를 배우는 모델을 키웠다.</span> <span class="l3">여기 실린 화면은 캡처가 아니라 지금 눌러볼 수 있는 실물이다.</span></p>
       </div>
     </div>
     <div class="veil"></div>
@@ -340,8 +430,9 @@
 
   <!-- ═══ 차원 1 · Blue Horizon ═══ -->
   <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
-  <section class="dim next" id="d01" data-obj="0.53,0.795,0.31,#3d5cff" data-mat="0.14,1.00,0.00,0.02,1.30,0.95,0.06">
+  <section class="dim next" id="d01" data-obj="0.42,0.86,0.13,#3d5cff" data-mat="0.14,1.00,0.00,0.02,1.30,0.95,0.06">
     <div class="sheet">
+      <div class="story">
       <div class="no">01 — INTERFACE</div>
       <div class="title"><small>BLUE</small><small>HORIZON</small></div>
       <div class="ddots"></div>
@@ -356,22 +447,26 @@
       <div class="facts">
         <p><b>컨택센터 관리 화면은 늘 데스크톱 전용이었다.</b> 그 전제를 깨고 같은 대시보드를 폰에 접어 넣었다. 폰 안에서 도는 게 그 화면이다.</p>
         <p><b>보는 화면과 조치하는 화면이 따로 있으면 판단이 끊긴다.</b> 실시간 지표·상담원 상태·채널 대기열을 한 흐름으로 묶어, 보고 판단하고 조치하는 일이 한 자리에서 끝나게 했다.</p>
-        <p><b>디자인을 문서가 아니라 코드로 냈다.</b> 프레임워크 없는 단일 HTML 한 장. 돌아가는 상태로 만들어 넘겼고, 뒤의 배선은 개발팀이 이어받았다.</p>
-        <p><b>시안 셋을 만들어 놓고 다크를 골랐다.</b> 관리자는 하루 종일 이 화면을 본다. 눈이 편한 쪽이 맞다. 다만 색만 뒤집은 다크는 어색해진다. 어색하지 않은 다크를 만드는 것이 일이었다. 위 탭으로 셋 다 볼 수 있다.</p>
+        <details class="reason"><summary>설계와 구현에서 정한 것</summary><p><b>디자인을 문서가 아니라 코드로 냈다.</b> 프레임워크 없는 단일 HTML 한 장. 돌아가는 상태로 만들어 넘겼고, 뒤의 배선은 개발팀이 이어받았다.</p>
+        <p><b>시안 셋을 만들어 놓고 다크를 골랐다.</b> 오래 보는 화면이라 바탕은 차분하게, 지표와 조작은 구분되게 잡았다. 어두운 배경에서도 경고와 상태를 놓치지 않도록 대비와 색의 역할을 나눴다. 시안 탭에서 방향을 비교할 수 있다.</p>
+</details>
       </div>
-      <div class="try">둘 다 실물입니다 · admin 으로 로그인해 보세요</div>
-            <div class="frame scaled" data-vw="1440" data-title="Blue Horizon · 데스크톱"><button class="zoom" type="button">크게 보기</button><div class="win"><div class="bar"><i></i><i></i><i></i><span>blue-horizon / 최종</span></div>
+      <div class="try">로그인 → 현재 대기 확인 → 상담원 현황 둘러보기</div>
+            </div><div class="exhibit">
+      <div class="frame scaled" data-vw="1440" data-responsive="true" data-title="Blue Horizon · 데스크톱"><button class="zoom" type="button">크게 보기</button><div class="win"><div class="bar"><i></i><i></i><i></i><span>blue-horizon / 최종</span></div>
         <div class="view"><iframe data-src="work/blue-horizon/live.html?v=20260914" title="Blue Horizon desktop"></iframe></div></div></div>
       <div class="phone" id="phone01" data-vw="390" data-vh="844" data-title="Blue Horizon · 모바일"><button class="zoom" type="button">크게 보기</button>
         <div class="view"><iframe data-src="work/blue-horizon/live.html?v=20260914" title="Blue Horizon mobile"></iframe></div>
+      </div>
       </div>
       <div class="dband"></div><div class="dyear">.2026</div>
     </div>
   </section>
 
   <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
-  <section class="dim next" id="d02" data-obj="0.47,0.815,0.29,#e0762e" data-mat="0.44,1.00,0.00,0.19,1.05,0.85,0.06">
+  <section class="dim next" id="d02" data-obj="0.42,0.86,0.13,#e0762e" data-mat="0.44,1.00,0.00,0.19,1.05,0.85,0.06">
     <div class="sheet">
+      <div class="story">
       <div class="no">02 — SYSTEM</div>
       <div class="title"><small>OS</small><small>UI</small></div>
       <div class="ddots"></div>
@@ -379,55 +474,62 @@
       <p class="sub">상담 화면을 OS처럼 · 같은 관점으로 3년, 두 번</p>
       <div class="facts">
         <p><b>2023.</b> 상담사는 창을 여러 개 띄워 놓고 일하는 사람이었다. 그래서 페이지 대신 창과 작업표시줄을 줬고, 돌아가는 화면으로 만들어 개발팀에 넘겼다.</p>
-        <p><b>넘긴 게 끝이 아니었다.</b> 왼쪽은 2년 뒤, 그 파일이 제품이 된 모습이다. 구조가 그대로 남은 채 기능만 늘었다. 서버는 사라졌지만 화면은 되살렸다.</p>
+        <p><b>넘긴 게 끝이 아니었다.</b> 2025 화면은 그 파일이 제품이 된 모습이다. 구조가 그대로 남은 채 기능만 늘었다. 서버는 사라졌지만 화면은 되살렸다.</p>
         <p><b>2026.</b> 같은 관점이 관리자 도구 전체로 번졌다. 드래그·리사이즈·스냅·시작메뉴. 화면이 아니라 일할 공간을 설계했다. 결국 구조 얘기다.</p>
       </div>
-      <div class="try">둘 다 실물입니다 · 아이콘을 눌러 창을 열어보세요</div>
+      <div class="try">크게 보기 → 아이콘으로 창 열기 → 창을 나란히 놓기</div>
+      </div><div class="exhibit">
       <div class="frame scaled fgrow is2025" id="fgrow" data-vw="1440" data-title="2025 · 상담사 OS, 제품이 된 화면"><button class="zoom" type="button">크게 보기</button>
         <div class="label">2025 · 상담사 OS — 2년 뒤, 제품이 된 화면</div>
-        <div class="grew">내가 넘긴 파일이 제품이 됐다 <b>+821줄</b></div>
+        <div class="grew">상담 흐름을 유지하며 <b>기능을 확장했다</b></div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>counseling / 2025</span></div>
         <div class="view"><iframe data-src="work/os-ui/2025/index.html?demo=1&amp;v=20260919b" title="Counseling OS 2025"></iframe></div></div></div>
       <div class="frame scaled f2026" data-vw="1440" data-mvw="1024" data-title="2026 · 관리자 OS"><button class="zoom" type="button">크게 보기</button><div class="label">2026 · 관리자 OS</div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
         <div class="view"><iframe data-src="work/os-ui/2026/index.html?v=20260919b" title="Admin OS 2026"></iframe></div></div></div>
+      </div>
       <div class="dband"></div><div class="dyear">.2023 → 2026</div>
     </div>
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.50,0.845,0.21,#2fd3a0" data-mat="0.55,0.00,0.90,0.08,0.95,1.00,0.05">
+  <section class="dim next" id="d03" data-obj="0.42,0.86,0.13,#2fd3a0" data-mat="0.55,0.00,0.90,0.08,0.95,1.00,0.05">
     <div class="sheet">
+      <div class="story">
       <div class="no">03 — METHOD</div>
       <div class="title"><small>WORKING</small><small>WITH AI</small></div>
       <div class="ddots"></div>
-      <p class="hook">AI 여럿과 한 프로젝트를 석 달 이어서 일했다.</p>
-      <p class="sub">AI는 대화가 끝나면 잊는다. 그래서 기억을 사람 밖에, 파일로 뒀다.</p>
+      <p class="hook">AI와 만든 도구가 팀의 일상으로 이어졌다.</p>
+      <p class="sub">석 달 동안 이어온 AI 협업. 그 방식으로 주간업무와 워크샵 준비를 웹으로 옮겼다.</p>
       <div class="facts">
         <p><b>역할을 나눈 AI들이 같은 파일을 읽고 쓰며 서로 인계한다.</b> 사람은 방향만 준다. 계정을 옮긴 날에도 맥락이 끊기지 않았다.</p>
         <p><b>같은 방식으로 팀 도구를 만들었다.</b> 엑셀로 돌던 주간업무와 카톡에 흩어지던 워크샵 준비를 웹앱으로 옮겼다. 둘 다 팀이 실제로 썼다. 이름을 골라 들어가 보세요.</p>
-        <p><b>AI 도입이 겉도는 건 도구가 없어서가 아니라 일하는 방식이 안 바뀌어서다.</b> 그 방식을 혼자 석 달 굴려봤고, 어디서 깨지는지는 숫자가 말한다.</p>
+        <p><b>AI 도입이 겉도는 건 도구가 없어서가 아니라 일하는 방식이 안 바뀌어서다.</b> 맥락을 남기고, 결과를 확인하고, 다음 작업으로 넘기는 흐름을 만들었다. 그 과정의 기록도 남겼다.</p>
       </div>
-      <div class="frame scaled" data-vw="1440" data-title="Weekly · 팀 주간업무"><button class="zoom" type="button">크게 보기</button><div class="label">WEEKLY · 엑셀로 돌던 팀 주간업무를 웹앱으로</div>
+      </div><div class="exhibit">
+      <div class="frame scaled" data-vw="1440" data-responsive="true" data-title="Weekly · 팀 주간업무"><button class="zoom" type="button">크게 보기</button><div class="label">WEEKLY · 엑셀로 돌던 팀 주간업무를 웹앱으로</div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>weekly / login</span></div>
         <div class="view"><iframe data-src="work/team/weekly/index.html?v=20260919b" title="Weekly"></iframe></div></div></div>
       <div class="phone" id="phone03" data-vw="390" data-vh="844" data-title="워크샵 앱 · 모바일"><button class="zoom" type="button">크게 보기</button>
         <div class="view"><iframe data-src="work/team/workshop/index.html?v=20260918" title="Workshop app"></iframe></div>
       </div>
-      <div class="nums">
+      <details class="evidence"><summary>협업 중 남긴 기록 보기</summary><div class="nums">
         <div><b>3.4일 · 8분</b><span>실사용 로그 실측. 대화 단위를 턴에서 시간으로 다시 잡았다</span></div>
         <div><b>17일치</b><span>빠진 기록을 AI가 스스로 찾아 채워 넣었다</span></div>
         <div><b>1회 롤백</b><span>기준을 먼저 고정. 한 항목이 깨져 버전을 통째로 되돌렸다</span></div>
         <div><b>계정 이동</b><span>계정을 옮긴 날, 새 대화가 그대로 이어받았다</span></div>
       </div>
-      <div class="try">둘 다 실물입니다 · 이름은 전부 지어낸 것</div>
+      </details>
+      <div class="try">주간업무는 화면 탐색 데모 · 입력·저장은 지원하지 않아요</div>
+      </div>
       <div class="dband"></div><div class="dyear">.2026</div>
     </div>
   </section>
 
   <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
-  <section class="dim next" id="d04" data-obj="0.80,0.275,0.42,#c0203a" data-mat="0.42,0.00,1.00,0.10,1.05,1.10,0.04">
+  <section class="dim next" id="d04" data-obj="0.82,0.18,0.24,#c0203a" data-mat="0.42,0.00,1.00,0.10,1.05,1.10,0.04">
     <div class="sheet">
+      <div class="story">
       <div class="no">04 — NEXT</div>
       <div class="title"><small>SVALU</small></div>
       <div class="ddots"></div>
@@ -438,11 +540,13 @@
         <p><b>앞 장에서 말한 방식으로 키운 것이 이 모델이다.</b> 기준을 먼저 박고, 한 항목이 깨졌을 때 판을 통째로 되돌렸다. 서른여섯 판 중 한 번.</p>
         <p><b>기억 여든일곱 개 중 열넷만 실었다.</b> 나머지는 사람 것이라 두고 왔다. 그렇게 정한 날도 그 기억 안에 적혀 있다.</p>
       </div>
-      <div class="try">기억은 실제 파일에서 옮긴 것 · 아바타가 말하는 장면은 준비 중</div>
-      <div class="frame scaled" data-vw="1440" data-title="svalu · 무엇을 기억하는가"><button class="zoom" type="button">크게 보기</button><div class="label">SVALU · 이 모델이 기억하는 것</div>
+      <div class="try">기억 열넷을 읽어보세요 · 공개할 범위를 정한 이유까지</div>
+      </div><div class="exhibit">
+      <div class="frame scaled" data-vw="1440" data-responsive="true" data-title="svalu · 무엇을 기억하는가"><button class="zoom" type="button">크게 보기</button><div class="label">SVALU · 이 모델이 기억하는 것</div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>svalu / memory</span></div>
         <div class="view"><iframe data-src="work/svalu/memory.html?v=20260919" title="svalu memory"></iframe></div></div></div>
-      <div class="dband"></div><div class="dyear">.soon</div>
+      </div>
+      <div class="dband"></div><div class="dyear">.기억은 이어진다</div>
     </div>
   </section>
 </div>
@@ -469,10 +573,10 @@
     <span class="lb-title" id="lbTitle"></span>
     <span class="sp"></span>
     <label for="lbZoom">배율</label>
-    <input type="range" id="lbZoom" min="25" max="150" step="5" value="100">
+    <input type="range" id="lbZoom" min="10" max="150" step="1" value="100">
     <span class="lb-title" id="lbPct">100%</span>
     <button type="button" id="lbFit">화면에 맞춤</button>
-    <button type="button" id="lbClose">닫기 (Esc)</button>
+    <button type="button" id="lbClose">닫기</button>
   </div>
   <div class="lb-stage" id="lbStage"><div class="lb-box" id="lbBox"><div class="lb-view" id="lbView"><iframe id="lbFrame" title="실물 크게 보기"></iframe></div></div></div>
 </div>
@@ -483,8 +587,9 @@
 <script>
 const B = document.body, intro = document.getElementById('intro'), veil = document.querySelector('.veil');
 /* 폰(≤900px): 파일은 하나, 마크업도 하나. 원 전환·스크롤 잠금·정착만 끄고 세로로 흐른다. 모드가 바뀌면 다시 읽는다 */
-const NARROW = matchMedia('(max-width:900px)').matches;
-matchMedia('(max-width:900px)').addEventListener('change', ()=>location.reload());
+let NARROW = matchMedia('(max-width:900px)').matches;
+const motionQuery = matchMedia('(prefers-reduced-motion:reduce)');
+let reducedMotion = motionQuery.matches;
 if(NARROW) B.classList.remove('locked');
 const dims = [...document.querySelectorAll('.dim')];          // [intro, d01, d02, d03, d04]
 const N = dims.length;
@@ -625,12 +730,15 @@ place();
 /* 고정 뷰포트 프레임: 진짜 크기(폰 390×844 / 데스크톱 1440×900)로 렌더한 뒤 프레임 폭에 맞춰 축소 */
 function fitViews(){
   document.querySelectorAll('.phone').forEach(p=>{
-    const s = p.clientWidth/390; const v = p.querySelector('.view');
-    v.style.transform = `scale(${s.toFixed(4)})`; v.style.height = (p.clientHeight/s)+'px'; v.querySelector('iframe').style.height = (p.clientHeight/s)+'px';
+    if(!p.clientWidth || !p.querySelector('iframe')) return;
+    const W=NARROW?p.clientWidth:390, s=p.clientWidth/W, contentHeight=Math.max(1,p.clientHeight-56); const v=p.querySelector('.view');
+    v.style.width=W+'px'; v.querySelector('iframe').style.width=W+'px';
+    v.style.transform = `scale(${s.toFixed(4)})`; v.style.height = (contentHeight/s)+'px'; v.querySelector('iframe').style.height = (contentHeight/s)+'px';
   });
   const narrow = innerWidth <= 900;
   document.querySelectorAll('.frame.scaled').forEach(f=>{
-    const W = (narrow && f.dataset.mvw) ? +f.dataset.mvw : (+f.dataset.vw || 1440), H = Math.round(W*0.625);   /* 16:10 */
+    if(!f.clientWidth) return;
+    const W = narrow && f.dataset.responsive==='true' ? f.clientWidth : (narrow && f.dataset.mvw) ? +f.dataset.mvw : (+f.dataset.vw || 1440), H = Math.round(W*0.625);   /* 16:10 */
     const s = f.clientWidth/W; const v = f.querySelector('.view');
     v.style.width = W+'px'; v.style.height = H+'px';
     v.style.transform = `scale(${s.toFixed(4)})`; v.style.marginBottom = (H*s - H)+'px';   /* 스케일로 줄어든 만큼 자리도 줄인다 */
@@ -646,11 +754,11 @@ addEventListener('scroll', scheduleSnap, {passive:true});
 function scheduleSnap(){
   clearTimeout(snapTimer);
   snapTimer = setTimeout(()=>{
-    if(NARROW || B.classList.contains('locked') || touching) return;
+    if(NARROW || reducedMotion || B.classList.contains('locked') || touching) return;
     const ih = innerHeight, max = (N-1)*ih;
     const to = Math.min(Math.round(scrollY/ih)*ih, max);
     if(Math.abs(to - scrollY) > 4 && scrollY <= max + ih*.3) scrollTo({top:to, behavior:'smooth'});
-  }, 320);
+  }, 480);
 }
 
 /* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
@@ -676,13 +784,20 @@ function worldXY(x,y){ return [ (x-0.5)*vwW, -(y-0.5)*vhW - 0.115*baseScale ]; }
 const T = NARROW ? { act1:0.4, act2:1.75, color:3.0, flow:3.0+0.35+(DOTS-1)*0.028+1.2 }
                  : { act1:0.55, act2:2.25, color:4.05, flow:4.05+0.35+(DOTS-1)*0.028+1.4 };
 const SHRINK = NARROW ? 1.5 : 1.7;
-let t0 = performance.now()/1000, fired = {}, skipped = false, flowStart = 0;
+let t0 = performance.now()/1000, fired = {}, skipped = false, flowStart = 0, skipAt=0, skipFrom=0;
 const easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
 const clamp01 = x => Math.min(Math.max(x,0),1);
 function flowDots(now){ const hs = (now - flowStart)*10;   /* 색이 라인을 따라 아주 천천히 흐른다 */ for(let i=0;i<DOTS;i++){ const h=(dotHue(i)+hs+720)%360, l=52+7*Math.sin((now - flowStart)*0.9 - i*.45); dotEls[i].style.background=`hsl(${h.toFixed(1)} 72% ${l.toFixed(1)}%)`; } }
 function unlock(){ B.classList.remove('locked'); }
 function reset(){ scrollTo(0,0); B.classList.add('snap'); if(!NARROW) B.classList.add('locked'); B.classList.remove('act1','act2','color','flow'); B.classList.add('act0'); dotEls.forEach(d=>d.style.background=''); fired={}; skipped=false; t0=performance.now()/1000; requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
-function skip(){ if(skipped) return; skipped=true; B.classList.add('snap','act1','act2','color','flow'); fired={act1:1,act2:1,color:1,flow:1}; flowStart=performance.now()/1000; unlock(); requestAnimationFrame(()=>requestAnimationFrame(()=>B.classList.remove('snap'))); }
+function skip(){
+  if(skipped)return;
+  skipFrom=easeIO(clamp01((performance.now()/1000-t0-T.act1)/SHRINK));skipAt=performance.now()/1000;
+  skipped=true;B.classList.add('fast','act1','act2','color','flow');
+  fired={act1:1,act2:1,color:1,flow:1};flowStart=skipAt;unlock();
+  setTimeout(()=>B.classList.remove('fast'),650);
+}
+
 document.getElementById('replay').onclick = reset;
 document.getElementById('skip').onclick = skip;
 document.getElementById('hint').onclick = ()=> scrollTo({top:innerHeight*1.0, behavior:'smooth'});
@@ -694,7 +809,7 @@ intro.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON' && !fired.fl
 /* ── 만질 수 있는 차원은 하나뿐. 마스크는 시각만 가리고 클릭은 통과시키므로 직접 끈다.
       판정은 스크롤 위치로 즉시(부드러운 prog 를 기다리면 전환 중 클릭이 죽는다) ── */
 function updateReach(){
-  if(NARROW) return;                       /* 폰은 겹치지 않으니 전부 만질 수 있다 */
+  if(NARROW){ dims.forEach(d=>{d.inert=false;d.style.pointerEvents='';d._on=undefined;}); return; }
   const a = Math.max(0, Math.min(N-1, Math.round(scrollY / innerHeight)));
   for(let i=0;i<N;i++){
     const on = (i === a);
@@ -720,7 +835,7 @@ function loadNear(p){
     lazyFrames[i].forEach(f=>{
       const shown = f.getClientRects().length > 0;          /* display:none(모바일에서 접은 프레임)이면 로드하지 않는다 */
       if(near && shown && !f.getAttribute('src')) f.setAttribute('src', f.dataset.src);
-      else if((!near || !shown) && f.getAttribute('src')) f.removeAttribute('src');
+      else if((!near || !shown) && !f.dataset.engaged && f.getAttribute('src')) f.removeAttribute('src');
     });
   });
 }
@@ -730,14 +845,14 @@ function loadNear(p){
 const colTarget = RED.clone();
 const smCol = RED.clone();          /* 폰에서 sRGB 로 누적하는 색. mat.color 를 직접 lerp 하면 선형과 섞여 엉킨다 */
 let matTarget = INTRO_MAT;
-if(NARROW){
-  const inObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.18});
-  const colObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ const st = S[dims.indexOf(e.target)]; colTarget.copy(st.c); matTarget = st.t; } }), {rootMargin:'-40% 0px -40% 0px', threshold:0});
+{
+  const inObs = new IntersectionObserver(es=>es.forEach(e=>{ if(NARROW && e.isIntersecting) e.target.classList.add('in'); }), {threshold:.08});
+  const colObs = new IntersectionObserver(es=>es.forEach(e=>{ if(NARROW && e.isIntersecting){ const st = S[dims.indexOf(e.target)]; colTarget.copy(st.c); matTarget = st.t; } }), {rootMargin:'-40% 0px -40% 0px', threshold:0});
   dims.forEach(d=>{ inObs.observe(d); colObs.observe(d); });
   const loadObs = new IntersectionObserver(es=>es.forEach(e=>{
-    const f = e.target;
+    const f = e.target; if(!NARROW) return;
     if(e.isIntersecting){ if(!f.getAttribute('src')) f.setAttribute('src', f.dataset.src); }
-    else if(f.getAttribute('src') && Math.abs(e.boundingClientRect.top) > innerHeight*1.2) f.removeAttribute('src');
+    else if(!f.dataset.engaged && f.getAttribute('src') && Math.abs(e.boundingClientRect.top) > innerHeight*1.2) f.removeAttribute('src');
   }), {rootMargin:'60% 0px 60% 0px'});
   document.querySelectorAll('iframe[data-src]').forEach(f=>loadObs.observe(f));
 }
@@ -746,18 +861,22 @@ if(NARROW){
 let prog = 0;                       // 부드럽게 따라가는 스크롤 진행도 (차원 단위: 0=인트로 … N-1=마지막)
 let expo = 1;                       // 차원별 노출 — 배경이 어두운 장에서 오브젠트만 튀지 않게
 const tmpC = new THREE.Color();
+let previousFrame=performance.now()/1000, readingIndex=0;
 function frame(){
   requestAnimationFrame(frame);
   const now = performance.now()/1000, t = now - t0;
+  const dt=Math.min(.05,Math.max(0,now-previousFrame));previousFrame=now;
+  const follow=k=>1-Math.pow(1-k,dt*60);
+  readingIndex=NARROW?Math.max(0,dims.findIndex(d=>{const r=d.getBoundingClientRect();return r.top<=innerHeight*.35&&r.bottom>innerHeight*.35;})):Math.min(N-1,Math.round(scrollY/innerHeight));
   for(const k in T){ if(!fired[k] && t>=T[k]){ fired[k]=1; B.classList.add(k); if(k==='act1') B.classList.remove('act0'); if(k==='flow'){ flowStart=now; unlock(); } } }
-  if(fired.flow && prog<0.9) flowDots(now);
+  if(fired.flow && prog<0.9 && !reducedMotion) flowDots(now);
 
   updateReach();
   /* 스크롤 → 차원 진행도 */
   const target = innerHeight ? Math.min(scrollY/innerHeight, N-1) : 0;   /* 숨은 탭(뷰포트 0)에서 NaN 이 S[k] 를 깨뜨리지 않게 */
-  prog += (target - prog)*.09;
+  prog += (target - prog)*(reducedMotion?1:follow(.14));
   const k = Math.min(Math.floor(prog), N-2);          // 지금 열리는 중인 차원 = k+1
-  const o = easeIO(clamp01((prog - k)/0.82));         // 열림 진행도 (스크롤 82% 구간에서 완전히 열림)
+  const o = Math.pow(clamp01((prog - k)/0.90),.72);  // First scroll opens the next dimension immediately.
   const oc = clamp01((prog - k)/0.45);                // 색은 먼저 바뀐다
 
   let ox, oy, os;
@@ -765,6 +884,11 @@ function frame(){
     /* 폰: 인트로에선 오른쪽 가운데 크게, 첫 화면을 넘기며 우상단에 작게 앉는다. 색은 관찰자가 정한 차원 색으로 */
     const p = clamp01(scrollY/(innerHeight*0.9));
     ox = .78 + (.84-.78)*p; oy = .44 + (.11-.44)*p; os = 1.45 - .85*p;   /* 인트로 화면 높이의 1/3, 카드에선 그 40% */
+    const heading=dims.slice(1).find(d=>{const r=d.getBoundingClientRect();return r.top<innerHeight*.7&&r.bottom>0;});
+    const hr=heading?.querySelector('.title').getBoundingClientRect();
+    const fade=scrollY<innerHeight*.55?1:(hr?clamp01((hr.bottom-60)/160):0);
+    renderer.domElement.style.opacity=String(fade);
+    os=1.45-1.12*p;
     smCol.lerp(colTarget, .04); mat.color.copy(smCol).convertSRGBToLinear();   /* sRGB 로 쌓고 넣을 때만 선형 */
     /* 폰: 색과 마찬가지로 표면도 관찰자가 정한 차원 것으로 서서히 */
     mat.roughness        += (matTarget.r   - mat.roughness) * .04;
@@ -776,6 +900,7 @@ function frame(){
     expo                 += (matTarget.ex  - expo) * .04;
   }else{
     /* 오브젠트: 상태 S[k] → S[k+1] 보간. 직선이 아니라 살짝 떠서 건너간다(포물선) + 건너가는 중엔 조금 커진다 */
+    renderer.domElement.style.opacity='1';
     const a = S[k], b = S[k+1] || a;
     const lift = Math.sin(o*Math.PI);
     ox = a.x + (b.x-a.x)*o; oy = a.y + (b.y-a.y)*o - lift*0.09; os = (a.s + (b.s-a.s)*o) * (1 + lift*0.14);
@@ -792,7 +917,7 @@ function frame(){
   }
 
   /* 인트로 응축 — 베일 원과 오브젝트 크기가 같은 곡선으로 */
-  const s = skipped ? 1 : easeIO(clamp01((t - T.act1)/SHRINK));
+  const s = reducedMotion ? 1 : skipped ? skipFrom+(1-skipFrom)*easeIO(clamp01((now-skipAt)/.45)) : easeIO(clamp01((t - T.act1)/SHRINK));
   veil.style.setProperty('--vr', (140*(1-s)).toFixed(2)+'%');
   const sc = baseScale * os * (1 + (1-s)*3.2);
   group.scale.setScalar(sc);
@@ -808,16 +933,16 @@ function frame(){
     const m = R < 1 ? 'radial-gradient(circle 1px at 50% 50%,transparent 0,transparent 1px)'
                     : `radial-gradient(circle ${R.toFixed(0)}px at ${(ox*100).toFixed(2)}% ${(oy*100).toFixed(2)}%,#000 ${Math.max(R-60,0).toFixed(0)}px,transparent ${R.toFixed(0)}px)`;
     if(d._m !== m){ d.style.webkitMaskImage = m; d.style.maskImage = m; d._m = m; }   /* 값이 같으면 쓰지 않는다(스타일 재계산 절약) */
-    d.classList.toggle('in', r > 0.7);
+    if(r > 0.7) d.classList.add('in');
   }
   /* 실물 iframe 은 가까운 차원만 살린다 — 다섯 개가 동시에 돌면 렌더러가 버거움 */
   if(!NARROW) loadNear(prog);
 
   /* 마우스 */
-  const live = s;
-  vel.x = (mouse.x - sm.x)*.085; vel.y = (mouse.y - sm.y)*.085; sm.x += vel.x; sm.y += vel.y; spin += vel.x*2.2; spin *= .965;
-  group.rotation.y = now*.22 + (sm.x*1.4 + spin)*live;   /* 반사가 흘러야 금속으로 읽힌다 */ group.rotation.x = -sm.y*.42*live; group.rotation.z = -sm.x*.28*live;
-  ball.position.x = sm.x*1.6*live; ball.position.z = -sm.y*1.2*live; ball.position.y = 4.15 + Math.sin(now*1.3)*.12 + Math.abs(sm.x)*.35*live;
+  const live = reducedMotion ? 0 : s;
+    vel.x = (mouse.x - sm.x)*follow(.085); vel.y = (mouse.y - sm.y)*follow(.085); sm.x += vel.x; sm.y += vel.y; spin += vel.x*2.2; spin *= Math.pow(.965,dt*60);
+  group.rotation.y = (reducedMotion ? 0 : now*.16) + (sm.x*1.4 + spin)*live;   /* 반사가 흘러야 금속으로 읽힌다 */ group.rotation.x = -sm.y*.42*live; group.rotation.z = 0;
+  ball.position.x = sm.x*.7*live; ball.position.z = -sm.y*1.2*live; ball.position.y = 4.15 + (reducedMotion ? 0 : Math.sin(now*1.3)*.06);
   key.position.set(-4 + sm.x*14*live, 6 - sm.y*10*live, 8);
   key.intensity  = KEY_I * expo;
   hemi.intensity = HEMI_I * expo;
@@ -825,8 +950,22 @@ function frame(){
   renderer.render(scene, camera);
 }
 frame();
+addEventListener('blur',()=>{const f=document.activeElement;if(f?.matches('iframe[data-src]')) f.dataset.engaged='true';});
+motionQuery.addEventListener('change',e=>{reducedMotion=e.matches;if(reducedMotion)skip();});
+if(reducedMotion)skip();
+matchMedia('(max-width:900px)').addEventListener('change',e=>{
+  const index=readingIndex;NARROW=e.matches; clearTimeout(snapTimer);
+  document.getElementById('track').style.height=NARROW?'':`calc(${N}00vh + 40vh)`;
+  dims.forEach(d=>{d.style.maskImage='';d.style.webkitMaskImage='';d._m=null;d.classList.add('in');});
+  lastLoadCheck=-1; skip(); updateReach(); fitViews(); place();
+  requestAnimationFrame(()=>scrollTo({top:NARROW?dims[index].offsetTop:index*innerHeight,behavior:'instant'}));
+});
 
-
+function visitHash(){
+  const index=dims.findIndex(d=>'#'+d.id===location.hash);if(index<0)return;
+  skip();requestAnimationFrame(()=>scrollTo({top:NARROW?dims[index].offsetTop:index*innerHeight,behavior:'instant'}));
+}
+addEventListener('hashchange',visitHash);if(location.hash)visitHash();
 /* ── 시안 탭: 같은 자리에서 방향만 바꾼다 ── */
 (function(){
   var wrap=document.getElementById('tabs01'); if(!wrap) return;
@@ -845,6 +984,7 @@ frame();
         pf.dataset.src=src;
         if(pf.getAttribute('src')) pf.setAttribute('src', src);
       }else if(window.__openBig){
+        host.dataset.responsive=String(/live\.html/.test(b.dataset.src));
         host.dataset.title='Blue Horizon · '+b.textContent.trim();
         if(fr.getAttribute('src')) fr.setAttribute('src', src);
         window.__openBig(host);
@@ -855,7 +995,8 @@ frame();
     }else if(fr.getAttribute('src')) fr.setAttribute('src', src);     /* 이미 떠 있으면 바로 갈아 끼운다 */
     var key=b.dataset.src.split('/').pop();
     if(bar) bar.textContent=names[key]||key;
-    host.dataset.title='Blue Horizon · '+b.textContent.trim();
+    host.dataset.responsive=String(/live\.html/.test(b.dataset.src));
+        host.dataset.title='Blue Horizon · '+b.textContent.trim();
   });
 })();
 
@@ -865,7 +1006,16 @@ frame();
   var lb=document.getElementById('lb'), lbFrame=document.getElementById('lbFrame'), lbView=document.getElementById('lbView'),
       lbStage=document.getElementById('lbStage'), lbBox=document.getElementById('lbBox'),
       lbZoom=document.getElementById('lbZoom'), lbPct=document.getElementById('lbPct'),
-      lbTitle=document.getElementById('lbTitle'), cur={w:1440,h:900}, lastFocus=null;
+      lbTitle=document.getElementById('lbTitle'), cur={w:1440,h:900}, lastFocus=null, activeHost=null, closeTimer=0;
+  const spareFrame=lbFrame;let parked=null;
+  function restoreFrame(){
+    if(!parked)return;
+    const {node,parent,next,style,id}=parked;
+    parent.moveBefore(node,next&&next.parentNode===parent?next:null);
+    if(style===null)node.removeAttribute('style');else node.setAttribute('style',style);
+    if(id)node.id=id;else node.removeAttribute('id');
+    spareFrame.id='lbFrame';spareFrame.hidden=false;lbFrame=spareFrame;parked=null;fitViews();
+  }
   function apply(z){
     var s=z/100;
     lbView.style.width=cur.w+'px'; lbView.style.height=cur.h+'px';   /* 안쪽은 늘 실제 크기 — 줄이면 잘린다 */
@@ -875,17 +1025,25 @@ frame();
     lbPct.textContent=z+'%';
   }
   function fit(){
-    var pad=48, aw=lbStage.clientWidth-pad, ah=lbStage.clientHeight-pad;
+    var pad=NARROW?24:40, aw=lbStage.clientWidth-pad, ah=lbStage.clientHeight-24;
     var z=Math.floor(Math.min(aw/cur.w, ah/cur.h)*100);
-    z=Math.max(25,Math.min(150,z)); lbZoom.value=z; apply(z);
+    z=Math.max(10,Math.min(150,z)); lbZoom.value=z; apply(z);
   }
   function open(host){
     var src=host.querySelector('iframe[data-src],iframe[src]');
     if(!src) return;
-    cur.w=+host.dataset.vw||1440; cur.h=+host.dataset.vh||Math.round(cur.w*0.625);
+    clearTimeout(closeTimer);restoreFrame();activeHost=host;
+    if(lbView.moveBefore && src.getAttribute('src')){
+      parked={node:src,parent:src.parentElement,next:src.nextSibling,style:src.getAttribute('style'),id:src.id};
+      src.dataset.engaged='true';spareFrame.id='lbSpare';spareFrame.hidden=true;
+      lbView.moveBefore(src,null);src.id='lbFrame';lbFrame=src;
+    }
+    const responsive=NARROW&&(host.classList.contains('phone')||host.dataset.responsive==='true');
+    cur.w=responsive?Math.max(280,innerWidth-24):(+host.dataset.vw||1440);
+    cur.h=responsive?Math.max(420,innerHeight-140):(+host.dataset.vh||Math.round(cur.w*0.625));
     lbFrame.style.width=cur.w+'px'; lbFrame.style.height=cur.h+'px';
     lbTitle.textContent=host.dataset.title||'';
-    lbFrame.src=src.getAttribute('src')||src.dataset.src;
+    if(!parked)lbFrame.src=src.getAttribute('src')||src.dataset.src;
     lastFocus=document.activeElement;
     lb.hidden=false; requestAnimationFrame(function(){ lb.classList.add('on'); });
     setTimeout(function(){
@@ -894,11 +1052,11 @@ frame();
       if(NARROW && cur.w > 900){ lbZoom.value=55; apply(55); lbStage.scrollTo(0,0); } else fit();
       document.getElementById('lbClose').focus();
     }, 30);
-    document.body.style.overflow='hidden';
+    document.body.style.overflow='hidden'; document.getElementById('track').inert=true;document.getElementById('foot').inert=true;
   }
   function close(){
     lb.classList.remove('on');
-    setTimeout(function(){ lb.hidden=true; lbFrame.removeAttribute('src'); document.body.style.overflow=''; if(lastFocus) lastFocus.focus(); }, 260);
+    closeTimer=setTimeout(function(){ lb.hidden=true;document.body.style.overflow='';restoreFrame();lbFrame.removeAttribute('src');fitViews();document.getElementById('track').inert=false;document.getElementById('foot').inert=false; if(lastFocus) lastFocus.focus({preventScroll:true}); }, reducedMotion?0:260);
   }
   document.querySelectorAll('.zoom').forEach(function(b){
     b.addEventListener('click', function(e){ e.stopPropagation(); open(b.parentElement); });
@@ -908,8 +1066,23 @@ frame();
   document.getElementById('lbFit').addEventListener('click', fit);
   document.getElementById('lbClose').addEventListener('click', close);
   lb.addEventListener('click', function(e){ if(e.target===lb||e.target===lbStage) close(); });
-  addEventListener('keydown', function(e){ if(!lb.hidden && e.key==='Escape') close(); });
-  addEventListener('resize', function(){ if(!lb.hidden) fit(); });
+  addEventListener('keydown', function(e){
+    if(lb.hidden)return;
+    if(e.key==='Escape')close();
+    if(e.key==='Tab'){
+      const els=[...lb.querySelectorAll('button,input,iframe')],first=els[0],last=els[els.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+  addEventListener('resize', function(){
+    if(lb.hidden)return;
+    if(NARROW&&(activeHost?.classList.contains('phone')||activeHost?.dataset.responsive==='true')){
+      cur.w=Math.max(280,innerWidth-24);cur.h=Math.max(420,innerHeight-140);
+      lbFrame.style.width=cur.w+'px';lbFrame.style.height=cur.h+'px';
+    }
+    fit();
+  });
 })();
 </script>
 </body>
