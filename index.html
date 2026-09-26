@@ -953,13 +953,19 @@ frame();
 addEventListener('blur',()=>{const f=document.activeElement;if(f?.matches('iframe[data-src]')) f.dataset.engaged='true';});
 motionQuery.addEventListener('change',e=>{reducedMotion=e.matches;if(reducedMotion)skip();});
 if(reducedMotion)skip();
-matchMedia('(max-width:900px)').addEventListener('change',e=>{
-  const index=readingIndex;NARROW=e.matches; clearTimeout(snapTimer);
+const mq900 = matchMedia('(max-width:900px)');
+function applyLayoutMode(next){
+  if(next === NARROW) return;
+  const index=readingIndex; NARROW=next; clearTimeout(snapTimer);
   document.getElementById('track').style.height=NARROW?'':`calc(${N}00vh + 40vh)`;
   dims.forEach(d=>{d.style.maskImage='';d.style.webkitMaskImage='';d._m=null;d.classList.add('in');});
   lastLoadCheck=-1; skip(); updateReach(); fitViews(); place();
   requestAnimationFrame(()=>scrollTo({top:NARROW?dims[index].offsetTop:index*innerHeight,behavior:'instant'}));
-});
+}
+mq900.addEventListener('change', e => applyLayoutMode(e.matches));
+/* change 하나만 믿으면 그 신호가 안 오는 환경(개발자도구 화면 흉내, 일부 브라우저)에서
+   CSS 는 데스크톱인데 JS 만 폰인 채로 남는다. 창 크기가 바뀔 때마다 한 번 더 맞춘다 */
+addEventListener('resize', () => applyLayoutMode(mq900.matches));
 
 function visitHash(){
   const index=dims.findIndex(d=>'#'+d.id===location.hash);if(index<0)return;
