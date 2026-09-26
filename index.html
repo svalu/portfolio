@@ -44,6 +44,8 @@
   /* ───────────── 인트로 (차원 0) ───────────── */
   .intro{background:var(--m-paper)}
   .stage{position:absolute;inset:0;display:grid;grid-template-rows:59% 9% 32%}
+  .stage:not(.mono){z-index:1;opacity:0;transition:opacity .5s cubic-bezier(.2,.7,.2,1)}
+  body.color .stage:not(.mono){opacity:1}
   /* 빨강 베일: 응축 원. JS 가 --vr 을 140%→0 으로 몰고, 가장자리는 6% 만큼 번진다 */
   .veil{position:absolute;inset:0;background:var(--red);z-index:5;pointer-events:none;--vr:140%;
     -webkit-mask-image:radial-gradient(ellipse var(--vr) var(--vr) at var(--ox) var(--oy),#000 calc(100% - 7%),transparent 100%);
@@ -74,6 +76,17 @@
   .bottom{grid-row:3;position:relative;background:linear-gradient(90deg,var(--c-bottom1) 0%,#6f7a3a 55%,var(--c-bottom2) 100%);z-index:1}
   .intro .body{position:absolute;left:1.6%;top:8%;width:59%;font-weight:300;font-size:clamp(11px,.95vw,15px);line-height:2.35;letter-spacing:.01em;color:var(--c-body);text-align:justify}
   .intro .body b{font-weight:inherit;color:inherit}   /* 데스크톱 본문은 한 굵기. 폰에서만 첫 문장이 선다 */
+  /* 흑백 장면을 컬러 장면 위에 얹어, 채도 보간 없이 한 번의 페이드로 넘긴다. */
+  .stage.mono{z-index:2;pointer-events:none;opacity:1;transition:opacity .5s cubic-bezier(.2,.7,.2,1)}
+  body.color .stage.mono{opacity:0}
+  body.flow .stage.mono{visibility:hidden}
+  .stage.mono .type{color:var(--m-type)}
+  .stage.mono .dots i{background:var(--m-dot)}
+  .stage.mono .band{background:var(--m-band)}
+  .stage.mono .tri{background:linear-gradient(135deg,var(--m-tri),#8a8a8a)}
+  .stage.mono .mark{color:var(--m-mark)}
+  .stage.mono .bottom{background:var(--m-bottom)}
+  .stage.mono .body,.stage.mono .body b{color:var(--m-body)}
   .hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:6;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.7);opacity:0;transition:opacity 1s var(--ease) 2.4s;cursor:pointer;background:none;border:0;font-family:inherit}
   body.color .hint{opacity:1}
   .hint i{display:block;width:1px;height:22px;margin:8px auto 0;background:rgba(255,255,255,.5);animation:drop 1.6s ease-in-out infinite}
@@ -614,6 +627,10 @@ for(let i=0;i<DOTS;i++){
   d.style.setProperty('--ad', (0.55 + i*0.022)+'s'); d.style.setProperty('--cd', (0.35 + (DOTS-1-i)*0.028)+'s');
   dots.appendChild(d);
 }
+const mono = intro.querySelector('.stage').cloneNode(true);
+mono.classList.add('mono'); mono.setAttribute('aria-hidden','true'); mono.inert=true;
+mono.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+intro.querySelector('.stage').after(mono);
 function setSpreadCenters(){
   const R = intro.getBoundingClientRect();
   const ox = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ox'))/100*R.width + R.left;
@@ -757,9 +774,9 @@ function worldXY(x,y){ return [ (x-0.5)*vwW, -(y-0.5)*vhW - 0.115*baseScale ]; }
 
 /* ── 인트로 타임라인 ── */
 /* 폰은 3초 안에 훅: 빨강 → 응축 → 이름 → 색. 잠금이 없으니 밀면 바로 넘어간다 */
-const T = NARROW ? { act1:0.4, act2:1.75, color:3.0, flow:3.0+0.35+(DOTS-1)*0.028+1.2 }
-                 : { act1:0.55, act2:2.25, color:4.05, flow:4.05+0.35+(DOTS-1)*0.028+1.4 };
-const SHRINK = NARROW ? 1.5 : 1.7;
+const T = NARROW ? { act1:0.25, act2:1.60, color:2.85, flow:2.85+0.35+(DOTS-1)*0.028+1.2 }
+                 : { act1:0.30, act2:2.00, color:3.80, flow:3.80+0.35+(DOTS-1)*0.028+1.4 };
+const SHRINK = NARROW ? 1.35 : 1.7;
 let t0 = performance.now()/1000, fired = {}, skipped = false, flowStart = 0, skipAt=0, skipFrom=0;
 const easeIO = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
 const clamp01 = x => Math.min(Math.max(x,0),1);
