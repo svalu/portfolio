@@ -23,8 +23,8 @@
     --ox:72.5%; --oy:52.5%;
     --m-paper:#ffffff; --m-type:#111111; --m-dot:#c9c9c9; --m-band:#3a3a3a; --m-tri:#c2c2c2;
     --m-bottom:#050505; --m-body:#e6e6e6; --m-mark:#111111; --m-year:#ffffff;
-    --c-type:#201a24; --c-band1:#3fae7a; --c-band2:#12b3b9; --c-band3:#1f8fd6;
-    --c-tri:#6fc28f; --c-bottom1:#20232d; --c-bottom2:#29212b; --c-body:#e8e5e9; --c-mark:#b7a56b;
+    --c-type:#8a0f78; --c-band1:#3fae7a; --c-band2:#12b3b9; --c-band3:#1f8fd6;
+    --c-tri:#6fc28f; --c-bottom1:#8a9a2a; --c-bottom2:#8d4a86; --c-body:#f4d54a; --c-mark:#b7a56b;
     --red:#c0203a;
     --ease:cubic-bezier(.4,.05,.2,1); --in:cubic-bezier(.2,.7,.2,1); --dur:1.9s; --spread:2.3s;
   }
@@ -74,7 +74,7 @@
   .year{position:absolute;right:2%;bottom:6%;font-weight:300;letter-spacing:.02em;font-size:clamp(20px,3vw,46px);color:var(--m-year);z-index:3}
   .band::after,.bottom::after{content:"";position:absolute;inset:0;clip-path:circle(0% at var(--cx,72%) var(--cy,50%));transition:clip-path var(--spread) var(--ease)}
   .band::after{background:linear-gradient(90deg,var(--c-band1) 0%,var(--c-band2) 55%,var(--c-band3) 100%);transition-delay:.15s}
-  .bottom::after{background:linear-gradient(90deg,var(--c-bottom1) 0%,#24232b 55%,var(--c-bottom2) 100%);transition-delay:.3s}
+  .bottom::after{background:linear-gradient(90deg,var(--c-bottom1) 0%,#6f7a3a 55%,var(--c-bottom2) 100%);transition-delay:.3s}
   body.color .band::after,body.color .bottom::after{clip-path:circle(160% at var(--cx,72%) var(--cy,50%))}
   .bottom .body,.band .year{position:absolute;z-index:1}
   .mark{position:absolute;right:2.2%;top:47%;width:clamp(44px,6vw,90px);color:var(--m-mark);z-index:3}
@@ -430,7 +430,7 @@
 
   <!-- ═══ 차원 1 · Blue Horizon ═══ -->
   <!-- data-obj = 오브젠트 x비율, y비율(중심), 크기비율, 이 차원의 색. 프레임 아래 띠 위에 작게 선다 -->
-  <section class="dim next" id="d01" data-obj="0.42,0.86,0.13,#3d5cff" data-mat="0.14,1.00,0.00,0.02,1.30,0.95,0.06">
+  <section class="dim next" id="d01" data-obj="0.42,0.86,0.13,#3d5cff" data-mat="0.22,1.00,0.00,0,1.10,0.95,0.20">
     <div class="sheet">
       <div class="story">
       <div class="no">01 — INTERFACE</div>
@@ -464,7 +464,7 @@
   </section>
 
   <!-- ═══ 차원 2 · OS UI (스텁) ═══ -->
-  <section class="dim next" id="d02" data-obj="0.42,0.86,0.13,#e0762e" data-mat="0.44,1.00,0.00,0.19,1.05,0.85,0.06">
+  <section class="dim next" id="d02" data-obj="0.42,0.86,0.13,#e0762e" data-mat="0.38,1.00,0.00,0,1.05,0.85,0.20">
     <div class="sheet">
       <div class="story">
       <div class="no">02 — SYSTEM</div>
@@ -493,7 +493,7 @@
   </section>
 
   <!-- ═══ 차원 3 · 시스템 (스텁) ═══ -->
-  <section class="dim next" id="d03" data-obj="0.42,0.86,0.13,#2fd3a0" data-mat="0.55,0.00,0.90,0.08,0.95,1.00,0.05">
+  <section class="dim next" id="d03" data-obj="0.42,0.86,0.13,#2fd3a0" data-mat="0.35,0.00,0.35,0,0.95,1.00,0.25">
     <div class="sheet">
       <div class="story">
       <div class="no">03 — METHOD</div>
@@ -527,7 +527,7 @@
   </section>
 
   <!-- ═══ 차원 4 · svalu (예고) — 오브젝트가 인트로 자리로, 빨강으로 돌아온다 ═══ -->
-  <section class="dim next" id="d04" data-obj="0.82,0.18,0.24,#c0203a" data-mat="0.42,0.00,1.00,0.10,1.05,1.10,0.04">
+  <section class="dim next" id="d04" data-obj="0.82,0.18,0.24,#c0203a" data-mat="0.30,0.00,0.35,0,0.80,1.00,0.25">
     <div class="sheet">
       <div class="story">
       <div class="no">04 — NEXT</div>
@@ -628,40 +628,11 @@ const curve = new THREE.SplineCurve(prof.map(p=>new THREE.Vector2(p[0],p[1])));
 const lathe = new THREE.LatheGeometry(curve.getPoints(90), 96); lathe.computeVertexNormals();
 const RED = new THREE.Color(0x9c0a18);
 
-/* 요철맵 — 표면의 결. 차원마다 이 깊이(bumpScale)를 바꿔 종이·금속·수지를 가른다.
-   외부 이미지를 받지 않고 캔버스에 노이즈 세 겹을 겹쳐 굽는다(첫 로드에 한 번, 4ms) */
-function grainTexture(){
-  const N = 256, c = document.createElement('canvas'); c.width = c.height = N;
-  const g = c.getContext('2d'), img = g.createImageData(N, N);
-  const lay = [];                                     // [칸 크기, 세기] — 큰 결 위에 잔 결
-  for(const [cell, amp] of [[32, 46], [8, 26], [2, 16]]){
-    const m = N/cell, v = [];
-    for(let i=0;i<(m+1)*(m+1);i++) v.push(Math.random());
-    lay.push({cell, amp, m, v});
-  }
-  for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-    let h = 128;
-    for(const L of lay){
-      const fx = x/L.cell, fy = y/L.cell, ix = Math.floor(fx), iy = Math.floor(fy);
-      const tx = fx-ix, ty = fy-iy, ex = tx*tx*(3-2*tx), ey = ty*ty*(3-2*ty);
-      const at = (a,b)=>L.v[(b%(L.m+1))*(L.m+1) + (a%(L.m+1))];
-      const top = at(ix,iy) + (at(ix+1,iy)-at(ix,iy))*ex;
-      const bot = at(ix,iy+1) + (at(ix+1,iy+1)-at(ix,iy+1))*ex;
-      h += (top + (bot-top)*ey - 0.5) * L.amp;
-    }
-    const i = (y*N+x)*4, u = Math.max(0, Math.min(255, h));
-    img.data[i] = img.data[i+1] = img.data[i+2] = u; img.data[i+3] = 255;
-  }
-  g.putImageData(img, 0, 0);
-  const t = new THREE.CanvasTexture(c);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(0.85, 0.85);   /* 결을 크게 잡는다. 잘면 찌글찌글해 보이고 재질로 안 읽힌다 */
-  return t;
-}
-
+/* 거친 표면 노이즈 없이 부드러운 반사로 형태를 읽게 한다. */
 const mat = new THREE.MeshPhysicalMaterial({
-  color: RED.clone().convertSRGBToLinear(), roughness:.82, metalness:0,
-  clearcoat:0, clearcoatRoughness:.06, envMapIntensity:.55,
-  bumpMap: grainTexture(), bumpScale:.018,
+  color: RED.clone().convertSRGBToLinear(), roughness:.30, metalness:0,
+  clearcoat:.35, clearcoatRoughness:.25, envMapIntensity:.80,
+
 });
 const bodyM = new THREE.Mesh(lathe, mat);
 const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.position.y = 4.15;
@@ -763,7 +734,7 @@ function scheduleSnap(){
 
 /* 차원별 오브젠트 상태: [x비율, y비율(중심), 크기비율, 색]. 인트로는 CSS 변수와 동일 */
 let S = [];
-const INTRO_MAT = {r:.84, m:0, cc:0, b:.14, e:.72, ex:.80, ccr:.06};   /* 무광 석고. 배경이 흰 종이라 오브젠트는 어두워야 읽힌다 */   /* 인트로는 무광 석고 — 빛을 먹고 안 돌려준다 */
+const INTRO_MAT = {r:.30, m:0, cc:.35, b:0, e:.80, ex:1.00, ccr:.25}; // 매끈한 유약 도자기
 function matOf(d){
   if(!d.dataset.mat) return INTRO_MAT;
   const [r,m,cc,b,e,ex,ccr] = d.dataset.mat.split(',').map(Number);
@@ -894,7 +865,6 @@ function frame(){
     mat.roughness        += (matTarget.r   - mat.roughness) * .04;
     mat.metalness        += (matTarget.m   - mat.metalness) * .04;
     mat.clearcoat        += (matTarget.cc  - mat.clearcoat) * .04;
-    mat.bumpScale        += (matTarget.b   - mat.bumpScale) * .04;
     mat.envMapIntensity  += (matTarget.e   - mat.envMapIntensity) * .04;
     mat.clearcoatRoughness += (matTarget.ccr - mat.clearcoatRoughness) * .04;
     expo                 += (matTarget.ex  - expo) * .04;
@@ -910,7 +880,6 @@ function frame(){
     mat.roughness = at.r  + (bt.r  - at.r)  * e;
     mat.metalness = at.m  + (bt.m  - at.m)  * e;
     mat.clearcoat = at.cc + (bt.cc - at.cc) * e;
-    mat.bumpScale = at.b  + (bt.b  - at.b)  * e;
     mat.envMapIntensity = at.e + (bt.e - at.e) * e;
     mat.clearcoatRoughness = at.ccr + (bt.ccr - at.ccr) * e;
     expo = at.ex + (bt.ex - at.ex) * e;
