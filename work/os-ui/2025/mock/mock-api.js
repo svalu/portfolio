@@ -412,12 +412,43 @@
             });
             return { data: nodes, dataList: nodes };
         }],
-        ["message-manager", function () {
+        ["message-manager", function (opts) {
+            /* 목록은 화면 HTML 에 박혀 있고, 행을 누르면 .../{코드}/detail 로 하나를 물어본다.
+               전에는 목록 배열을 그대로 돌려줘서 원본 JS 가 data.mngMsgContent 를 못 찾고
+               조용히 아무것도 안 했다 — "클릭이 안 먹는" 증상의 정체. 코드별로 하나씩 돌려준다 */
+            var MSG = {
+                cnsl_strt: {
+                    mngMsgContent: "안녕하세요, 무엇을 도와드릴까요? 상담사가 확인 후 바로 답변드리겠습니다.",
+                    mngMsgIsAllow: true
+                },
+                auto_end: {
+                    mngMsgContent: "답변이 없어 상담을 종료합니다. 필요하시면 다시 문의해 주세요.",
+                    mngMsgContentBefore: "잠시 후 상담이 자동 종료됩니다. 계속하시려면 메시지를 남겨 주세요.",
+                    mngMsgSetTime: "10",
+                    mngMsgIsAllow: true
+                },
+                cnsl_end: {
+                    mngMsgContent: "상담이 종료되었습니다. 이용해 주셔서 감사합니다.",
+                    mngMsgIsAllow: true
+                },
+                ovf_num: {
+                    mngMsgContent: "상담 요청이 많아 대기 중입니다. 순서대로 연결해 드리겠습니다.",
+                    mngMsgSetMax: "3",
+                    mngMsgIsAllow: false
+                },
+                before_end: {
+                    mngMsgContent: "잠시 후 상담이 자동 종료됩니다.",
+                    mngMsgIsAllow: true
+                }
+            };
+            var url = String((opts && opts.url) || "");
+            var hit = url.match(/message-manager\/([a-z_]+)/);
+            if (hit && MSG[hit[1]]) return { data: MSG[hit[1]], result: true, code: "0000" };
             return { data: [
-                { id: oid(860), msgCd: "WELCOME", msgName: "인사말", msgContent: "안녕하세요. 상담사 연결되었습니다.", useYn: "Y" },
-                { id: oid(861), msgCd: "WAIT", msgName: "대기 안내", msgContent: "잠시만 기다려 주세요.", useYn: "Y" },
-                { id: oid(862), msgCd: "CLOSE", msgName: "종료 인사", msgContent: "상담이 종료되었습니다.", useYn: "Y" },
-                { id: oid(863), msgCd: "AWAY", msgName: "부재 안내", msgContent: "현재 상담 가능 시간이 아닙니다.", useYn: "N" }
+                { id: oid(860), mngMsgCode: "cnsl_strt", msgName: "상담시작 관리", msgContent: MSG.cnsl_strt.mngMsgContent, useYn: "Y" },
+                { id: oid(861), mngMsgCode: "auto_end",  msgName: "자동종료 관리", msgContent: MSG.auto_end.mngMsgContent,  useYn: "Y" },
+                { id: oid(862), mngMsgCode: "cnsl_end",  msgName: "상담종료 관리", msgContent: MSG.cnsl_end.mngMsgContent,  useYn: "Y" },
+                { id: oid(863), mngMsgCode: "ovf_num",   msgName: "건수초과 관리", msgContent: MSG.ovf_num.mngMsgContent,   useYn: "N" }
             ] };
         }],
         ["operation-time", function () {
@@ -619,7 +650,9 @@
         var path = parts[0];
         if (path.indexOf(".html") !== -1 || path.indexOf("http") === 0) return url;
         var file = "screens/" + path.replace(/^\//, "").replace(/\//g, "_") + ".html";
-        return parts[1] ? file + "?" + parts[1] : file;
+        /* 창 안 화면도 캐시된다. 고친 mock 을 쓰게 하려면 여기에도 판 번호를 붙여야 한다 */
+        var V = "v=20260927";
+        return parts[1] ? file + "?" + parts[1] + "&" + V : file + "?" + V;
     }
     window.__toStaticView = toStatic;
 
