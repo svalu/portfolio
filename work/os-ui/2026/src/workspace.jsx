@@ -133,7 +133,7 @@ function OpsLayout({
   onSelect,
   children
 }) {
-  return <div className="app-shell ops-shell"><nav className="app-side" aria-label="앱 메뉴"><div className="app-side-title">운영 워크스페이스</div>{items.map(item => <button key={item} className={'ops-nav ' + (active === item ? 'sel' : '')} aria-current={active === item ? 'page' : undefined} onClick={() => onSelect(item)}>{item}</button>)}<p className="ops-demo">체험용 가상 데이터<br />변경은 새로고침 전까지 유지돼요.</p></nav><main className="app-main">{children}</main></div>;
+  return <div className="app-shell ops-shell"><nav className="app-side" aria-label="앱 메뉴"><div className="app-side-title">운영 워크스페이스</div>{items.map(item => <button key={item} className={'ops-nav ' + (active === item ? 'sel' : '')} aria-current={active === item ? 'page' : undefined} onClick={() => onSelect(item)}>{item}</button>)}<p className="ops-demo">체험용 가상 데이터<br />변경은 새로고침 전까지 유지돼요.</p></nav><main key={active} className="app-main ops-page-enter">{children}</main></div>;
 }
 function OpsHeading({
   title,
@@ -157,16 +157,24 @@ function OpsMetric({
 }
 function OpsModal({
   title,
-  onClose,
+  onClose: onDismiss,
   children
 }) {
   const ref = React.useRef(null);
+  const [closing,setClosing]=React.useState(false);
+  const closeTimer=React.useRef(null);
+  React.useEffect(()=>()=>clearTimeout(closeTimer.current),[]);
+  const onClose=()=>{
+    if(closeTimer.current)return;
+    setClosing(true);
+    closeTimer.current=setTimeout(onDismiss,matchMedia('(prefers-reduced-motion: reduce)').matches?0:160);
+  };
   React.useEffect(() => {
     const prev = document.activeElement;
     ref.current?.querySelector('button,input,select,textarea')?.focus();
     return () => prev?.isConnected && prev.focus();
   }, []);
-  return <div className="ops-overlay" onMouseDown={e => {
+  return <div className={"ops-overlay"+(closing?" is-closing":"")} onMouseDown={e => {
     if (e.target === e.currentTarget) onClose();
   }} onKeyDown={e => {
     if (e.key === 'Escape') {
@@ -208,3 +216,16 @@ Object.assign(window, {
   opsCSV,
   opsDownload
 });
+
+// Keep exiting panels mounted; cancel teardown if the user reopens quickly.
+function MotionPresence({open,children}) {
+  const [mounted,setMounted]=React.useState(open);
+  React.useLayoutEffect(()=>{
+    if(open){setMounted(true);return;}
+    if(!mounted)return;
+    const timer=setTimeout(()=>setMounted(false),matchMedia('(prefers-reduced-motion: reduce)').matches?0:160);
+    return()=>clearTimeout(timer);
+  },[open,mounted]);
+  return mounted?<div className="motion-presence" data-state={open?'open':'closing'} inert={open?undefined:''}>{children}</div>:null;
+}
+Object.assign(window,{MotionPresence});

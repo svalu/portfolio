@@ -595,14 +595,6 @@ body { background: #000; }
 }
 .app-side a:hover { background: var(--surface-2); }
 .app-side a.sel { background: var(--surface-2); font-weight: 500; }
-.app-side a.sel::before {
-  content: "";
-  width: 3px; height: 16px;
-  background: var(--accent);
-  border-radius: 2px;
-  position: absolute;
-  left: 8px;
-}
 .app-side a { position: relative; padding-left: 18px; }
 .app-side svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; flex-shrink: 0; }
 
@@ -910,7 +902,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 .ops-nav.sel {
   color:var(--accent);
-  box-shadow:inset 3px 0 var(--accent);
 }
 .ops-demo {
   margin-top:auto;
@@ -1356,8 +1347,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   margin-bottom:8px;
 }
 .ops-mail-list>button.selected {
-  border-color:var(--accent);
-  box-shadow:inset 3px 0 var(--accent);
+  background:var(--surface-2);
+  color:var(--accent);
 }
 .ops-mail-list small {
   color:var(--accent);
@@ -1618,4 +1609,45 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .ops-toast,.ops-bar-column>div {
     transition:none!important;
   }
+}
+
+/* Motion uses translation separate from layout anchoring (start menu is centered,
+   notifications are right-aligned). Neither panel animates its horizontal anchor. */
+:root { --os-ease: cubic-bezier(.22,.7,.22,1); }
+.motion-presence { display: contents; }
+.startmenu, .notif-center { animation: osPanelIn 220ms var(--os-ease) both; }
+.notif-center { transform: none; transform-origin: bottom right; }
+.motion-presence[data-state="closing"] > .startmenu,
+.motion-presence[data-state="closing"] > .notif-center {
+  animation: osPanelOut 160ms var(--os-ease) both;
+  pointer-events: none;
+}
+@keyframes osPanelIn { from { opacity:0; translate:0 8px; } to { opacity:1; translate:0 0; } }
+@keyframes osPanelOut { from { opacity:1; translate:0 0; } to { opacity:0; translate:0 5px; } }
+.win { transform-origin:50% 65%; transition:box-shadow 180ms ease, opacity 180ms var(--os-ease), transform 220ms var(--os-ease), visibility 0s; }
+.win.anim-open { animation:osWindowIn 240ms var(--os-ease) both; }
+.win.anim-close { animation:osWindowOut 160ms var(--os-ease) both; pointer-events:none; }
+.win.minimized { opacity:0; transform:translateY(28px) scale(.96); visibility:hidden; pointer-events:none; transition:opacity 160ms ease, transform 200ms var(--os-ease), visibility 0s 200ms; }
+.win.geometry-motion { transition:left 220ms var(--os-ease),top 220ms var(--os-ease),width 220ms var(--os-ease),height 220ms var(--os-ease),box-shadow 180ms ease; }
+@keyframes osWindowIn { from { opacity:0; transform:translateY(10px) scale(.985); } to { opacity:1; transform:none; } }
+@keyframes osWindowOut { from { opacity:1; transform:none; } to { opacity:0; transform:translateY(6px) scale(.99); } }
+.ops-page-enter { animation:osPageIn 180ms var(--os-ease) both; }
+@keyframes osPageIn { from { opacity:.35; } to { opacity:1; } }
+.btn,.ops-nav,.ops-file-open,.ops-quick button,.ops-mail-list>button,.ops-theme,.ops-notif,.sm-app { transition:background-color 140ms ease,border-color 140ms ease,box-shadow 140ms ease; }
+.btn:active,.tb-btn:active,.sm-app:active { scale:.98; }
+@media(prefers-reduced-motion:reduce) {
+  .win,.win.anim-open,.win.anim-close,.win.minimized,.win.geometry-motion,
+  .startmenu,.notif-center,.motion-presence[data-state="closing"]>.startmenu,
+  .motion-presence[data-state="closing"]>.notif-center,.ops-page-enter {
+    animation:none!important;transition:none!important;translate:none!important;
+  }
+}
+
+.ops-overlay { animation:osBackdropIn 180ms ease both; }
+.ops-overlay.is-closing { animation:osBackdropOut 160ms ease both; pointer-events:none; }
+.ops-overlay.is-closing .ops-modal { animation:osWindowOut 160ms var(--os-ease) both; }
+@keyframes osBackdropIn { from { opacity:0; } to { opacity:1; } }
+@keyframes osBackdropOut { from { opacity:1; } to { opacity:0; } }
+@media(prefers-reduced-motion:reduce) {
+  .ops-overlay,.ops-overlay.is-closing,.ops-overlay.is-closing .ops-modal { animation:none!important; }
 }

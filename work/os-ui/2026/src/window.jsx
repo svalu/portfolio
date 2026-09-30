@@ -30,6 +30,21 @@ function Window({
   style = 'mica'
 }) {
   const winRef = useRef(null);
+  const [closing,setClosing]=useState(false);
+  const [geometryMotion,setGeometryMotion]=useState(false);
+  const closeTimer=useRef(null),geometryTimer=useRef(null);
+  useEffect(()=>()=>{clearTimeout(closeTimer.current);clearTimeout(geometryTimer.current);},[]);
+  const requestClose=()=>{
+    if(closeTimer.current)return;
+    setClosing(true);
+    closeTimer.current=setTimeout(()=>onClose(id),matchMedia('(prefers-reduced-motion: reduce)').matches?0:160);
+  };
+  const animateGeometry=()=>{
+    clearTimeout(geometryTimer.current);
+    setGeometryMotion(true);
+    geometryTimer.current=setTimeout(()=>setGeometryMotion(false),240);
+  };
+
   const [box, setBox] = useState(initial);
   const [viewport, setViewport] = useState({
     w: innerWidth,
@@ -93,6 +108,7 @@ function Window({
   const dragStart = useRef(null);
   const onTitleMouseDown = e => {
     if (viewport.w < 640 || e.target.closest('.win-controls')) return;
+    setGeometryMotion(false);
     onFocus(id);
     if (maximized || snapRegion) {
       // un-maximize and jump under cursor
@@ -152,6 +168,7 @@ function Window({
     window.removeEventListener('mousemove', onDrag_);
     window.removeEventListener('mouseup', onDragEnd_);
     if (snapRef.current) {
+      animateGeometry();
       onSnap(id, snapRef.current);
       snapRef.current = null;
       setSnapPreview(null);
@@ -164,6 +181,7 @@ function Window({
     e.preventDefault();
     e.stopPropagation();
     onFocus(id);
+    setGeometryMotion(false);
     const start = {
       mx: e.clientX,
       my: e.clientY,
@@ -202,16 +220,18 @@ function Window({
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
   };
-  const onDouble = () => onMaximize(id);
+  const onDouble = () => { animateGeometry(); onMaximize(id); };
   const cls = ['win'];
-  if (opening) cls.push('anim-open');
+  if (opening && !closing && !minimized) cls.push('anim-open');
+  if (closing) cls.push('anim-close');
+  if (geometryMotion) cls.push('geometry-motion');
   if (!active) cls.push('inactive');
   if (minimized) cls.push('minimized');
   if (maximized) cls.push('maximized');
   if (style === 'solid') cls.push('win-style-solid');
   if (style === 'glass') cls.push('win-style-glass');
   return <>
-      <div ref={winRef} className={cls.join(' ')} style={{
+      <div ref={winRef} className={cls.join(' ')} inert={minimized || closing ? '' : undefined} aria-hidden={minimized || closing ? true : undefined} style={{
       left: displayedBox.x,
       top: displayedBox.y,
       width: displayedBox.w,
@@ -232,13 +252,14 @@ function Window({
             </button>
             <button onClick={e => {
             e.stopPropagation();
+            animateGeometry();
             onMaximize(id);
           }} title="최대화 / 복원">
               {maximized ? <svg viewBox="0 0 10 10"><path d="M2.5 0.5 H8.5 V6.5 M0.5 2.5 H6.5 V8.5 H0.5 Z" /></svg> : <svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" /></svg>}
             </button>
             <button className="close" onClick={e => {
             e.stopPropagation();
-            onClose(id);
+            requestClose();
           }} title="닫기">
               <svg viewBox="0 0 10 10"><path d="M0.5 0.5 L9.5 9.5 M9.5 0.5 L0.5 9.5" /></svg>
             </button>

@@ -176,9 +176,9 @@ function AdminOS() {
           </Window>;
     })}
 
-      {startOpen && <StartMenu layout={tweaks.startMenuLayout} onOpen={openApp} onClose={() => setStartOpen(false)} accent={tweaks.accent} />}
+      <MotionPresence open={startOpen}><StartMenu layout={tweaks.startMenuLayout} onOpen={openApp} onClose={() => setStartOpen(false)} accent={tweaks.accent} /></MotionPresence>
 
-      {notifOpen && <NotificationCenter onOpen={openApp} onClose={() => setNotifOpen(false)} />}
+      <MotionPresence open={notifOpen}><NotificationCenter onOpen={openApp} onClose={() => setNotifOpen(false)} /></MotionPresence>
 
       <Taskbar openApps={windows.map(w => w.app)} windows={windows} activeId={activeId} startOpen={startOpen} onStartClick={() => {
       setStartOpen(v => !v);
