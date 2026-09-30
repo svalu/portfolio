@@ -24,8 +24,14 @@ for(const scope of ['user/perf','admin/tot-perf']){
   assert.equal(JSON.stringify(summary),JSON.stringify(call(url,range)));
 }
 const full=call('analytics/admin/tot-perf/data',range);
+const screenRange={searchStartDt:new Date('2025-09-01'),searchEndDt:new Date('2025-09-30'),grpId:'',searchStr:''};
+assert.equal(call('analytics/admin/tot-perf/data',screenRange).totalCnslCnt,full.totalCnslCnt);
+assert.equal(call('analytics/admin/tot-perf/data/month',screenRange).length,60);
 const groups=['g1','g2','g3','g4'].map(grpId=>call('analytics/admin/tot-perf/data',{...range,grpId}));
 assert.equal(full.totalCnslCnt,sum(groups,'totalCnslCnt'));
+assert.equal(call('member/combo-items').data.mbrGrpComboList.length,4);
+assert.equal(call('member/check-dup-name',{mbrName:'김상담'}).data.length,1);
+assert.equal($.ajax({url:'/rest/api/member/check-dup-name',data:{mbrName:'김상담'},async:false}).data.length,1);
 assert(call('analytics/user/perf/data',range).totalCnslCnt<full.totalCnslCnt);
 const dash=call('analytics/dashboard/data');
 assert.equal(dash.totalCnslCnt,sum(dash.chartDatas,'endCnt'));

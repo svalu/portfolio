@@ -252,6 +252,12 @@
         // 날짜 입력은 UTC가 아닌 화면의 달력 날짜로 해석한다.
         function localDate(value, fallback) {
             if (!value) return new Date(fallback);
+            // 실적 화면은 input 값을 Date로 변환해 보낸다. 그날을 다시 UTC ISO 날짜로
+            // 꺼내야 브라우저 시간대가 달라도 사용자가 고른 달력 날짜가 유지된다.
+            if (value && typeof value.toISOString === "function") {
+                if (isNaN(value)) return new Date(NaN);
+                value = value.toISOString().slice(0, 10);
+            }
             var parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
             return parts ? new Date(+parts[1], +parts[2]-1, +parts[3], 12) : new Date(NaN);
         }
@@ -377,6 +383,7 @@
         ["member/combo-items", function () {
             return { data: {
                 mbrGrpComboMap: { g1: "1상담팀", g2: "2상담팀", g3: "VIP전담", g4: "야간팀" },
+                mbrGrpComboList: GROUPS.map(function (grpName, i) { return {id:"g"+(i+1),grpName:grpName}; }),
                 authComboMap: { a1: "시스템관리자", a2: "그룹관리자", a3: "상담원" },
                 mbrTypeComboMap: { USER: "일반사용자", GROUP_ADMIN: "그룹관리자", SYS_ADMIN: "시스템관리자" }
             } };
@@ -612,6 +619,11 @@
             var p=readParams(opts), valid=p.mbrID === "demo" && p.mbrPwd === "demo2025";
             return {data:{statusCode:valid?200:401,outcomeMessage:"데모 계정은 demo / demo2025입니다."}};
         }],
+        ["member/check-dup-name", function (opts) {
+            var name = String(readParams(opts).mbrName || "").trim();
+            return {data:MEMBERS.filter(function(m){return name && m.mbrName.indexOf(name) >= 0;})
+                .map(function(m){return Object.assign({},m,{id:m.mbrOid});})};
+        }],
         ["login/find-pwd/exist", function (opts) {
             var p=readParams(opts);return {data:p.mbrID === "demo" && p.mbrEmail === "demo@example.com"};
         }],
@@ -650,7 +662,8 @@
             if (opts.async === false) {
                 if (opts.success) opts.success(payload, "success", {});
                 if (opts.complete) opts.complete({}, "success");
-                return { responseJSON: payload };
+                // 원본 검색 코드는 동기 요청 결과를 $.when()에 그대로 넘겨 data를 읽는다.
+                return Object.assign({ responseJSON: payload }, payload);
             }
 
             var fake = {
@@ -704,7 +717,7 @@
         if (path.indexOf(".html") !== -1 || path.indexOf("http") === 0) return url;
         var file = "screens/" + path.replace(/^\//, "").replace(/\//g, "_") + ".html";
         /* 창 안 화면도 캐시된다. 고친 mock 을 쓰게 하려면 여기에도 판 번호를 붙여야 한다 */
-        var V = "v=20260930";
+        var V = "v=20261001c";
         return parts[1] ? file + "?" + parts[1] + "&" + V : file + "?" + V;
     }
     window.__toStaticView = toStatic;
