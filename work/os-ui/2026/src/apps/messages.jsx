@@ -1,55 +1,69 @@
-/* global React, CONVERSATIONS, Stroke */
-const { useState } = React;
-
 function Messages() {
-  const [sel, setSel] = useState(CONVERSATIONS[0].id);
-  const current = CONVERSATIONS.find(c => c.id === sel);
-
-  return (
-    <div className="app-shell">
-      <aside className="app-side">
-        <div className="app-side-title">Mail</div>
-        <a className="sel"><Stroke d="M3 6 H21 V19 H3 Z M3 6 L12 13 L21 6" /> Inbox <span style={{marginLeft:'auto', color:'var(--text-mute)', fontSize:11}}>2</span></a>
-        <a><Stroke d="M3 12 L21 3 L14 21 L11 13 Z" /> Sent</a>
-        <a><Stroke d="M3 3 H17 V21 L10 17 L3 21 Z" /> Starred</a>
-        <a><Stroke d="M4 7 H20 M10 3 V7 M14 3 V7 M6 7 V21 H18 V7" /> Archive</a>
-        <div className="app-side-title" style={{marginTop:18}}>Labels</div>
-        <a><span style={{width:10,height:10,borderRadius:2,background:'#0078D4'}}/>Operations</a>
-        <a><span style={{width:10,height:10,borderRadius:2,background:'#8B5CF6'}}/>Engineering</a>
-        <a><span style={{width:10,height:10,borderRadius:2,background:'#1A9D4A'}}/>Billing</a>
-      </aside>
-
-      <div className="msg-shell" style={{flex:1}}>
-        <div className="msg-list">
-          {CONVERSATIONS.map(c => (
-            <div key={c.id} className={`msg-item ${c.unread?'unread':''} ${sel===c.id?'sel':''}`} onClick={() => setSel(c.id)}>
-              <div className="ava" style={{flexShrink:0}}>{c.from.split(' ').map(s=>s[0]).slice(0,2).join('')}</div>
-              <div style={{flex:1, minWidth:0}}>
-                <div className="msg-from"><span>{c.from}</span><span className="msg-time">{c.time}</span></div>
-                <div style={{fontSize:12, fontWeight:500, marginTop:1}}>{c.subj}</div>
-                <div className="msg-preview">{c.preview}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="msg-body">
-          <div className="msg-body-header" style={{display:'flex', alignItems:'center', gap:12}}>
-            <div className="ava md">{current.from.split(' ').map(s=>s[0]).slice(0,2).join('')}</div>
-            <div style={{flex:1}}>
-              <div style={{fontSize:16, fontWeight:600}}>{current.subj}</div>
-              <div style={{fontSize:12, color:'var(--text-dim)', marginTop:2}}>{current.from} · {current.time} ago</div>
-            </div>
-            <button className="btn"><Stroke d="M4 4 L20 20 M4 20 L20 4"/></button>
-            <button className="btn primary">Reply</button>
-          </div>
-          <div className="msg-body-content">
-            {current.body.split('\n').map((line, i) => <p key={i} style={{margin:'0 0 12px'}}>{line}</p>)}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const w = useWorkspace(),
+    [tab, setTab] = React.useState('받은 메시지'),
+    [selected, setSelected] = React.useState(null),
+    [draft, setDraft] = React.useState(null),
+    [q, setQ] = React.useState('');
+  const box = {
+    '받은 메시지': 'inbox',
+    '보낸 메시지': 'sent',
+    '보관함': 'archive'
+  }[tab];
+  const rows = w.messages.filter(m => m.box === box && (m.subject + m.from + m.body).includes(q));
+  const current = w.messages.find(m => m.id === selected && m.box === box);
+  return <OpsLayout items={['받은 메시지', '보낸 메시지', '보관함']} active={tab} onSelect={t => {
+    setTab(t);
+    setSelected(null);
+  }}><OpsHeading title={tab} sub="업무 요청과 처리 내용을 한 흐름으로 이어가요."><button className="btn primary" onClick={() => setDraft({
+        to: '',
+        subject: '',
+        body: ''
+      })}>메시지 쓰기</button></OpsHeading><div className="ops-toolbar"><input aria-label="메시지 검색" placeholder="메시지 검색" value={q} onChange={e => setQ(e.target.value)} /></div><div className="ops-mail"><div className="ops-mail-list">{rows.map(m => <button key={m.id} className={selected === m.id ? 'selected' : ''} onClick={() => {
+          setSelected(m.id);
+          w.setMessages(s => s.map(x => x.id === m.id ? {
+            ...x,
+            unread: false
+          } : x));
+        }}><small>{m.from}{m.unread ? ' · 새 메시지' : ''}</small><strong>{m.subject}</strong><span>{m.body.slice(0, 60)}</span></button>)}{!rows.length && <OpsEmpty />}</div><section className="panel ops-mail-body">{current ? <><span className="ops-eyebrow">{current.box === 'sent' ? '보낸 메시지' : '업무 메시지'}</span><h2>{current.subject}</h2><p className="ops-muted">{current.from} → {current.to}</p><p className="ops-message-text">{current.body}</p><div className="ops-actions"><button className="btn primary" onClick={() => setDraft({
+              to: current.box === 'sent' ? current.to : current.from,
+              subject: '답장: ' + current.subject,
+              body: ''
+            })}>답장</button><button className="btn" onClick={() => {
+              w.setMessages(s => s.map(m => m.id === current.id ? {
+                ...m,
+                box: box === 'archive' ? m.previousBox || 'inbox' : 'archive',
+                previousBox: box === 'archive' ? undefined : m.box
+              } : m));
+              w.notify(box === 'archive' ? '원래 메시지함으로 이동' : '메시지 보관 완료');
+              setSelected(null);
+            }}>{box === 'archive' ? '원래 메시지함으로 이동' : '보관'}</button></div></> : <OpsEmpty>메시지를 선택하면 내용을 볼 수 있어요.</OpsEmpty>}</section></div>
+ {draft && <OpsModal title="메시지 작성" onClose={() => setDraft(null)}><form className="ops-form" onSubmit={e => {
+        e.preventDefault();
+        if (!draft.body.trim()) return;
+        const id = Date.now();
+        w.setMessages(s => [{
+          ...draft,
+          id,
+          from: w.profile,
+          box: 'sent',
+          unread: false
+        }, ...s]);
+        w.notify('데모 메시지를 보낸함에 저장했어요. 실제 전송은 하지 않아요.');
+        setDraft(null);
+        setTab('보낸 메시지');
+        setSelected(id);
+        setQ('');
+      }}><label>받는 사람<input required value={draft.to} onChange={e => setDraft({
+            ...draft,
+            to: e.target.value
+          })} /></label><label>제목<input required value={draft.subject} onChange={e => setDraft({
+            ...draft,
+            subject: e.target.value
+          })} /></label><label>내용<textarea required rows={7} value={draft.body} onChange={e => setDraft({
+            ...draft,
+            body: e.target.value
+          })} /></label><p className="ops-muted">보내기는 체험용이에요. 외부 메일이나 메시지는 전송하지 않아요.</p><button className="btn primary" type="submit">데모 보내기</button></form></OpsModal>}</OpsLayout>;
 }
-
-Object.assign(window, { Messages });
+Object.assign(window, {
+  Messages
+});
