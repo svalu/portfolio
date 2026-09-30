@@ -1,0 +1,35 @@
+/* 공개 체험을 위한 안내와 상태. 원본 로그인·봉투 애니메이션을 사용한다. */
+.demo-dock{position:fixed;left:20px;bottom:16px;z-index:1000;display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid #ddd;border-radius:8px;background:#fffffff2;color:#727272;font:12px/1.4 font_na,sans-serif;box-shadow:0 4px 18px #00000008}
+.demo-dock a{color:#c42d39;text-decoration:none;border-bottom:1px solid #c42d3944;padding:3px 0}
+.demo-dock a:focus-visible{outline:2px solid #c42d39;outline-offset:4px}
+.demo-login-note{max-width:440px;margin:32px 20px 0;text-align:center;color:#747474;font-size:12px;line-height:1.8}
+.demo-login-note a{color:#c42d39;display:inline-block;margin-left:10px}
+.demo-login .login_text{display:block;width:100%;border:0;padding:0;cursor:pointer}
+.demo-login #openFindPw{border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+.demo-login .login_text:disabled{opacity:.5;cursor:wait}
+.demo-login{overflow:auto}
+.demo-login .login_wrap{position:relative;width:100%;height:auto;min-height:100vh;box-sizing:border-box;padding:32px 16px}
+.demo-login .login_logo_1{width:86px;height:96px;flex-shrink:0;background-image:url(../img/demo-mark.svg);background-size:contain;animation:demo-mark-in 1.15s cubic-bezier(.2,.7,.2,1) both}
+.demo-login .login_logo_2{width:auto;height:auto;background:none;color:#8e8981;font-size:22px;letter-spacing:.14em;text-align:center;margin:12px 0 42px}
+.demo-login .login_logo_2 small{display:block;font-size:11px;letter-spacing:.28em;margin-top:10px}
+.demo-login .form-signin{width:min(360px,calc(100vw - 40px))}
+.demo-login .login_box{width:100%;height:54px;border-width:1px}
+.demo-login .login_box input{min-width:0;width:100%;box-sizing:border-box;font-size:22px;padding:0 18px}
+.demo-login .login_text_2{bottom:auto;margin-top:18px;font-size:13px}
+.demo-login #openFindPw{color:#c64c5b;text-decoration:underline;margin-left:6px;padding:8px 0}
+.demo-login .ani_opacity{animation-delay:.55s;animation-duration:.65s}
+@keyframes demo-mark-in{from{opacity:0;transform:translateY(60px) scale(.85)}to{opacity:1;transform:none}}
+.demo-login .pass_popup_wrap{max-width:calc(100vw - 32px)}
+.demo-login input[readonly]{color:#555;background:#f7f7f7}
+#mailSendAnim{z-index:110;background:#fffffff2;pointer-events:auto}
+#mailSendAnim .mail-status{position:absolute;bottom:12%;left:16px;right:16px;text-align:center;font-size:14px;color:#666}
+.demo-login .email_wrap{animation-delay:1.05s;animation-duration:1.8s}
+.demo-login .email_text_wrap{animation-delay:.35s;animation-duration:.7s}
+.demo-login .email_text_1,.demo-login .email_text_2{animation-delay:.35s}
+.demo-login .email_text_1,.demo-login .email_text_2{background-image:url(../img/demo-letter.svg)}
+.demo-login .email_front{animation-delay:1.05s}
+.demo-login .email_top{animation-delay:1.05s;animation-duration:.6s}
+.demo-login .wing_left,.demo-login .wing_right{animation-delay:1.65s;animation-duration:.45s}
+@media(prefers-reduced-motion:reduce){
+  .demo-login *{animation:none!important;transition:none!important}
+}

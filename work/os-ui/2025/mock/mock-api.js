@@ -43,7 +43,7 @@
     function ymdhms(d) {
         return ymd(d) + "(" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + ")";
     }
-    function oid(i) { return "6" + String(100000000000000000000000 + i).slice(-23); }
+    function oid(i) { return "6" + String(i).padStart(23, "0"); }
 
     // 화면 JSP 에 박아 넣은 세션 값과 같아야 "내 고객" 판정이 된다
     var SESS_OID = "mbr000000000000000001";
@@ -73,6 +73,15 @@
         }
         return out;
     })();
+
+    // 한 운영일의 구성. 표와 원형 그래프가 같은 인원을 세도록 한다.
+    var DEMO_STATUSES = ["상담중", "상담중", "상담대기", "상담중", "휴게시간", "상담중",
+        "예약상담", "상담대기", "식사시간", "상담중", "상담대기", "휴게시간", "상담중", "오프라인"];
+    MEMBERS.forEach(function (m, i) {
+        m.cnslStatusName = DEMO_STATUSES[i];
+        m.chatCnt = m.cnslStatusName === "상담중" ? 1 + i % 3 : 0;
+        m.waitCnt = m.cnslStatusName === "상담중" || m.cnslStatusName === "상담대기" ? i % 3 : 0;
+    });
 
     // ── 상담 이력 ─────────────────────────────────────────────────────────────
     var HISTORY = (function () {
@@ -227,40 +236,81 @@
     // =========================================================================
     // 라우트 — [URL 조각, 응답 만드는 함수]
     // =========================================================================
-    function perfDayData() {
-        var days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
-        return days.map(function (d, i) {
-            var cnt = i < 5 ? int(28, 74) : int(4, 16);
-            return {
-                day: d, count: cnt, percentage: Math.round(cnt / 80 * 100),
-                postProcCount: cnt, postProcGrade: cnt * int(3, 5)
-            };
+    // 날짜·상담원별로 고정된 가상 실적. 재조회해도 값이 바뀌지 않으며
+    // 기간/그룹을 바꾸면 합계·막대·월별 선 그래프가 모두 같은 자료로 집계된다.
+    function sample(key) {
+        var n = 2166136261;
+        for (var i = 0; i < key.length; i++) n = Math.imul(n ^ key.charCodeAt(i), 16777619);
+        return (n >>> 0) / 4294967296;
+    }
+    function readParams(opts) {
+        var data = opts && opts.data || {};
+        if (typeof data === "string") { try { return JSON.parse(data); } catch (_) { return Object.fromEntries(new URLSearchParams(data)); } }
+        return data;
+    }
+    function perfRows(opts) {
+        // 날짜 입력은 UTC가 아닌 화면의 달력 날짜로 해석한다.
+        function localDate(value, fallback) {
+            if (!value) return new Date(fallback);
+            var parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+            return parts ? new Date(+parts[1], +parts[2]-1, +parts[3], 12) : new Date(NaN);
+        }
+        var p = readParams(opts), today = new Date(), start = localDate(p.searchStartDt, new Date(today.getFullYear(), today.getMonth(), 1));
+        var end = localDate(p.searchEndDt, today), rows = [];
+        if (isNaN(start) || isNaN(end) || start > end) return rows;
+        start.setHours(12, 0, 0, 0);end.setHours(12, 0, 0, 0);
+        var members = MEMBERS.filter(function (m, i) {
+            if (String(opts && opts.url).indexOf("/user/") >= 0) return i === 0;
+            if (p.mbrOid && m.mbrOid !== p.mbrOid) return false;
+            if (p.grpId && /^g[1-4]$/.test(p.grpId) && m.grpName !== GROUPS[Number(p.grpId.slice(1)) - 1]) return false;
+            return !p.searchStr || m.mbrName.indexOf(p.searchStr) >= 0;
         });
-    }
-    function perfHourData() {
-        var out = [];
-        for (var h = 0; h < 24; h++) {
-            var busy = (h >= 9 && h <= 18);
-            var cnt = busy ? int(12, 58) : int(0, 5);
-            out.push({ cnslHour: pad(h), count: cnt, percentage: Math.round(cnt / 60 * 100) });
+        for (var d = new Date(start), limit = 0; d <= end && limit < 3660; d.setDate(d.getDate() + 1), limit++) {
+            var key = ymd(d), weekend = d.getDay() === 0 || d.getDay() === 6;
+            ["CHAT", "RSVTN"].forEach(function (type) {
+                var count = 0, duration = 0, reviewCount = 0, grades = 0;
+                members.forEach(function (m) {
+                    var base = key + m.id + type, factor = weekend ? 0.28 : 1;
+                    var n = key > ymd(today) ? 0 : Math.round((type === "CHAT" ? 19 + sample(base) * 27 : 2 + sample(base) * 7) * factor);
+                    var reviewed = Math.round(n * (0.62 + sample(base + "r") * 0.22));
+                    count += n; duration += n * Math.round(270 + sample(base + "t") * 320);
+                    reviewCount += reviewed; grades += Math.round(reviewed * (3.8 + sample(base + "g") * 1.1));
+                });
+                rows.push({ cnslDate: key, postProcType: type, count: count,
+                    avgCnslDurationSeconds: count ? Math.round(duration / count) : 0,
+                    avgCnslDuration: count ? (duration / count / 60).toFixed(1) : "0",
+                    countCnslReview: reviewCount, sumCnslReviewGrade: grades,
+                    avgGrade: reviewCount ? grades / reviewCount : 0 });
+            });
         }
-        return out;
+        return rows;
     }
-    function perfMonthData() {
-        var out = [];
-        for (var i = 30; i >= 0; i--) {
-            var d = daysAgo(i);
-            var weekend = d.getDay() === 0 || d.getDay() === 6;
-            out.push({ cnslDate: ymd(d), postProcType: "CHAT",
-                       count: weekend ? int(2, 9) : int(18, 52),
-                       avgCnslDuration: (weekend ? 3 + rnd() * 2 : 6 + rnd() * 4).toFixed(1),
-                       avgGrade: (3.4 + rnd() * 1.5).toFixed(1) });
-            out.push({ cnslDate: ymd(d), postProcType: "RSVTN",
-                       count: weekend ? int(0, 3) : int(4, 17),
-                       avgCnslDuration: (weekend ? 2 + rnd() * 2 : 4 + rnd() * 3).toFixed(1),
-                       avgGrade: (3.2 + rnd() * 1.6).toFixed(1) });
-        }
-        return out;
+    function perfSummary(opts) {
+        var rows = perfRows(opts), days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        var dayRows = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(function (day) {
+            return {day: day, count: 0, cnslReviewCount: 0, cnslReviewGrade: 0};
+        });
+        var total = 0, chat = 0, seconds = 0, reviews = 0, grades = 0;
+        rows.forEach(function (r) {
+            total += r.count;if (r.postProcType === "CHAT") chat += r.count;
+            seconds += r.count * r.avgCnslDurationSeconds;reviews += r.countCnslReview;grades += r.sumCnslReviewGrade;
+            var day = dayRows.find(function (a) { return a.day === days[new Date(r.cnslDate + "T12:00:00").getDay()]; });
+            day.count += r.count;day.cnslReviewCount += r.countCnslReview;day.cnslReviewGrade += r.sumCnslReviewGrade;
+        });
+        var maxDay = Math.max(1, ...dayRows.map(function (r) { return r.count; }));
+        dayRows.forEach(function (r) { r.percentage = Math.round(r.count / maxDay * 100);r.postProcCount = r.cnslReviewCount;r.postProcGrade = r.cnslReviewGrade; });
+        var weights = [0,0,0,0,0,0,1,2,3,13,17,14,8,11,14,15,14,10,6,3,1,0,0,0];
+        var sum = weights.reduce(function (a,b) { return a+b; }, 0), used = 0, cumulative = 0;
+        var hours = weights.map(function (weight,h) {
+            cumulative += weight;var next = Math.round(total * cumulative / sum), count = next-used;used=next;
+            return {cnslHour:pad(h),count:count};
+        });
+        var maxHour = Math.max(1, ...hours.map(function (r) { return r.count; }));
+        hours.forEach(function (r) { r.percentage = Math.round(r.count / maxHour * 100); });
+        var duration = total ? Math.round(seconds / total) : 0;
+        return {dataByDays:dayRows,dataByHours:hours,totalCnslCnt:total,totalChatCnt:chat,totalRsvtnCnt:total-chat,
+            totAvgCnslDuration:Math.floor(duration/60)+"분 "+pad(duration%60)+"초",
+            totalCnslReviewCnt:reviews,totalCnslReviewGrade:grades,totalPostProcCnt:reviews,totalPostProctGrade:grades};
     }
 
     function paged(list, opts) {
@@ -295,24 +345,19 @@
         ["member/getMbrType", function () { return { data: "SYS_ADMIN" }; }],
 
         // ── 대시보드 ──
-        ["analytics/dashboard/data", function () {
-            return {
-                chartDatas: MEMBERS,
-                totalCnslCnt: 428, totalChatCnt: 351, totalRsvtnCnt: 77,
-                totAvgCnslDuration: "7분 42초"
-            };
+        ["analytics/dashboard/data", function (opts) {
+            var date = ymd(new Date()), params = readParams(opts);
+            var members = MEMBERS.map(function (m) {
+                var summary = perfSummary({data:{searchStartDt:date,searchEndDt:date,mbrOid:m.mbrOid}});
+                return Object.assign({},m,{endCnt:summary.totalCnslCnt});
+            });
+            if(params.sortField)members.sort(function(a,b){var x=a[params.sortField],y=b[params.sortField];return (typeof x==='number'?x-y:String(x).localeCompare(String(y),'ko'))*(Number(params.sortType)||1);});
+            return Object.assign(perfSummary({data:{searchStartDt:date,searchEndDt:date}}),{chartDatas:members});
         }],
 
         // ── 실적 ──
-        ["perf/data/month", function () { return perfMonthData(); }],
-        ["perf/data", function () {
-            return {
-                dataByDays: perfDayData(), dataByHours: perfHourData(),
-                totalCnslCnt: 428, totalChatCnt: 351, totalRsvtnCnt: 77,
-                totAvgCnslDuration: "7분 42초",
-                totalPostProcCnt: 410, totalPostProctGrade: 1722
-            };
-        }],
+        ["perf/data/month", perfRows],
+        ["perf/data", perfSummary],
 
         // ── 상담 이력 ──
         // 목록 응답은 화면마다 ajaxData.cnslHistList / ajaxData.data.list 둘 다 쓴다 → 양쪽에 담는다
@@ -563,8 +608,16 @@
         }],
 
         // ── 로그인 ──
+        ["login/proc", function (opts) {
+            var p=readParams(opts), valid=p.mbrID === "demo" && p.mbrPwd === "demo2025";
+            return {data:{statusCode:valid?200:401,outcomeMessage:"데모 계정은 demo / demo2025입니다."}};
+        }],
+        ["login/find-pwd/exist", function (opts) {
+            var p=readParams(opts);return {data:p.mbrID === "demo" && p.mbrEmail === "demo@example.com"};
+        }],
+        ["login/find-pwd/send", function () { return {data:true,demo:true}; }],
         ["login/pwd/rule", function () {
-            return { data: { minLength: 9, useSpecialChar: true, useNumber: true } };
+            return { data: "데모 계정으로 로그인과 메일 발송 모션을 체험할 수 있습니다." };
         }],
         ["login/useTwoFactorAuth", function () { return { data: false }; }]
     ];
@@ -651,7 +704,7 @@
         if (path.indexOf(".html") !== -1 || path.indexOf("http") === 0) return url;
         var file = "screens/" + path.replace(/^\//, "").replace(/\//g, "_") + ".html";
         /* 창 안 화면도 캐시된다. 고친 mock 을 쓰게 하려면 여기에도 판 번호를 붙여야 한다 */
-        var V = "v=20260927";
+        var V = "v=20260930";
         return parts[1] ? file + "?" + parts[1] + "&" + V : file + "?" + V;
     }
     window.__toStaticView = toStatic;
@@ -762,15 +815,16 @@
     // 창 몇 개를 미리 띄워 둔 상태로 보여 준다. 사람이 아이콘을 누른 것과
     // 똑같은 경로(menuIconClick)를 타므로 억지로 만든 화면이 아니다.
     // =========================================================================
-    if (window.parent === window && /[?&]demo=1/.test(location.search)) {
+    if (/\/2025\/index\.html$/.test(location.pathname) && /[?&]demo=1/.test(location.search)) {
         $(function () {
-            var 순서 = ["상담 채팅", "대시보드"];   // 뒤에 연 창이 위로 온다
+            var 순서 = ["대시보드"];
             var i = 0;
+            var attempts = 0;
 
             function openNext() {
                 if (i >= 순서.length) return;
                 var $icon = $(".bg_icon_wrap[menuName='" + 순서[i] + "']");
-                if (!$icon.length) return setTimeout(openNext, 100);  // 아직 메뉴가 안 그려짐
+                if (!$icon.length) { if(++attempts<50)setTimeout(openNext,100);return; }
                 i++;
                 $icon.trigger("click");
                 setTimeout(openNext, 900);
@@ -779,7 +833,7 @@
             // 메뉴 아이콘이 ajax 로 그려진 뒤에 시작한다
             (function waitMenu() {
                 if ($(".bg_icon_wrap").length) return openNext();
-                setTimeout(waitMenu, 100);
+                if(++attempts<50)setTimeout(waitMenu, 100);
             })();
         });
     }

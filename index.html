@@ -237,6 +237,15 @@
   .lb-box{flex:0 0 auto}
   .lb-view{transform-origin:top left;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.6)}
   .lb-view iframe{display:block;border:0;background:#fff}
+  .frame .zoom{right:104px}
+  .frame .full-open{right:8px;opacity:1}
+  .lb.fullview{background:#0a0d14}
+  .lb.fullview .lb-bar{padding:8px 16px;border-bottom:1px solid #ffffff18}
+  .lb.fullview .lb-stage{padding:0;overflow:auto}
+  .lb.fullview .lb-view{border-radius:0;box-shadow:none}
+  .lb.fullview :is(label[for=lbZoom],#lbZoom,#lbPct,#lbFit){display:none}
+  #lbMode[hidden]{display:none}
+  @media(max-width:900px){.frame .full-open,#lbMode{display:none}.frame .zoom{right:4px}}
 
   /* 오브젝트 캔버스: 모든 차원 위에 */
   /* 크기는 CSS 로 늘리지 않는다. JS 가 보이는 영역(visualViewport)만큼 px 로 직접 박는다 */
@@ -501,7 +510,7 @@
         <div class="label">2025 · 상담사 OS — 2년 뒤, 제품이 된 화면</div>
         <div class="grew">구조는 그대로 두고 <b>기능만 얹었다</b></div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>counseling / 2025</span></div>
-        <div class="view"><iframe data-src="work/os-ui/2025/index.html?demo=1&amp;v=20260927" title="Counseling OS 2025"></iframe></div></div></div>
+        <div class="view"><iframe data-src="work/os-ui/2025/index.html?demo=1&amp;v=20260930" title="Counseling OS 2025"></iframe></div></div></div>
       <div class="frame scaled f2026" data-vw="1440" data-mvw="1024" data-title="2026 · 관리자 OS"><button class="zoom" type="button">크게 보기</button><div class="label">2026 · 관리자 OS — 같은 생각, 더 넓은 범위</div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>admin-os / 2026</span></div>
         <div class="view"><iframe data-src="work/os-ui/2026/index.html?v=20260919b" title="Admin OS 2026"></iframe></div></div></div>
@@ -594,6 +603,7 @@
     <input type="range" id="lbZoom" min="10" max="150" step="1" value="100">
     <span class="lb-title" id="lbPct">100%</span>
     <button type="button" id="lbFit">화면에 맞춤</button>
+    <button type="button" id="lbMode" aria-pressed="false">전체 보기</button>
     <button type="button" id="lbClose">닫기</button>
   </div>
   <div class="lb-stage" id="lbStage"><div class="lb-box" id="lbBox"><div class="lb-view" id="lbView"><iframe id="lbFrame" title="실물 크게 보기"></iframe></div></div></div>
@@ -747,7 +757,7 @@ addEventListener('scroll', scheduleSnap, {passive:true});
 function scheduleSnap(){
   clearTimeout(snapTimer);
   snapTimer = setTimeout(()=>{
-    if(NARROW || reducedMotion || B.classList.contains('locked') || touching) return;
+    if(NARROW || reducedMotion || B.classList.contains('locked') || touching || !document.getElementById('lb').hidden) return;
     const ih = innerHeight, max = (N-1)*ih;
     const to = Math.min(Math.round(scrollY/ih)*ih, max);
     if(Math.abs(to - scrollY) > 4 && scrollY <= max + ih*.3) scrollTo({top:to, behavior:'smooth'});
@@ -1003,7 +1013,8 @@ addEventListener('hashchange',visitHash);if(location.hash)visitHash();
   var lb=document.getElementById('lb'), lbFrame=document.getElementById('lbFrame'), lbView=document.getElementById('lbView'),
       lbStage=document.getElementById('lbStage'), lbBox=document.getElementById('lbBox'),
       lbZoom=document.getElementById('lbZoom'), lbPct=document.getElementById('lbPct'),
-      lbTitle=document.getElementById('lbTitle'), cur={w:1440,h:900}, lastFocus=null, activeHost=null, closeTimer=0;
+      lbTitle=document.getElementById('lbTitle'), lbMode=document.getElementById('lbMode'),
+      cur={w:1440,h:900}, lastFocus=null, activeHost=null, closeTimer=0, openTimer=0, full=false;
   const spareFrame=lbFrame;let parked=null;
   function restoreFrame(){
     if(!parked)return;
@@ -1022,28 +1033,39 @@ addEventListener('hashchange',visitHash);if(location.hash)visitHash();
     lbPct.textContent=z+'%';
   }
   function fit(){
+    if(full){sizeView();apply(100);return;}
     var pad=NARROW?24:40, aw=lbStage.clientWidth-pad, ah=lbStage.clientHeight-24;
     var z=Math.floor(Math.min(aw/cur.w, ah/cur.h)*100);
     z=Math.max(10,Math.min(150,z)); lbZoom.value=z; apply(z);
   }
-  function open(host){
+  function sizeView(){
+    const responsive=NARROW&&(activeHost.classList.contains('phone')||activeHost.dataset.responsive==='true');
+    cur.w=full?lbStage.clientWidth:responsive?Math.max(280,innerWidth-24):(+activeHost.dataset.vw||1440);
+    cur.h=full?lbStage.clientHeight:responsive?Math.max(420,innerHeight-140):(+activeHost.dataset.vh||Math.round(cur.w*0.625));
+    lbFrame.style.width=cur.w+'px';lbFrame.style.height=cur.h+'px';
+  }
+  function setMode(value){
+    full=!!value&&!NARROW;
+    lb.classList.toggle('fullview',full);
+    lbMode.textContent=full?'크게 보기':'전체 보기';lbMode.setAttribute('aria-pressed',String(full));
+    lb.setAttribute('aria-label',full?'실물 전체 보기':'실물 크게 보기');
+    sizeView();fit();lbStage.scrollTo(0,0);
+  }
+  function open(host,mode){
     var src=host.querySelector('iframe[data-src],iframe[src]');
     if(!src) return;
-    clearTimeout(closeTimer);restoreFrame();activeHost=host;
+    clearTimeout(closeTimer);clearTimeout(openTimer);clearTimeout(snapTimer);restoreFrame();activeHost=host;
     if(lbView.moveBefore && src.getAttribute('src')){
       parked={node:src,parent:src.parentElement,next:src.nextSibling,style:src.getAttribute('style'),id:src.id};
       src.dataset.engaged='true';spareFrame.id='lbSpare';spareFrame.hidden=true;
       lbView.moveBefore(src,null);src.id='lbFrame';lbFrame=src;
     }
-    const responsive=NARROW&&(host.classList.contains('phone')||host.dataset.responsive==='true');
-    cur.w=responsive?Math.max(280,innerWidth-24):(+host.dataset.vw||1440);
-    cur.h=responsive?Math.max(420,innerHeight-140):(+host.dataset.vh||Math.round(cur.w*0.625));
-    lbFrame.style.width=cur.w+'px'; lbFrame.style.height=cur.h+'px';
     lbTitle.textContent=host.dataset.title||'';
     if(!parked)lbFrame.src=src.getAttribute('src')||src.dataset.src;
     lastFocus=document.activeElement;
-    lb.hidden=false; requestAnimationFrame(function(){ lb.classList.add('on'); });
-    setTimeout(function(){
+    lb.hidden=false;lbMode.hidden=host.classList.contains('phone');setMode(mode==='full');
+    requestAnimationFrame(function(){ if(!lb.hidden)lb.classList.add('on'); });
+    openTimer=setTimeout(function(){
       lb.classList.add('on');
       /* 폰에서 1440 화면을 맞추면 25% — 글자가 안 읽힌다. 읽히는 배율로 열고 왼쪽 위부터 보여준다 */
       if(NARROW && cur.w > 900){ lbZoom.value=55; apply(55); lbStage.scrollTo(0,0); } else fit();
@@ -1052,12 +1074,20 @@ addEventListener('hashchange',visitHash);if(location.hash)visitHash();
     document.body.style.overflow='hidden'; document.getElementById('track').inert=true;document.getElementById('foot').inert=true;
   }
   function close(){
+    clearTimeout(openTimer);clearTimeout(closeTimer);
     lb.classList.remove('on');
     closeTimer=setTimeout(function(){ lb.hidden=true;document.body.style.overflow='';restoreFrame();lbFrame.removeAttribute('src');fitViews();document.getElementById('track').inert=false;document.getElementById('foot').inert=false; if(lastFocus) lastFocus.focus({preventScroll:true}); }, reducedMotion?0:260);
   }
   document.querySelectorAll('.zoom').forEach(function(b){
     b.addEventListener('click', function(e){ e.stopPropagation(); open(b.parentElement); });
+    if(b.parentElement.classList.contains('frame')){
+      const fullButton=document.createElement('button');fullButton.type='button';
+      fullButton.className='zoom full-open';fullButton.textContent='전체 보기';
+      fullButton.addEventListener('click',function(e){e.stopPropagation();open(b.parentElement,'full');});
+      b.after(fullButton);
+    }
   });
+  lbMode.addEventListener('click',function(){setMode(!full);});
   window.__openBig = open;          /* 폰에서 01 시안을 이걸로 연다 */
   lbZoom.addEventListener('input', function(){ apply(+lbZoom.value); });
   document.getElementById('lbFit').addEventListener('click', fit);
@@ -1067,18 +1097,14 @@ addEventListener('hashchange',visitHash);if(location.hash)visitHash();
     if(lb.hidden)return;
     if(e.key==='Escape')close();
     if(e.key==='Tab'){
-      const els=[...lb.querySelectorAll('button,input,iframe')],first=els[0],last=els[els.length-1];
+      const els=[...lb.querySelectorAll('button,input,iframe')].filter(el=>el.getClientRects().length),first=els[0],last=els[els.length-1];
       if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
       else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
     }
   });
   addEventListener('resize', function(){
     if(lb.hidden)return;
-    if(NARROW&&(activeHost?.classList.contains('phone')||activeHost?.dataset.responsive==='true')){
-      cur.w=Math.max(280,innerWidth-24);cur.h=Math.max(420,innerHeight-140);
-      lbFrame.style.width=cur.w+'px';lbFrame.style.height=cur.h+'px';
-    }
-    fit();
+    if(NARROW&&full)setMode(false);else{sizeView();fit();}
   });
 })();
 </script>

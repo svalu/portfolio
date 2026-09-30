@@ -64,6 +64,8 @@ function initEvents() {
 }
 
 function loginProc() {
+    if ($('.login_text').prop('disabled')) return;
+    $('.login_text').prop('disabled', true).attr('aria-busy', 'true');
     const url = "/rest/api/login/proc";
     $.ajax({
         url : url,
@@ -74,9 +76,11 @@ function loginProc() {
         type : "POST",
         dataType : "json",
         success : function(ajaxData) {
+            $('.login_text').prop('disabled', false).removeAttr('aria-busy');
             loginResultProc(ajaxData.data);
         },
         error : function(error) {
+            $('.login_text').prop('disabled', false).removeAttr('aria-busy');
             console.log(error);
         }
     })
@@ -85,8 +89,7 @@ function loginProc() {
 function loginResultProc(loginResult) {
     switch (loginResult.statusCode) {
         case 200: {
-            setCookie("cUserId", $("#userId").val(), 30);
-            location.href = "main";
+            location.href = "../index.html?demo=1";
             break;
         }
         case 300 : {
@@ -144,6 +147,7 @@ function getCookie(cName){
 
 
 function sendEmailForTempPw() {
+    if ($('#sendEmailBtn').prop('disabled')) return;
     var params = {
         mbrID	: $("#findPw_id").val().trim(),
         mbrName	: $("#findPw_name").val().trim(),
@@ -165,6 +169,7 @@ function sendEmailForTempPw() {
         return;
     }
 
+    $('#sendEmailBtn, #sendEmailCancleBtn').prop('disabled', true);
     $.ajax({
         url : "/rest/api/login/find-pwd/exist",
         data : params,
@@ -172,36 +177,41 @@ function sendEmailForTempPw() {
         dataType : "json",
         success : function(ajaxData){
             if(ajaxData.data) {
+                $('#findPwUserInfoPop').addClass('display_none');
                 $("#mailSendAnim").removeClass("display_none");
-
+                var motionDone = matchMedia('(prefers-reduced-motion:reduce)').matches;
+                var response = null, finished = false;
+                var fallback;
+                function finish() {
+                    if(finished || !motionDone || response === null) return;
+                    finished = true;clearTimeout(fallback);
+                    $('#mailSendAnim .email_wrap').off('animationend.demoMail');
+                    $('#mailSendAnim').addClass('display_none');
+                    $('#sendEmailBtn, #sendEmailCancleBtn').prop('disabled', false);
+                    if(response) openTextPop('메일 발송 체험이 끝났어요.<br>실제 메일은 발송되지 않았습니다.',function(){ $('#openFindPw').trigger('focus'); });
+                    else { $('#findPwUserInfoPop').removeClass('display_none');openMailTextPop('체험을 불러오지 못했어요. 다시 시도해 주세요.'); }
+                }
+                $('#mailSendAnim .email_wrap').on('animationend.demoMail',function(event){
+                    if(event.target === this && event.originalEvent.animationName === 'email_wrap'){motionDone=true;finish();}
+                });
+                // 탭이 백그라운드이거나 모션 설정이 바뀌어도 완료 상태로 돌아온다.
+                fallback=setTimeout(function(){motionDone=true;finish();},3500);
                 $.ajax({
                     url: "/rest/api/login/find-pwd/send",
                     data: params,
                     type : "POST",
                     dataType : "json",
                     success: function (ajaxData) {
-                        $("#mailSendAnim").addClass("display_none");
-                        if (ajaxData.data) {
-                            openTextPop("임시 비밀번호를 이메일로 발송했습니다.<br>" +
-                                "해당 임시 비밀번호는 1시간 동안만 사용이 가능합니다.", function() {
-                                // $("#findPwPopDim").addClass("display_none");
-                                $("#findPwUserInfoPop").addClass("display_none");
-                            });
-
-                            $("#findPw_id").val("");
-                            $("#findPw_name").val("");
-                            $("#findPw_email").val("");
-
-                            $(document).off("keyup");
-                        } else {
-                            openMailTextPop("이메일 발송에 실패했습니다.");
-                        }
-                    }
+                        response=!!ajaxData.data;finish();
+                    },
+                    error:function(){response=false;finish();}
                 });
             }else{
+                $('#sendEmailBtn, #sendEmailCancleBtn').prop('disabled', false);
                 openMailTextPop("가입정보와 입력하신 정보가 일치하지 않습니다.<br>입력하신 정보를 다시한번 확인해 주세요.");
             }
-        }
+        },
+        error:function(){ $('#sendEmailBtn, #sendEmailCancleBtn').prop('disabled',false);openMailTextPop('체험을 불러오지 못했어요. 다시 시도해 주세요.'); }
     });
 }
 

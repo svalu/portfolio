@@ -1,5 +1,4 @@
-<spring:eval expression="@environment.getProperty('twofactorauth.is_use')" var="twoFactorIsUse"/>
-<spring:eval expression="@environment.getProperty('twofactorauth.sendType')" var="twoFactorSendType"/>
+<!doctype html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -9,20 +8,23 @@
     <title>COUNSELING OS</title>
     <link rel="shortcut icon" type="image/jpg" href="../img/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="../css/main.css?v=20260919d">
+    <link rel="stylesheet" href="../css/demo.css?v=20260930">
     <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="../vendor/jquery/jquery-ui.js"></script>
-    <script type="text/javascript" src="../mock/mock-api.js?v=20260927"></script>
+    <script type="text/javascript" src="../mock/mock-api.js?v=20260930"></script>
     <script type="text/javascript" src="../js/common/commonPopup.js"></script>
-    <script type="text/javascript" src="../js/login/login.js"></script>
+    <script type="text/javascript" src="../js/login/login.js?v=20260930"></script>
+    <script src="../mock/demo-ui.js?v=20260930"></script>
     <script>
         const twoFactorIsUse = "false";
         const twoFactorSendType = "EMAIL";
     </script>
 </head>
 
-<body class="text-center">
+<body class="text-center demo-login">
     <!--   메일 에니메이션-->
-    <div id="mailSendAnim" class="email_container display_none">
+    <div id="mailSendAnim" class="email_container display_none" role="status" aria-live="polite" aria-label="메일 발송 모션 재생 중">
+        <p class="mail-status">메일 발송 모션을 재생하고 있어요</p>
         <div class="email_wrap">
             <div class="email_top">
             </div>
@@ -102,12 +104,12 @@
     <div id="findPwUserInfoPop" class="pass_popup_wrap display_none" style="z-index: 98">
         <div class="pass_popup_con">
 
-            <div class="pass_popup_text_1">비밀번호 찾기</div>
+            <div class="pass_popup_text_1">비밀번호 찾기 · 체험</div>
 
             <!--                알림 발생시 클래스 active 추가-->
-            <div class="pass_popup_text_2">· 가입정보와 입력하신 정보가 일치하면, 임시 비밀번호가 메일로 발송됩니다.</div>
+            <div class="pass_popup_text_2">데모 계정으로 메일 발송 과정을 볼 수 있어요. 실제 메일은 보내지 않습니다.</div>
             <div class="pass_popup_text_3">
-                ID(이름, 이메일)를 입력해 주세요.
+                발송을 누르면 봉투가 접히고 날아갑니다.
             </div>
             <div class="pass_popup_input_wrap">
                 <input id="findPw_id" class="pass_popup_input" placeholder="ID를 입력해주세요">
@@ -146,26 +148,27 @@
 
     <div class="login_wrap">
         <div class="login_logo_1"></div>
-        <div class="login_logo_2 ani_opacity"></div>
+        <div class="login_logo_2 ani_opacity">COUNSELING OS<small>2025</small></div>
         <div class="form-signin">
             <div class="login_box ani_opacity">
                 <div class="id_save_wrap">
                     <input id="saveUserIdCheck" type="checkbox"><span>SAVE ID</span>
                 </div>
-                <input id="userId" type="text">
+                <input id="userId" type="text" aria-label="아이디" autocomplete="off" value="demo">
             </div>
             <div class="login_box_text" id="pwd_div"></div>
             <div class="login_box ani_opacity">
-                <input id="password" type="password">
+                <input id="password" type="password" aria-label="비밀번호" autocomplete="off" value="demo2025">
             </div>
-            <div class="login_text ani_opacity">
+            <button type="button" class="login_text ani_opacity">
                 <span>Login</span>
-            </div>
+            </button>
             <div class="login_text_2 ani_opacity">
-                <span>비밀번호를 칮어버리셨나요?</span>
-                <span id="openFindPw">비밀번호 찾기</span>
+                <span>비밀번호를 잊으셨나요?</span>
+                <button type="button" id="openFindPw">비밀번호 찾기</button>
             </div>
         </div>
+    <p class="demo-login-note">DEMO · demo / demo2025<br>로그인하거나 비밀번호 찾기에서 메일 모션을 체험해 보세요.<a href="../index.html?demo=1">바로 둘러보기 →</a></p>
     </div>
 </body>
 </html>

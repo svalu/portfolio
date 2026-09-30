@@ -118,6 +118,8 @@ var iframeWindow = (function($) {
             $resizeObserver = new ResizeObserver((entries) => {
                 entries.forEach((entry) => {
                     var { width, height } = entry.contentRect;
+                    // 최소화된 창의 0 크기를 원래 창 크기로 저장하지 않는다.
+                    if (width <= 0 || height <= 0 || $iframeWindow.hasClass('display_none')) return;
 
                     if(!$iframeWindow.data("minWidth")) {
                         $iframeWindow.data("minWidth", width);
@@ -151,41 +153,27 @@ var iframeWindow = (function($) {
         return $iframeWindow;
     }
 
-    function getAvailableViewportHeight() {
-        var windowHeight = window.innerHeight; // 현재 브라우저 창의 높이
-        var windowOuterHeight = window.outerHeight; // 브라우저 창의 전체 높이 (탭, 주소표시줄 포함)
-        var windowChromeHeight = windowOuterHeight - windowHeight; // 브라우저 창의 크롬 부분 (탭, 주소표시줄 등)
-        var screenAvailableHeight = screen.availHeight;
-
-        var availableHeight = screenAvailableHeight - windowChromeHeight;
-        return availableHeight;
-    }
-
     //화면 하단으로 안 내려가게 처리
     function iframeWindowCheckPosition(iframe, width, height) {
-        const addPos = 10;
-        let offset = $(iframe).offset();
-        const screenHeight = parseInt(screen.height);
-        //let iframeBottom = parseInt(offset.top) + parseInt($(iframe).height());
-        let iframeBottom = parseInt(offset.top) + parseInt(height);
-        let maxHeightPos = getAvailableViewportHeight();
-        let topAdjustment = maxHeightPos - iframeBottom - addPos;
-        let leftAdjustment = screen.availWidth - (parseInt(offset.left) + parseInt(width)) - addPos
-        const minTop = 80;
-
-        if(topAdjustment < 0) {
-            let topPos = (offset.top + (topAdjustment)) < minTop ? minTop : (offset.top + (topAdjustment));
-            var iframeWindow = $(iframe).parents("div[name=iframeWindow]");
-            iframeWindow.css("top", topPos);
-        };
-
-        if(leftAdjustment < 0) {
-            let leftPos = (offset.left + (leftAdjustment)) < 0 ? 0 : (offset.left + (leftAdjustment));
-            var iframeWindow = $(iframe).parents("div[name=iframeWindow]");
-            iframeWindow.css("left", leftPos);
-        }
-
+        // 포폴 iframe 안에서는 모니터(screen)가 아니라 실제 앱 뷰포트가 경계다.
+        const box = $(iframe).closest('div[name=iframeWindow]');
+        const maxW = Math.max(320, window.innerWidth - 24);
+        const header = box.find('.popup_top_line').outerHeight() || 44;
+        // 원본 타이틀바는 본문 위(top:-40px)에 붙어 있으므로 자르지 않는다.
+        const minTop = 42 + header;
+        const maxH = Math.max(180, window.innerHeight - minTop - 12);
+        box.css({maxWidth:maxW,maxHeight:maxH});
+        $(iframe).css({maxWidth:'100%',maxHeight:maxH,minHeight:0});
+        const pos = box.position();
+        const top = Math.max(minTop,Math.min(pos.top,window.innerHeight-box.outerHeight()-12));
+        const availableHeight = Math.max(180, window.innerHeight - top - 12);
+        box.css({left:Math.max(12,Math.min(pos.left,window.innerWidth-box.outerWidth()-12)),
+            top:top,maxHeight:availableHeight});
+        $(iframe).css('maxHeight',availableHeight);
     }
+    window.addEventListener('resize',function(){
+        $('div[name=iframeWindow]:visible > iframe').each(function(){iframeWindowCheckPosition(this);});
+    });
 
     function focus($iframeWindow) {
         let index = windowList.indexOf($iframeWindow);

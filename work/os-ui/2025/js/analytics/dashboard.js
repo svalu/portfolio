@@ -103,7 +103,7 @@ function setCountDatas(ajaxData) {
 
 function generateContents(ajaxData) {
     //console.log(ajaxData);
-    $("#memberTable tr:gt(0)").empty();
+    $("#memberTable tr:gt(0)").remove();
     Object.keys(ajaxData.chartDatas).forEach(function(key) {
         generateTable(ajaxData.chartDatas[key], key);
     });
@@ -183,7 +183,7 @@ function setCnslStatusChart(ajaxData) {
         return obj.cnslStatusName == "로그아웃";
     }).length;
 
-    let totalCnt = offlineCnt + lunchCnt + breakCnt + chatCnt + chatWaitCnt + endCnt + rsvtnCnt;
+    let totalCnt = offlineCnt + lunchCnt + breakCnt + chatCnt + chatWaitCnt + rsvtnCnt;
     let data = [offlineCnt, chatWaitCnt, chatCnt, breakCnt, rsvtnCnt, lunchCnt];
     let backgroundColor = ['#DD6666', '#0089ff', '#85a2d1', '#e2ca43', '#b4e683', '#82e0c7'];
     let labels = [];
@@ -219,7 +219,7 @@ function setCnslStatusChart(ajaxData) {
         labels.push(`${chartObj[key][0]} ${text}`);
         $("#"+key).text(text);
     }
-    if(eval(data.join("+")) == 0) {
+    if(data.reduce((sum, count) => sum + count, 0) === 0) {
         labels = ["상태 데이터 없음"];
         data = [1];
         backgroundColor = ["#919599"];
@@ -229,7 +229,7 @@ function setCnslStatusChart(ajaxData) {
     if(cnslStatusChart !== undefined) {
         cnslStatusChart.data.datasets[0].data = data;
 
-        if(cnslStatusChart.data.datasets[0].backgroundColor.length != backgroundColor)
+        if(cnslStatusChart.data.datasets[0].backgroundColor.length !== backgroundColor.length)
             cnslStatusChart.data.datasets[0].backgroundColor = backgroundColor;
 
         cnslStatusChart.data.labels = labels;

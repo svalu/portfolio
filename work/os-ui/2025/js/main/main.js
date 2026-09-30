@@ -170,7 +170,7 @@ function logout() {
         type: "POST",
         dataType: "json",
         success : function(ajaxData) {
-            location.href = "/";
+            location.href = "screens/login.html?demo=1";
         },
         error : function(error) {
             console.log(error);
@@ -484,4 +484,3 @@ function updateSocketSession(sessionId) {
         }
     });
 }
-
