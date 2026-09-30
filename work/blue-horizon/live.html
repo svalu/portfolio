@@ -878,6 +878,7 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
   body{flex-direction:column;overflow-x:hidden;}
   .sidebar{
     width:100%;height:50px;flex-shrink:0;
+    position:relative;z-index:401;
     flex-direction:row;align-items:center;
     padding:0 14px;gap:4px;
     border-right:none;border-bottom:1px solid var(--border);
@@ -891,16 +892,17 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
   .topbar{display:none;}
   /* 오버레이 nav → 위에서 풀 width 드롭다운 */
   .overlay-nav{
-    top:50px;left:0;right:0;bottom:auto;
-    width:100%;max-height:calc(100vh - 50px);
+    top:var(--mobile-nav-top,50px);left:0;right:0;bottom:auto;
+    width:100%;max-height:calc(100dvh - var(--mobile-nav-top,50px));
     border-right:none;border-bottom:1px solid var(--border);
     box-shadow:0 8px 32px rgba(0,0,0,0.45);
-    transform:translateY(-110%);
+    transform:none;clip-path:inset(0 0 100% 0);visibility:hidden;pointer-events:none;
+    transition:clip-path .28s cubic-bezier(.2,.7,.2,1),visibility 0s .28s;
     overflow-y:auto;
   }
-  .overlay-nav.open{transform:translateY(0);}
+  .overlay-nav.open{transform:none;clip-path:inset(0);visibility:visible;pointer-events:auto;transition-delay:0s;}
   /* 백드롭 탑 오프셋 */
-  .backdrop{top:50px;}
+  .backdrop{top:var(--mobile-nav-top,50px);}
   /* 오버레이 헤더 줄 숨김 */
   .on-head{display:none;}
   /* 하단 닫기 버튼 표시 */
@@ -1421,6 +1423,7 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
 .aim-stat-item-val{font-size:0.88rem;font-weight:700;color:var(--text);}
 .aim-bar{height:4px;background:rgba(128,128,128,0.15);border-radius:2px;overflow:hidden;}
 .aim-bar-fill{height:100%;border-radius:2px;}
+@media (prefers-reduced-motion:reduce){.overlay-nav,.backdrop{transition:none!important;}}
 </style>
 </head>
 <body>
@@ -2760,9 +2763,16 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') collapseHb(); });
 
 // ── 오버레이 네비 ──
 function openNav(){
+  syncMobileNavTop();
   document.getElementById('overlayNav').classList.add('open');
   document.getElementById('backdrop').classList.add('show');
 }
+function syncMobileNavTop(){
+  const bar=document.querySelector('.sidebar');
+  if(bar && innerWidth<=700) document.documentElement.style.setProperty('--mobile-nav-top',bar.getBoundingClientRect().bottom+'px');
+}
+addEventListener('resize',syncMobileNavTop);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});
 function closeNav(){
   document.getElementById('overlayNav').classList.remove('open');
   document.getElementById('backdrop').classList.remove('show');

@@ -1,5 +1,5 @@
 /* The three archived design directions share one mobile layout. */
-.mobile-menu-toggle, .mobile-menu-panel { display: none; }
+.mobile-menu-bar, .mobile-menu-toggle, .mobile-menu-panel, .mobile-menu-backdrop { display: none; }
 @media (max-width: 600px) {
   html, body, #root { min-width: 0; width: 100%; }
   .login-wrap, .lc-wrap { min-width: 0; width: 100%; padding: 16px; }
@@ -16,6 +16,24 @@
   .app.light-mode .mobile-menu-panel { background: #f7faff; }
   .mobile-menu-panel button { width: 100%; padding: 12px 14px; border: 0; border-radius: 8px; text-align: left; background: transparent; color: inherit; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
   .mobile-menu-panel button:hover, .mobile-menu-panel button:focus-visible { background: var(--nav-hover, var(--nhv, #ffffff18)); outline: none; }
+  .mobile-menu-bar { display:flex; align-items:center; justify-content:space-between; height:54px; flex-shrink:0; padding:0 14px; background:var(--bg,#101726); color:var(--t1); }
+  .app.light-mode .mobile-menu-bar { background:#f7faff; }
+  .mobile-brand { display:flex; align-items:center; gap:10px; font-size:14px; }
+  .mobile-brand svg { width:24px; height:24px; color:var(--nav-active-c,var(--ac,#22d3ee)); }
+  .mobile-menu-toggle { width:44px; height:44px; padding:0; justify-content:center; border-radius:10px; }
+  .mobile-menu-toggle:focus-visible { outline:2px solid var(--nav-active-c,var(--ac,#22d3ee)); }
+  .mobile-menu-backdrop { display:block; position:fixed; inset:54px 0 0; z-index:1; border:0; background:#0006; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .24s,visibility 0s .24s; }
+  .mobile-menu-backdrop.open { opacity:1; visibility:visible; pointer-events:auto; transition-delay:0s; }
+  .mobile-menu-panel { z-index:2; top:100%; max-height:calc(100dvh - 54px); gap:4px; clip-path:inset(0 0 100% 0); visibility:hidden; pointer-events:none; transition:clip-path .28s cubic-bezier(.2,.7,.2,1),visibility 0s .28s; }
+  .mobile-menu-panel.open { clip-path:inset(0); visibility:visible; pointer-events:auto; transition-delay:0s; }
+  .mobile-menu-panel button { display:flex; align-items:center; gap:12px; min-height:48px; }
+  .mobile-menu-panel button[aria-current] { background:var(--nav-active-bg,var(--acb,#ffffff10)); color:var(--nav-active-c,var(--ac,#22d3ee)); }
+  .mobile-menu-section { padding:12px 10px 4px; color:var(--t2); font-size:10px; font-weight:600; letter-spacing:.06em; }
+  .mobile-menu-icon { display:grid; place-items:center; flex:0 0 36px; height:36px; border-radius:10px; background:var(--nav-active-bg,var(--acb,#ffffff10)); color:var(--nav-active-c,var(--ac,#22d3ee)); }
+  .mobile-menu-icon svg { width:19px; height:19px; }
+  .mobile-menu-panel small { display:block; margin-top:4px; color:var(--t2); font-size:11px; font-weight:400; }
+  .mobile-menu-account { display:flex; align-items:center; gap:10px; margin-top:12px; padding:14px 10px; border-top:1px solid var(--sidebar-bdr,var(--sbdr)); font-size:12px; }
+  .mobile-menu-panel .mobile-menu-close { justify-content:center; color:var(--t2); border-top:1px solid var(--sidebar-bdr,var(--sbdr)); border-radius:0; }
   body:has(.sidebar) #p5-bg { opacity: .08; pointer-events: none; }
   .main { min-width: 0; width: 100%; min-height: 0; flex: 1; }
   .header { height: 50px; gap: 8px; padding: 0 12px; }
@@ -30,6 +48,9 @@
   .welcome-title { font-size: 21px; text-align: center; }
   .ai-sidebar { position: absolute; top: 0; bottom: 0; left: 0; z-index: 25; width: min(300px, 84vw); box-shadow: 14px 0 30px #0005; }
   .ai-sidebar.collapsed { width: 0; box-shadow: none; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .mobile-menu-panel, .mobile-menu-backdrop { transition:none; }
 }
 @media (max-width: 350px) {
   .login-card, .lc-card { padding-inline: 18px; }
