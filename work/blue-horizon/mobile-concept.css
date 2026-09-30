@@ -1,4 +1,5 @@
 /* The three archived design directions share one mobile layout. */
+.mobile-menu-toggle, .mobile-menu-panel { display: none; }
 @media (max-width: 600px) {
   html, body, #root { min-width: 0; width: 100%; }
   .login-wrap, .lc-wrap { min-width: 0; width: 100%; padding: 16px; }
@@ -6,13 +7,16 @@
   .login-theme-btn, .lc-theme-btn { top: 12px; right: 12px; }
   .login-field, .lc-field, .lc-f { min-width: 0; }
   .app { flex-direction: column; min-width: 0; }
-  .sidebar { width: 100%; height: 54px; max-height: 54px; flex: 0 0 54px; overflow: hidden; border-right: 0; border-bottom: 1px solid var(--sidebar-bdr, var(--sbdr)); }
+  .sidebar { position: relative; z-index: 30; width: 100%; height: 54px; max-height: 54px; flex: 0 0 54px; overflow: visible; border-right: 0; border-bottom: 1px solid var(--sidebar-bdr, var(--sbdr)); }
   .sidebar-logo, .sidebar-footer, .nav-sec-label { display: none; }
-  .sidebar-nav { display: flex; align-items: stretch; gap: 2px; width: 100%; min-width: 0; height: 54px; padding: 4px 8px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
-  .sidebar-nav::-webkit-scrollbar { display: none; }
-  .sidebar-nav > div { display: contents; }
-  .nav-item { flex: 0 0 auto; width: auto; white-space: nowrap; padding: 8px 12px; border-radius: 9px; }
-  .nav-item.active::before { display: none; }
+  .sidebar-nav { display: none; }
+  .mobile-menu-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; height: 54px; padding: 0 18px; border: 0; background: transparent; color: var(--t1); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .mobile-menu-toggle span { font-size: 22px; font-weight: 400; }
+  .mobile-menu-panel { position: absolute; display: grid; gap: 4px; top: 54px; left: 0; right: 0; padding: 10px 12px 14px; max-height: min(420px, calc(100dvh - 54px)); overflow-y: auto; background: var(--bg, #101726); color: var(--t1); border-bottom: 1px solid var(--sidebar-bdr, var(--sbdr)); box-shadow: 0 14px 24px #0005; }
+  .app.light-mode .mobile-menu-panel { background: #f7faff; }
+  .mobile-menu-panel button { width: 100%; padding: 12px 14px; border: 0; border-radius: 8px; text-align: left; background: transparent; color: inherit; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .mobile-menu-panel button:hover, .mobile-menu-panel button:focus-visible { background: var(--nav-hover, var(--nhv, #ffffff18)); outline: none; }
+  body:has(.sidebar) #p5-bg { opacity: .08; pointer-events: none; }
   .main { min-width: 0; width: 100%; min-height: 0; flex: 1; }
   .header { height: 50px; gap: 8px; padding: 0 12px; }
   .search-box, .h-time, .h-icon, .kbd { display: none; }

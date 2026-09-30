@@ -270,7 +270,7 @@ body{overflow:hidden;background:#0B1120}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--t2)}
 .legend-line{width:16px;height:2px;border-radius:1px}
 </style>
-<link rel="stylesheet" href="mobile-concept.css?v=20260930mobile1">
+<link rel="stylesheet" href="mobile-concept.css?v=20260930mobile2">
 </head>
 <body>
 <div id="p5-bg"></div>
@@ -471,12 +471,26 @@ function LoginScreen({onLogin}){
 /* ── HOME ─────────────────────────── */
 function HomeScreen({onNavigate}){
   const [now,setNow]=useState(new Date());
+  const [menuOpen,setMenuOpen]=useState(false);
+  function goTo(selector){
+    const pane=document.querySelector('.content'), target=pane?.querySelector(selector);
+    setMenuOpen(false);
+    if(target) pane.scrollTo({top:pane.scrollTop+target.getBoundingClientRect().top-pane.getBoundingClientRect().top-12,behavior:'smooth'});
+  }
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
   const fmt=t=>t.toLocaleTimeString('ko-KR',{hour12:false});
   return(
     <div className="app">
-      <aside className="sidebar">
+      <aside className={'sidebar'+(menuOpen?' menu-open':'')}>
         <div className="sidebar-logo"><span style={{color:'#22d3ee'}}><I.logo/></span><span className="logo-text">Blue Horizon</span></div>
+        <button className="mobile-menu-toggle" type="button" aria-expanded={menuOpen} onClick={()=>setMenuOpen(v=>!v)}>{menuOpen?'닫기':'메뉴'} <span aria-hidden="true">{menuOpen?'×':'☰'}</span></button>
+        {menuOpen&&<div className="mobile-menu-panel">
+          <button onClick={()=>goTo('.status-banner')}>대시보드</button>
+          <button onClick={()=>goTo('.kpi-row')}>실시간 현황</button>
+          <button onClick={()=>goTo('.al-list')}>주의 항목</button>
+          <button onClick={()=>goTo('.ev-list')}>실시간 이벤트</button>
+          <button onClick={()=>{setMenuOpen(false);onNavigate('aimode');}}>AI Mode</button>
+        </div>}
         <nav className="sidebar-nav">
           {NAV.map((g,gi)=>(
             <div key={gi}>
