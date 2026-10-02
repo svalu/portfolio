@@ -1,6 +1,31 @@
 /* The three archived design directions share one mobile layout. */
+.nav-item { width:100%; border:0; background:transparent; font-family:inherit; text-align:left; }
+.nav-item.active::before { display:none; }
+.nav-item:focus-visible, .qa:focus-visible, .ai-home:focus-visible { outline:2px solid var(--nav-active-c,var(--ac,#22d3ee)); outline-offset:-2px; }
+.kpi-row, .grid { min-width:0; }
+.kpi, .kpi > div:first-child, .col, .sec, .nc > div:last-child { min-width:0; }
+.kpi-val { white-space:nowrap; }
+.s-left { min-width:0; }
+.s-left > div:last-child { min-width:0; }
+.s-services, .svc { flex-shrink:0; }
+.al, .nc { cursor:default; border-left:0; }
+.al-title, .al-desc, .nc-title, .ev-text { overflow-wrap:anywhere; word-break:keep-all; }
+.qa { color:var(--t1); font-family:inherit; }
+.qa-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.ai-home { margin-right:auto; padding:8px 12px; min-height:40px; border:1px solid var(--sidebar-bdr,var(--sbdr,#ffffff20)); border-radius:9px; background:transparent; color:var(--t1); font:inherit; font-size:12px; cursor:pointer; white-space:nowrap; }
+.stats-inner { width:100%; min-width:0; }
+.stats-title { min-width:0; overflow-wrap:anywhere; }
+.sdb-item { cursor:default; }
+.sdb-item:hover { background:transparent; }
+@media (max-width:1200px) {
+  .kpi-row { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid { grid-template-columns:minmax(0,1fr); }
+  .status-banner { display:block; }
+  .s-services { flex-wrap:wrap; gap:8px 16px; margin-top:10px; }
+  .stat-kpi-row { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
 .mobile-menu-bar, .mobile-menu-toggle, .mobile-menu-panel, .mobile-menu-backdrop { display: none; }
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   html, body, #root { min-width: 0; width: 100%; }
   .login-wrap, .lc-wrap { min-width: 0; width: 100%; padding: 16px; }
   .login-card, .lc-card { width: 100%; max-width: 400px; padding: 30px 22px 26px; }
@@ -8,6 +33,7 @@
   .login-field, .lc-field, .lc-f { min-width: 0; }
   .app { flex-direction: column; min-width: 0; }
   .sidebar { position: relative; z-index: 30; width: 100%; height: 54px; max-height: 54px; flex: 0 0 54px; overflow: visible; border-right: 0; border-bottom: 1px solid var(--sidebar-bdr, var(--sbdr)); }
+  .sidebar { backdrop-filter:none; -webkit-backdrop-filter:none; }
   .sidebar-logo, .sidebar-footer, .nav-sec-label { display: none; }
   .sidebar-nav { display: none; }
   .mobile-menu-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; height: 54px; padding: 0 18px; border: 0; background: transparent; color: var(--t1); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
@@ -38,12 +64,29 @@
   .main { min-width: 0; width: 100%; min-height: 0; flex: 1; }
   .header { height: 50px; gap: 8px; padding: 0 12px; }
   .search-box, .h-time, .h-icon, .kbd { display: none; }
-  .content { min-width: 0; padding: 14px; }
+  .content { min-width: 0; min-height:0; padding: 14px; }
   .status-banner { display: block; }
   .s-services { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
   .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .grid { grid-template-columns: minmax(0, 1fr); }
   .grid > *, .col { min-width: 0; }
+  .kpi { padding:14px; gap:8px; }
+  .kpi-val { font-size:26px; }
+  .kpi-ico { width:30px; height:30px; border-radius:9px; }
+  .kpi-ico svg { width:17px; height:17px; }
+  .sec { padding:14px; }
+  .al { flex-wrap:wrap; gap:6px 8px; padding:10px; }
+  .al-time { margin-left:auto; }
+  .ev { flex-wrap:wrap; gap:5px 8px; }
+  .ev-text { flex:1; min-width:0; }
+  .main-topbar { padding-inline:12px; }
+  .welcome { overflow-y:auto; min-height:0; }
+  .input-wrap, .samples, .messages-col { min-width:0; max-width:100%; }
+  .chat-bottom { padding:12px; }
+  .messages-scroll { padding:16px 12px; }
+  .stats-panel.open { position:absolute; inset:50px 0 0; z-index:40; width:100%; border-left:0; background:var(--bg,var(--panel-bg,#101726)); }
+  .stats-actions { flex-shrink:0; }
+  .s-act { min-width:44px; min-height:44px; border:0; background:transparent; font:inherit; }
   .welcome { padding: 24px 16px; }
   .welcome-title { font-size: 21px; text-align: center; }
   .ai-sidebar { position: absolute; top: 0; bottom: 0; left: 0; z-index: 25; width: min(300px, 84vw); box-shadow: 14px 0 30px #0005; }

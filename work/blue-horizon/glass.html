@@ -376,18 +376,19 @@ body{overflow:hidden}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--t2)}
 .legend-line{width:16px;height:2px;border-radius:1px}
 </style>
-<link rel="stylesheet" href="mobile-concept.css?v=20261001menu">
+<link rel="stylesheet" href="mobile-concept.css?v=20261002responsive">
 <link rel="stylesheet" href="../../assets/preview/client.css?v=20261002flow">
 </head>
 <body>
 <div id="root"></div>
+<script src="brand.js?v=20261002responsive"></script>
 <script type="text/babel">
 const {useState,useEffect,useRef} = React;
 const TODAY = '2026-05-12';
 
 /* ── ICONS ─────────────────────────────────────── */
 const I = {
-  logo:()=><svg viewBox="0 0 28 28" fill="none" width="22" height="22"><path d="M14 3 L5 22 L23 22 Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><circle cx="14" cy="10" r="2.8" fill="currentColor"/></svg>,
+  logo:()=><BlueHorizonLogo/>,
   home:()=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="15" height="15"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
   grid:()=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="15" height="15"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
   users:()=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="15" height="15"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>,
@@ -420,24 +421,16 @@ const I = {
 
 /* ── HOME DATA ─────────────────────────────────── */
 const NAV = [
-  {sec:null, items:[{id:'home',label:'홈',ico:'home',active:true}]},
   {sec:'모니터링', items:[
-    {id:'rt',label:'실시간 현황',ico:'grid'},
-    {id:'ag',label:'상담원 현황',ico:'users'},
-    {id:'ins',label:'상담 인사이트',ico:'eye'},
+    {id:'home',label:'홈',ico:'home',target:'.status-banner',hint:'운영 현황 한눈에 보기'},
+    {id:'rt',label:'실시간 현황',ico:'grid',target:'.kpi-row',hint:'대기 · 상담원 · 처리 실적'},
   ]},
-  {sec:'사용자 관리', items:[
-    {id:'um',label:'사용자 관리',ico:'user'},
-    {id:'pm',label:'권한 관리',ico:'shield'},
+  {sec:'운영 알림', items:[
+    {id:'al',label:'주의 항목',ico:'bell',target:'.al-list'},
+    {id:'ev',label:'실시간 이벤트',ico:'activity',target:'.ev-list'},
   ]},
-  {sec:'운영 통계', items:[{id:'st',label:'통계/분석',ico:'bar'}]},
-  {sec:'알림센터', items:[{id:'al',label:'알림 관리',ico:'bell'}]},
-  {sec:'감사', items:[{id:'log',label:'감사 로그',ico:'file'}]},
-  {sec:'CONNECT', items:[{id:'ac',label:'A/C 사용자 관리',ico:'layers'}]},
-  {sec:'AI AGENT', items:[{id:'wf',label:'워크플로우',ico:'flow'}]},
-  {sec:'운영관리', items:[
-    {id:'nc',label:'긴급 공지',ico:'volume'},
-    {id:'req',label:'요청 관리',ico:'check'},
+  {sec:'AI 어시스턴트', items:[
+    {id:'wf',label:'AI Mode',ico:'flow',hint:'운영 데이터에 질문하기'},
   ]},
 ];
 const KPI_DATA = [
@@ -466,12 +459,10 @@ const EVENTS = [
   {time:'14:30:30',col:'#a78bfa',text:'최*영 상담 완료 (2분 45초)',bold:['(2분 45초)']},
 ];
 const QA = [
-  {label:'실시간 현황',ico:'grid',bg:'rgba(34,211,238,0.14)',col:'#22d3ee'},
-  {label:'상담원 현황',ico:'users',bg:'rgba(52,211,153,0.14)',col:'#34d399'},
-  {label:'긴급 공지',ico:'volume',bg:'rgba(248,113,113,0.14)',col:'#f87171'},
-  {label:'요청 관리',ico:'check',bg:'rgba(251,191,36,0.14)',col:'#fbbf24'},
-  {label:'통계/분석',ico:'bar',bg:'rgba(139,92,246,0.14)',col:'#a78bfa'},
-  {label:'워크플로우',ico:'flow',bg:'rgba(96,165,250,0.14)',col:'#60a5fa'},
+  {label:'실시간 현황',ico:'grid',target:'.kpi-row',bg:'rgba(34,211,238,.14)',col:'#22d3ee'},
+  {label:'주의 항목',ico:'bell',target:'.al-list',bg:'rgba(248,113,113,.14)',col:'#f87171'},
+  {label:'실시간 이벤트',ico:'activity',target:'.ev-list',bg:'rgba(52,211,153,.14)',col:'#34d399'},
+  {label:'AI Mode',ico:'flow',bg:'rgba(139,92,246,.14)',col:'#a78bfa'},
 ];
 
 /* ── AI MODE DATA ──────────────────────────────── */
@@ -529,10 +520,7 @@ function StatsPanel({open,onClose}){
         <div className="stats-header">
           <div className="stats-title">통계 분석 (샘플 데이터) — {TODAY}</div>
           <div className="stats-actions">
-            <div className="s-act" title="새로고침"><I.refresh/></div>
-            <div className="s-act" title="다운로드"><I.download/></div>
-            <div className="s-act" title="복사"><I.copy/></div>
-            <div className="s-act" onClick={onClose} title="닫기"><I.close/></div>
+            <button className="s-act" type="button" onClick={onClose} aria-label="분석 닫기"><I.close/></button>
           </div>
         </div>
         <div className="stats-body">
@@ -593,7 +581,7 @@ function LoginScreen({dark,onToggle,onLogin}){
         <div className="login-card">
           <div className="login-logo-area">
             <div className="login-logo-mark">
-              <svg viewBox="0 0 28 28" fill="none" width="40" height="40"><path d="M14 3 L5 22 L23 22 Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><circle cx="14" cy="10" r="2.8" fill="currentColor"/></svg>
+              <BlueHorizonLogo size={40} color="#818cf8"/>
             </div>
             <div className="login-logo-title">Blue Horizon</div>
             <div className="login-logo-sub">클라우드 컨택센터 운영 플랫폼</div>
@@ -614,10 +602,9 @@ function LoginScreen({dark,onToggle,onLogin}){
             <button className={'login-btn'+(loading?' loading':'')} onClick={doLogin}>
               {loading?<><span className="spinner"/>로그인 중...</>:'로그인'}
             </button>
-            <div className="login-divider"><div className="login-div-line"/><span className="login-div-text">또는</span><div className="login-div-line"/></div>
-            <button className="login-register-btn">회원가입</button>
+
           </div>
-          <div className="login-note">처음 이용하시는 분은 회원가입 후 관리자 승인이 필요합니다.</div>
+          <div className="login-note">공개 데모 · 로그인하면 운영 화면을 둘러볼 수 있습니다.</div>
         </div>
       </div>
     </div>
@@ -630,11 +617,15 @@ function HomeScreen({dark,onToggle,onNavigate}){
   const [menuOpen,setMenuOpen]=useState(false);
   const [menuTarget,setMenuTarget]=useState('.status-banner');
   useEffect(()=>{const close=e=>{if(e.key==='Escape')setMenuOpen(false);};document.addEventListener('keydown',close);return()=>document.removeEventListener('keydown',close);},[]);
+  function navigateItem(item){
+    setMenuOpen(false);
+    if(item.target) goTo(item.target); else onNavigate('aimode');
+  }
   function goTo(selector){
     setMenuTarget(selector);
     const pane=document.querySelector('.content'), target=pane?.querySelector(selector);
     setMenuOpen(false);
-    if(target) pane.scrollTo({top:pane.scrollTop+target.getBoundingClientRect().top-pane.getBoundingClientRect().top-12,behavior:'smooth'});
+    if(target) pane.scrollTo({top:pane.scrollTop+target.getBoundingClientRect().top-pane.getBoundingClientRect().top-12,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
   const fmt=t=>t.toLocaleTimeString('ko-KR',{hour12:false});
@@ -649,53 +640,39 @@ function HomeScreen({dark,onToggle,onNavigate}){
         <div className="mobile-menu-bar"><span className="mobile-brand"><I.logo/><strong>Blue Horizon</strong></span><button className="mobile-menu-toggle" type="button" aria-label={menuOpen?'메뉴 닫기':'메뉴 열기'} aria-controls="mobile-menu" aria-expanded={menuOpen} onClick={()=>setMenuOpen(v=>!v)}><span aria-hidden="true">{menuOpen?'×':'☰'}</span></button></div>
         <button className={'mobile-menu-backdrop'+(menuOpen?' open':'')} aria-label="메뉴 닫기" tabIndex={-1} onClick={()=>setMenuOpen(false)}/>
         <nav id="mobile-menu" className={'mobile-menu-panel'+(menuOpen?' open':'')} aria-label="모바일 메뉴" aria-hidden={!menuOpen} inert={menuOpen?undefined:''}>
-          <div className="mobile-menu-section">모니터링</div>
-          <button aria-current={menuTarget==='.status-banner'?'location':undefined} onClick={()=>goTo('.status-banner')}><span className="mobile-menu-icon"><I.home/></span><span>홈<small>운영 현황 한눈에 보기</small></span></button>
-          <button aria-current={menuTarget==='.kpi-row'?'location':undefined} onClick={()=>goTo('.kpi-row')}><span className="mobile-menu-icon"><I.grid/></span><span>실시간 현황<small>대기 · 상담원 · 처리 실적</small></span></button>
-          <div className="mobile-menu-section">운영 알림</div>
-          <button aria-current={menuTarget==='.al-list'?'location':undefined} onClick={()=>goTo('.al-list')}><span className="mobile-menu-icon"><I.bell/></span><span>주의 항목</span></button>
-          <button aria-current={menuTarget==='.ev-list'?'location':undefined} onClick={()=>goTo('.ev-list')}><span className="mobile-menu-icon"><I.activity/></span><span>실시간 이벤트</span></button>
-          <div className="mobile-menu-section">AI 어시스턴트</div>
-          <button onClick={()=>{setMenuOpen(false);onNavigate('aimode');}}><span className="mobile-menu-icon"><I.flow/></span><span>AI Mode<small>운영 데이터에 질문하기</small></span></button>
+          {NAV.map((group,i)=><React.Fragment key={i}>
+            <div className="mobile-menu-section">{group.sec}</div>
+            {group.items.map(item=>{const Icon=I[item.ico]||I.home;return(
+              <button key={item.id} type="button" aria-current={menuTarget===item.target?'location':undefined} onClick={()=>navigateItem(item)}>
+                <span className="mobile-menu-icon"><Icon/></span><span>{item.label}{item.hint&&<small>{item.hint}</small>}</span>
+              </button>
+            );})}
+          </React.Fragment>)}
           <div className="mobile-menu-account"><span className="avatar">A</span><span><strong>admin</strong><small>관리자 · 데모 환경</small></span></div>
           <button className="mobile-menu-close" onClick={()=>setMenuOpen(false)}>⌃ 닫기</button>
         </nav>
-        <nav className="sidebar-nav">
-          {NAV.map((g,gi)=>(
-            <div key={gi}>
-              {g.sec&&<div className="nav-sec-label">{g.sec}</div>}
-              {g.items.map(item=>{
-                const Icon=I[item.ico]||I.home;
-                return(
-                  <div className={'nav-item'+(item.active?' active':'')} key={item.id}
-                    onClick={()=>item.id==='wf'&&onNavigate('aimode')}>
-                    <span className="nav-icon"><Icon/></span>{item.label}
-                  </div>
-                );
-              })}
-            </div>
-          ))}
+        <nav className="sidebar-nav" aria-label="운영 메뉴">
+          {NAV.map((group,i)=><div key={i}>
+            <div className="nav-sec-label">{group.sec}</div>
+            {group.items.map(item=>{const Icon=I[item.ico]||I.home;return(
+              <button type="button" className={'nav-item'+(menuTarget===item.target?' active':'')} key={item.id} aria-current={menuTarget===item.target?'location':undefined} onClick={()=>navigateItem(item)}>
+                <span className="nav-icon"><Icon/></span>{item.label}
+              </button>
+            );})}
+          </div>)}
         </nav>
         <div className="sidebar-footer">
           <div className="avatar">A</div>
           <div style={{flex:1}}><div className="avatar-name">admin</div><div className="avatar-role">관리자</div></div>
-          <span style={{color:'var(--t3)',cursor:'pointer'}}><I.more/></span>
         </div>
       </aside>
       {/* Main */}
       <div className="main">
         <header className="header">
-          <div className="search-box">
-            <span style={{color:'var(--t3)'}}><I.search/></span>
-            <input placeholder="메뉴 검색..."/>
-            <span className="kbd">Ctrl+K</span>
-          </div>
           <div className="h-spacer"/>
           <button className="ai-btn" onClick={()=>onNavigate('aimode')}>
             <span className="ai-star" style={{fontSize:12}}>✦</span> AI Mode
           </button>
-          <div className="h-icon"><I.bell/></div>
-          <div className="h-icon"><I.headphone/></div>
           <div className="h-time">{fmt(now)}</div>
           <ThemeToggle dark={dark} onToggle={onToggle}/>
         </header>
@@ -757,7 +734,7 @@ function HomeScreen({dark,onToggle,onNavigate}){
             </div>
             <div className="col">
               <div className="glass sec">
-                <div className="sec-hd"><div className="sec-title">활성 공지사항</div><div className="sec-link">전체보기 →</div></div>
+                <div className="sec-hd"><div className="sec-title">활성 공지사항</div></div>
                 <div className="nc-list">
                   {NOTICES.map((n,i)=>(
                     <div className="nc" key={i}>
@@ -771,10 +748,9 @@ function HomeScreen({dark,onToggle,onNavigate}){
                 <div className="sec-hd"><div className="sec-title">빠른 실행</div></div>
                 <div className="qa-grid">
                   {QA.map((q,i)=>{const QIcon=I[q.ico]||I.grid;return(
-                    <div className="qa" key={i} onClick={q.ico==='flow'?()=>onNavigate('aimode'):undefined}>
+                    <button type="button" className="qa" key={i} onClick={()=>navigateItem(q)}>
                       <div className="qa-ico" style={{background:q.bg,color:q.col}}><QIcon/></div>
-                      <div className="qa-lbl">{q.label}</div>
-                    </div>
+                      <div className="qa-lbl">{q.label}</div></button>
                   );})}
                 </div>
               </div>
@@ -794,7 +770,8 @@ function AIModeScreen({dark,onToggle,onNavigate}){
   const [thinking,setThinking]=useState(false);
   const [panelOpen,setPanelOpen]=useState(false);
   const [history,setHistory]=useState([]);
-  const [sidebarOpen,setSidebarOpen]=useState(true);
+  const [sidebarOpen,setSidebarOpen]=useState(()=>!matchMedia('(max-width:900px)').matches);
+  useEffect(()=>{const media=matchMedia('(max-width:900px)');const close=()=>{if(media.matches)setSidebarOpen(false);};media.addEventListener('change',close);return()=>media.removeEventListener('change',close);},[]);
   const scrollRef=useRef(null);
   const now=()=>{const d=new Date();const h=d.getHours();const pre=h<12?'오전':'오후';return `${pre} ${h%12||12}:${String(d.getMinutes()).padStart(2,'0')}`;};
   useEffect(()=>{if(scrollRef.current)scrollRef.current.scrollTop=scrollRef.current.scrollHeight;},[messages,thinking]);
@@ -818,10 +795,10 @@ function AIModeScreen({dark,onToggle,onNavigate}){
   return(
     <div className={'app'+(dark?'':' light-mode')}>
       {/* AI Sidebar */}
-      <div className={'ai-sidebar'+(sidebarOpen?'':' collapsed')}>
+      <div className={'ai-sidebar'+(sidebarOpen?'':' collapsed')} aria-hidden={!sidebarOpen} inert={sidebarOpen?undefined:''}>
         <div className="sdb-logo">
           <div className="sdb-logo-inner" onClick={()=>onNavigate('home')}>
-            <svg viewBox="0 0 28 28" fill="none" width="20" height="20" style={{color:'#22d3ee'}}><path d="M14 3 L5 22 L23 22 Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/><circle cx="14" cy="10" r="2.8" fill="currentColor"/></svg>
+            <BlueHorizonLogo size={20}/>
             <span className="sdb-logo-text">Blue Horizon</span>
           </div>
           <div className="sdb-collapse" onClick={()=>setSidebarOpen(v=>!v)}>
@@ -833,18 +810,19 @@ function AIModeScreen({dark,onToggle,onNavigate}){
             <I.pen/>새 대화
           </div>
         </div>
-        <div className="sdb-section">대화 내역<I.trash/></div>
+        <div className="sdb-section">대화 내역</div>
         <div className="sdb-hist">
           {history.length===0
             ?<div className="sdb-hist-empty">대화 기록이 없습니다</div>
             :history.map((h,i)=><div className="sdb-item" key={i}><div className="sdb-item-title">{h.title}</div><div className="sdb-item-meta">{h.meta}</div></div>)
           }
         </div>
-        <div className="sdb-footer"><I.back/>관리자 모드</div>
+        <div className="sdb-footer" role="button" tabIndex={0} onClick={()=>onNavigate('home')} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onNavigate('home');}}}><I.back/>관리자 모드</div>
       </div>
       {/* Main */}
       <div className="main">
         <div className="main-topbar">
+          <button className="ai-home" type="button" onClick={()=>onNavigate('home')}>← 운영 화면</button>
           <ThemeToggle dark={dark} onToggle={onToggle}/>
         </div>
         {!chatStarted?(
@@ -857,7 +835,7 @@ function AIModeScreen({dark,onToggle,onNavigate}){
                   onKeyDown={handleKeyDown}/>
                 <button className="send-btn" onClick={()=>handleSend()}><I.up/></button>
               </div>
-              <div className="input-hint"><span className="kbd">Ctrl+K</span><span>커맨드</span></div>
+
             </div>
             <div className="samples">
               {SAMPLES.map((s,i)=><div className="sample" key={i} onClick={()=>handleSend(s)}><span className="sample-dot">✦</span><span>{s}</span></div>)}
@@ -887,7 +865,7 @@ function AIModeScreen({dark,onToggle,onNavigate}){
                     onKeyDown={handleKeyDown}/>
                   <button className="send-btn" onClick={()=>handleSend()}><I.up/></button>
                 </div>
-                <div className="chat-input-hint"><span className="kbd">Ctrl+K</span><span>커맨드</span></div>
+
               </div>
             </div>
             <StatsPanel open={panelOpen} onClose={()=>setPanelOpen(false)}/>

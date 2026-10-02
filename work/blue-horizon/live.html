@@ -801,7 +801,7 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
 [data-theme="light"] .pg{scrollbar-color:rgba(0,0,0,0.18) #e8eaf0;}
 
 /* 메트릭 카드 hover */
-.mc{cursor:pointer;transition:background .18s;}
+.mc{cursor:default;transition:background .18s;}
 .mc:hover{background:rgba(255,255,255,0.04);}
 [data-theme="light"] .mc:hover{background:rgba(0,0,0,0.035);}
 
@@ -1233,7 +1233,7 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 14px 14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.aim-sb-logo-inner{display:flex;align-items:center;gap:9px;cursor:pointer;color:var(--cyan);}
+.aim-sb-logo-inner{display:flex;align-items:center;gap:9px;cursor:default;color:var(--cyan);}
 .aim-sb-logo-text{font-size:0.88rem;font-weight:700;color:var(--text);white-space:nowrap;}
 .aim-sb-collapse{
   width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;
@@ -1424,6 +1424,26 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
 .aim-bar{height:4px;background:rgba(128,128,128,0.15);border-radius:2px;overflow:hidden;}
 .aim-bar-fill{height:100%;border-radius:2px;}
 @media (prefers-reduced-motion:reduce){.overlay-nav,.backdrop{transition:none!important;}}
+/* Fit information to the app viewport, including tablet widths. */
+.stat-period{padding:4px 12px;border-radius:6px;background:var(--panel);font-size:.8rem;color:var(--sub);}
+.hb::before{display:none;}
+#pg-stats .pg-head-title::before,#pg-agents .pg-head-title::before,.stat-section-label::before{display:none;}
+#pg-stats .pg-head .pg-head-title,#pg-agents .pg-head .pg-head-title{padding-left:0;}
+.warn-panel .pg-panel-head,.live-panel .pg-panel-head{border-left:0;}
+@media(max-width:900px){
+  .pg-head{flex-wrap:wrap;gap:10px;}
+  .pg-head-right{flex-wrap:wrap;gap:8px;}
+  .ag-kpi-item{min-width:0;}
+  #pg-stats .pg-row,#pg-agents .pg-row{flex-direction:column;}
+  #pg-stats .pg-row>.pg-panel,#pg-agents .pg-row>.pg-panel{flex:0 0 auto!important;min-width:0!important;width:100%;max-width:100%;}
+  .pg-panel-head{flex-wrap:wrap;gap:8px;}
+  .sbc-bars,.sbc-labels{gap:4px;}
+  .sbc-bar-group,.sbc-bar,.sbc-label{min-width:0;}
+}
+@media(max-width:380px){
+  .mc{padding:14px 16px;gap:8px;}
+  .sec-label{font-size:.8rem;letter-spacing:.08em;}
+}
 </style>
 <link rel="stylesheet" href="../../assets/preview/client.css?v=20261002flow">
 </head>
@@ -1474,10 +1494,9 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
           <input class="lc-f" id="lc-pass" type="password" placeholder="비밀번호" value="password123" style="letter-spacing:.12em" onkeydown="if(event.key==='Enter')doLogin()">
         </div>
         <button class="lc-btn" id="loginBtn" onclick="doLogin()">로그인</button>
-        <div class="lc-div"><div class="lc-dl"></div><span class="lc-dt">또는</span><div class="lc-dl"></div></div>
-        <button class="lc-reg">회원가입</button>
+
       </div>
-      <div class="lc-note">처음 이용하시는 분은 회원가입 후 관리자 승인이 필요합니다.</div>
+      <div class="lc-note">공개 데모 · 로그인하면 운영 화면을 둘러볼 수 있습니다.</div>
     </div>
 
     <!-- 뒷면 — 로그인 완료 -->
@@ -1571,15 +1590,6 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
       <div class="on-icon"><span class="material-icons">bar_chart</span></div>
       <span class="on-label">통계/분석</span>
     </div>
-    <div class="on-section-label">SYSTEM</div>
-    <div class="on-item">
-      <div class="on-icon"><span class="material-icons">manage_accounts</span></div>
-      <span class="on-label">사용자 관리</span>
-    </div>
-    <div class="on-item">
-      <div class="on-icon"><span class="material-icons">key</span></div>
-      <span class="on-label">권한 관리</span>
-    </div>
   </div>
   <div class="on-footer" onclick="toggleUserMenu(this)">
     <div class="on-avatar">JY</div>
@@ -1619,7 +1629,7 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
   <div class="sb-item" data-page="pg-stats" onclick="sbNav('pg-stats',this)"><span class="material-icons">bar_chart</span></div>
   <div class="sb-item" onclick="showAiMode()"><span class="material-icons">auto_awesome</span></div>
   <div class="sb-gap"></div>
-  <div class="sb-item" onclick="openNav()"><span class="material-icons">settings</span></div>
+  <div class="sb-item" onclick="openNav()"><span class="material-icons">menu</span></div>
   <div class="sb-avatar" onclick="toggleUserMenu(this)">JY</div>
 </div>
 
@@ -1839,11 +1849,7 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
       <div class="sec-label">✦ AI 인사이트</div>
       <div class="bot-ai">
         <div class="ai-body"><strong>이메일 대기가 임계치 도달.</strong> 30분 내 SLA 위반 가능성 높습니다.</div>
-        <div class="ai-actions">
-          <div class="ai-btn">인력 재배치 →</div>
-          <div class="ai-btn">SLA 리포트 →</div>
-          <div class="ai-btn">상세 분석 →</div>
-        </div>
+
       </div>
     </div>
 
@@ -1943,12 +1949,7 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
     <div class="pg-head">
       <div class="pg-head-title">통계 / 분석</div>
       <div class="pg-head-right">
-        <div class="stat-tabs">
-          <div class="stat-tab active">오늘</div>
-          <div class="stat-tab">어제</div>
-          <div class="stat-tab">이번 주</div>
-          <div class="stat-tab">이번 달</div>
-        </div>
+<span class="stat-period">오늘</span>
         <div class="pg-time">2026년 5월 18일 기준</div>
       </div>
     </div>
@@ -2779,20 +2780,6 @@ function closeNav(){
   document.getElementById('backdrop').classList.remove('show');
 }
 
-// 오버레이 메뉴 아이템 active 전환
-document.querySelectorAll('.on-item').forEach(item=>{
-  item.addEventListener('click',()=>{
-    document.querySelectorAll('.on-item').forEach(i=>i.classList.remove('active'));
-    item.classList.add('active');
-    // 사이드바 아이콘도 동기화
-    const idx=[...document.querySelectorAll('.on-item')].indexOf(item);
-    document.querySelectorAll('.sb-item').forEach((s,i)=>{
-      s.classList.toggle('active', i===idx);
-    });
-    closeNav();
-  });
-});
-
 // 사이드바 아이콘 → 페이지 이동
 function sbNav(pageId, el){
   showPage(pageId, document.querySelector(`.on-item[onclick*="${pageId}"]`));
@@ -2882,6 +2869,7 @@ let aiHistoryList = [];
 function showPage(pageId, triggerEl){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.sb-item[data-page]').forEach(item=>item.classList.toggle('active',item.dataset.page===pageId));
   // 네비 active
   document.querySelectorAll('.on-item').forEach(i=>i.classList.remove('active'));
   if(triggerEl) triggerEl.classList.add('active');
@@ -3419,9 +3407,6 @@ window.addEventListener('load',()=>{
       <div class="ump-role">관리자 · 서울센터</div>
     </div>
   </div>
-  <div class="ump-divider"></div>
-  <div class="ump-item"><span class="material-icons">person</span>내 프로필</div>
-  <div class="ump-item"><span class="material-icons">settings</span>환경설정</div>
   <div class="ump-divider"></div>
   <div class="ump-item logout" onclick="doLogout()"><span class="material-icons">logout</span>로그아웃</div>
 </div>
