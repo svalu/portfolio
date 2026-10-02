@@ -145,6 +145,37 @@ function AdminOS() {
     return () => window.removeEventListener('keydown', onKey);
   }, [windows, zTop]);
   const desktopIcons = APPS.filter(a => !a.hiddenOnDesktop);
+  useEffect(() => {
+    const p = window.PortfolioPreview;
+    if (!p) return;
+    p.register({ stage: 'admin', async run(action, signal) {
+      if (action === 'arrival') { p.focus(document.querySelector('.desktop-icons')); return; }
+      if (action === 'dashboard' || action === 'analytics') {
+        openApp(action);
+        const host = await p.wait(() => document.querySelector(`.win[data-app="${action}"]`), signal);
+        if (action === 'analytics' && innerWidth >= 1100) {
+          const d = windows.find(w => w.app === 'dashboard');
+          if (d) snapWin(d.id, 'left');
+          // The new window's id is committed in React after this action starts.
+          host.dispatchEvent(new CustomEvent('preview-snap', { detail: 'right' }));
+        }
+        p.focus(host); return;
+      }
+      const analytics = windows.find(w => w.app === 'analytics');
+      if (!analytics) throw new Error('Analysis window not ready');
+      if (action === 'minimize') {
+        minimizeWin(analytics.id);
+        await p.wait(() => document.querySelector('.win[data-app="analytics"].minimized'), signal);
+        p.focus(document.querySelector('.taskbar')); return;
+      }
+      if (action === 'restore') {
+        focusWin(analytics.id);
+        const host = await p.wait(() => document.querySelector('.win[data-app="analytics"]:not(.minimized)'), signal);
+        p.focus(host); return;
+      }
+      throw new Error('Unknown admin scene');
+    } });
+  }, [windows, zTop]);
   return <div className={`desktop icon-style-${tweaks.iconStyle}`} onContextMenu={onDesktopContext} onClick={() => {
     if (startOpen) setStartOpen(false);
     if (notifOpen) setNotifOpen(false);

@@ -30,6 +30,12 @@ function Window({
   style = 'mica'
 }) {
   const winRef = useRef(null);
+  useEffect(() => {
+    const node = winRef.current;
+    const snapPreview = event => onSnap(id, event.detail);
+    node?.addEventListener('preview-snap', snapPreview);
+    return () => node?.removeEventListener('preview-snap', snapPreview);
+  }, [id, onSnap]);
   const [closing,setClosing]=useState(false);
   const [geometryMotion,setGeometryMotion]=useState(false);
   const closeTimer=useRef(null),geometryTimer=useRef(null);
@@ -231,7 +237,7 @@ function Window({
   if (style === 'solid') cls.push('win-style-solid');
   if (style === 'glass') cls.push('win-style-glass');
   return <>
-      <div ref={winRef} className={cls.join(' ')} inert={minimized || closing ? '' : undefined} aria-hidden={minimized || closing ? true : undefined} style={{
+      <div ref={winRef} data-app={app} className={cls.join(' ')} inert={minimized || closing ? '' : undefined} aria-hidden={minimized || closing ? true : undefined} style={{
       left: displayedBox.x,
       top: displayedBox.y,
       width: displayedBox.w,

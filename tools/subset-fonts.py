@@ -22,6 +22,7 @@ WEIGHTS = ["ExtraLight", "Light", "Regular", "Medium"]
 # 글자를 긁어올 파일 — 이 폰트를 쓰는 모든 화면
 TARGETS = [
     "index.html", "m/index.html", "README.md", "work/svalu/memory.html",
+    "assets/preview/portfolio.js",
     "work/os-ui/2023/main.html", "work/os-ui/2023/login.html", "work/os-ui/2023/error.html",
     "work/os-ui/2023/css/main.css",
 ]

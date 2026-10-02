@@ -1,0 +1,2 @@
+.preview-focus{outline:2px solid #7b8fff!important;outline-offset:4px;box-shadow:0 0 0 7px #7b8fff16!important;transition:outline-color .25s,box-shadow .25s!important}
+@media(prefers-reduced-motion:reduce){.preview-focus{transition:none!important}}
