@@ -1,28 +1,37 @@
-<html>
+<!doctype html>
+<html lang="ko">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
-    <title>COUNSELING OS</title>
-    <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="../mock/mock-api.js?v=20260930"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>404 · Counseling OS</title>
     <link rel="stylesheet" type="text/css" href="../css/main.css?v=20260919d">
+    <link rel="stylesheet" href="../css/error-demo.css?v=20261003story">
 </head>
 
 <body class="error">
-    <div style="z-index: 99">
-        <canvas id="game" height="400" width="800">
-        </canvas>
-        <script src="../js/dino.js"></script>
-    </div>
-    <div class="dino_ani"></div>
-    <button class="error_exit"></button>
+    <main class="iframe_body error-stage">
+    <p class="error-eyebrow">COUNSELING OS · 404 화면 체험</p>
+    <button class="error_exit" type="button" aria-label="업무 화면으로 돌아가기" title="업무 화면으로 돌아가기"></button>
     <div class="error_text_wrap">
         <div class="error_text_1">404</div>
         <div class="error_text_2">요청하신 페이지를 찾을 수 없습니다.</div>
-        <div class="error_text_3">2025-06-26 11:04:37</div>
+        <div class="error_text_3">돌아갈 길은 여기 있어요.<br>잠깐 쉬어 간다면, 숨겨 둔 게임도 있어요.</div>
+    </div>
+    <div class="error-game" hidden>
+        <canvas id="game" height="400" width="800" tabindex="0" role="img" aria-label="공룡이 장애물을 뛰어넘는 게임. 스페이스 키 또는 점프 버튼으로 조작합니다."></canvas>
+    </div>
+    <div class="error-actions">
+        <p id="game-status" role="status">페이지는 잃어도, 하던 작업은 남아 있습니다.</p>
+        <div class="error-buttons">
+            <button type="button" id="game-start">잠깐 게임하기</button>
+            <button type="button" id="game-jump" hidden>점프 ↑</button>
+            <button type="button" id="game-pause" hidden>멈춤</button>
+            <button type="button" id="error-return">업무로 돌아가기 ↗</button>
+        </div>
+        <small id="game-help" hidden>스페이스 또는 화면 터치로 점프 · Ctrl+Enter로 다시 시작</small>
     </div>
     <div class="error_bg_grid">
         <div class="oj_col_wrap">
@@ -186,11 +195,16 @@
             <div class="bg_oj"></div>
         </div>
     </div>
+    </main>
     <script>
-        document.querySelector(".error_exit").addEventListener("click", function() {
-            window.location.href = "/main";
-        });
+        if(new URLSearchParams(location.search).has('embedded') && parent !== window){
+            const stage=document.querySelector('.error-stage');
+            stage.style.width=Math.max(280,Math.min(1040,parent.innerWidth-48))+'px';
+            stage.style.height=Math.max(420,Math.min(680,parent.innerHeight-150))+'px';
+        }
     </script>
+    <script src="../js/dino.js?v=20261003story"></script>
+    <script src="../mock/error-demo.js?v=20261003story"></script>
 </body>
 
 </html>

@@ -512,11 +512,13 @@
                          useYn: i === 6 ? "N" : "Y" };
             }) };
         }],
-        ["notepad", function () {
-            return { data: [
-                { id: oid(890), title: "이관 담당자 연락처", content: "장애접수 → 기술지원팀 070-4000-1234", regDate: ymd(daysAgo(2)) },
-                { id: oid(891), title: "자주 쓰는 링크", content: "요금표 / 약관 / 해지 절차", regDate: ymd(daysAgo(9)) }
-            ] };
+        ["notepad", function (opts) {
+            var notes=[
+                { id: oid(890), notepadTitle: "이관 담당자 연락처", notepadContent: "장애접수 → 기술지원팀\n담당자 확인 후 상담 이관", regDate: ymd(daysAgo(2)) },
+                { id: oid(891), notepadTitle: "자주 쓰는 링크", notepadContent: "요금표 / 약관 / 해지 절차", regDate: ymd(daysAgo(9)) }
+            ];
+            if(/\/content$/.test(opts.url))return {data:notes.find(function(note){return opts.url.indexOf(note.id)>=0;})||notes[0]};
+            return {data:notes};
         }],
 
         // ── 상담 채팅 (mainFrame 의 고객 / 동료 / 예약 탭) ──
@@ -717,7 +719,7 @@
         if (path.indexOf(".html") !== -1 || path.indexOf("http") === 0) return url;
         var file = "screens/" + path.replace(/^\//, "").replace(/\//g, "_") + ".html";
         /* 창 안 화면도 캐시된다. 고친 mock 을 쓰게 하려면 여기에도 판 번호를 붙여야 한다 */
-        var V = "v=20261001c";
+        var V = "v=20261003story";
         return parts[1] ? file + "?" + parts[1] + "&" + V : file + "?" + V;
     }
     window.__toStaticView = toStatic;

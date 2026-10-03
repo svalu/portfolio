@@ -78,8 +78,8 @@ var iframeWindow = (function($) {
                         var targetObserve = $(targetIframe).contents().find('.iframe_body').get(0);
                         if(targetObserve) $resizeObserver.unobserve(targetObserve);
                         {
-                            let index = windowList.indexOf(iframeWindow[0]);
-                            windowList.splice(index, 1);
+                            let index = windowList.findIndex(entry => (entry[0] || entry) === iframeWindow[0]);
+                            if(index >= 0) windowList.splice(index, 1);
                         }
                         // windowList.remove(iframeWindow);
                     } catch(e) {
@@ -177,14 +177,10 @@ var iframeWindow = (function($) {
     });
 
     function focus($iframeWindow) {
-        let index = windowList.indexOf($iframeWindow);
-        if(index === -1) {
-            windowList.push($iframeWindow);
-            return;
-        } else {
-            windowList.splice(index, 1);
-            windowList.push($iframeWindow);
-        }
+        const node=$iframeWindow[0];
+        const index=windowList.findIndex(entry => (entry[0] || entry) === node);
+        if(index >= 0) windowList.splice(index, 1);
+        windowList.push($iframeWindow);
 
         windowList.forEach(function(iframe, index) {
             $(iframe).css('z-index', index);

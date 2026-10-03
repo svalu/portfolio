@@ -87,7 +87,9 @@ function harness({ width = 1440, reduce = false } = {}) {
   const os = harness(); os.ctx.scrollY = 1800; await os.advance(32000);
   assert.equal(os.controls[1].dataset.state, 'done', 'login navigation waits for the new document');
   assert.equal(os.controls[2].dataset.state, 'done');
-  const osActions = os.actions(); assert.ok(osActions.findIndex(x => x.frame === 3) > osActions.findIndex(x => x.action === 'note'), 'OS scenes play sequentially');
+  const osActions = os.actions();
+  assert.deepEqual(osActions.filter(x=>x.frame===2).map(x=>x.action),['arrival','password-find','password-mail','login','dashboard','performance','arrange','error','game','return']);
+  assert.ok(osActions.findIndex(x => x.frame === 3) > osActions.findIndex(x => x.action === 'return'), 'OS scenes play sequentially after returning to work');
   const osPause = harness(); osPause.ctx.scrollY = 1800; await osPause.advance(1500); osPause.controls[1].parts['.preview-play'].onclick();
   await osPause.advance(24000); assert.equal(osPause.actions().filter(x => x.frame === 3).length, 0, 'pause does not start the other OS preview');
   const sameTab = harness(); await sameTab.advance(1700); const beforeTab = sameTab.actions().length;

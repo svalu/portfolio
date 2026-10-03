@@ -2,6 +2,10 @@
 .demo-dock{position:fixed;left:20px;bottom:16px;z-index:1000;display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid #ddd;border-radius:8px;background:#fffffff2;color:#727272;font:12px/1.4 font_na,sans-serif;box-shadow:0 4px 18px #00000008}
 .demo-dock a{color:#c42d39;text-decoration:none;border-bottom:1px solid #c42d3944;padding:3px 0}
 .demo-dock a:focus-visible{outline:2px solid #c42d39;outline-offset:4px}
+.demo-dock button{border:0;padding:3px 0;border-bottom:1px solid #c42d3944;background:none;font:inherit;color:#c42d39;cursor:pointer}
+.demo-dock button:focus-visible{outline:2px solid #c42d39;outline-offset:4px}
+.demo-window-moving{will-change:left,top;}
+.demo-window-moving .popup_top_line{cursor:grabbing}
 .demo-login-note{max-width:440px;margin:32px 20px 0;text-align:center;color:#747474;font-size:12px;line-height:1.8}
 .demo-login-note a{color:#c42d39;display:inline-block;margin-left:10px}
 .demo-login .login_text{display:block;width:100%;border:0;padding:0;cursor:pointer}

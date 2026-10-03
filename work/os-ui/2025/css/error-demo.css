@@ -1,0 +1,38 @@
+@font-face{font-family:ErrorPretendard;src:url('../../../../assets/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:ErrorPretendard;src:url('../../../../assets/fonts/Pretendard-Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+body.error{margin:0;max-width:none;background:#080808;overflow:auto;font-family:ErrorPretendard,sans-serif}
+.error-stage.iframe_body{position:relative;isolation:isolate;display:block;width:100%;height:100svh;min-height:420px;overflow:hidden;background:#080808;color:#fff}
+.error-eyebrow{position:absolute;z-index:3;left:5%;top:5%;margin:0;font-size:11px;letter-spacing:.12em;color:#b8b8b8}
+.error-stage .error_bg_grid{position:absolute;inset:0;width:100%;height:100%;z-index:-1;overflow:hidden;background:#ddd;transition:opacity .3s}
+.error-stage .oj_col_wrap{flex-shrink:0}
+.error-stage .bg_oj{width:clamp(48px,8vw,150px);height:clamp(48px,8vw,150px);flex-shrink:0}
+.error-stage .error_exit{top:9%;right:5%;width:clamp(76px,12vw,160px);height:clamp(76px,12vw,160px);cursor:pointer;border-color:#ffffff60;transition:background-color .2s,transform .2s}
+.error-stage .error_exit:hover{background-color:#ffffff14;transform:translate(2px,-2px)}
+.error-stage .error_text_wrap{left:5%;right:8%;top:23%;bottom:auto;gap:14px;transition:opacity .25s}
+.error-stage .error_text_1{font-size:clamp(100px,17vw,210px);line-height:.95}
+.error-stage .error_text_2{font-family:ErrorPretendard,sans-serif;font-size:clamp(20px,3.8vw,46px);line-height:1.35;word-break:keep-all}
+.error-stage .error_text_3{font-family:ErrorPretendard,sans-serif;font-size:clamp(12px,1.6vw,18px);line-height:1.7}
+.error-actions{position:absolute;z-index:5;left:5%;right:5%;bottom:5%;color:#fff}
+.error-actions p{margin:0 0 14px;font-size:13px;line-height:1.6}
+.error-buttons{display:flex;flex-wrap:wrap;gap:10px}
+.error-buttons button{padding:11px 18px;min-height:44px;background:#181818;border:1px solid #ffffff55;border-radius:24px;color:#fff;font:500 13px/1.3 ErrorPretendard,sans-serif;cursor:pointer;transition:background-color .2s,border-color .2s}
+.error-buttons button:hover{background:#343434;border-color:#fff}
+.error-buttons #game-start,.error-buttons #game-jump{background:#f3f3f3;color:#111}
+.error-stage button:focus-visible,.error-stage canvas:focus-visible{outline:2px solid #ed7982;outline-offset:4px}
+.error-actions small{display:block;margin-top:12px;color:#aaa;font-size:11px;line-height:1.5}
+.error-game{position:absolute;inset:15% 5% 26%;z-index:2;display:flex;align-items:center}
+.error-stage canvas#game{position:static;display:block;width:100%;height:auto;max-height:100%;aspect-ratio:2;object-fit:contain;touch-action:manipulation}
+.game-playing .error_text_wrap,.game-playing .error_bg_grid{opacity:0;pointer-events:none}
+.game-playing .error_exit{width:64px;height:64px;top:4%}
+[hidden]{display:none!important}
+@media(max-width:520px){
+  .error-stage .error_text_wrap{top:28%;gap:12px;right:5%}
+  .error-stage .error_text_1{font-size:104px}
+  .error-stage .error_exit{top:12%;width:72px;height:72px}
+  .error-buttons{gap:8px}.error-buttons button{padding:10px 14px;font-size:12px}
+  .error-actions p{font-size:12px;margin-bottom:10px}
+  .error-game{inset:20% 3% 33%}
+}
+@media(prefers-reduced-motion:reduce){
+  .error-stage *{animation:none!important;transition:none!important}
+}

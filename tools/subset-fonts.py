@@ -23,6 +23,8 @@ WEIGHTS = ["ExtraLight", "Light", "Regular", "Medium"]
 TARGETS = [
     "index.html", "m/index.html", "README.md", "work/svalu/memory.html",
     "assets/preview/portfolio.js",
+    "work/os-ui/2025/screens/error.html", "work/os-ui/2025/js/dino.js",
+    "work/os-ui/2025/mock/error-demo.js",
     "work/os-ui/2023/main.html", "work/os-ui/2023/login.html", "work/os-ui/2023/error.html",
     "work/os-ui/2023/css/main.css",
 ]

@@ -71,15 +71,13 @@ function Cactus(gameWidth, groundY){
     this.height = (Math.random() > 0.5) ? 30 : 70;
     this.x = gameWidth;
     this.y = groundY - this.height;
+    this.color = Math.random() > .5 ? '#df6572' : '#dda16c';
 }
 
 Cactus.prototype.draw = function(context){
     var oldFill = context.fillStyle;
 
-    context.fillStyle = `rgb(
-        ${Math.floor(255 * Math.random())},
-        ${Math.floor(255 * Math.random())},
-        0)`;
+    context.fillStyle = this.color;
 
     context.fillRect(this.x, this.y, this.width, this.height);
     context.fillStyle = oldFill;
@@ -90,13 +88,11 @@ function Stars(gameWidth, groundY){
     this.x = gameWidth + Math.random() * 1000;
     this.y = groundY - Math.floor(Math.random() * groundY);
     this.variant = Math.random();
+    this.color = ['#ef8791','#c1c7e9','#e3c48c'][Math.floor(Math.random()*3)];
 }
 
 Stars.prototype.draw = function(context){
-    context.fillStyle = `rgb(
-        ${Math.floor(255 * Math.random())},
-        ${Math.floor(255 * Math.random())},
-        ${Math.floor(255 * Math.random())})`;
+    context.fillStyle = this.color;
     context.beginPath();
     context.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
     context.closePath();
@@ -116,10 +112,11 @@ ResultWindow.prototype.draw = function(context) {
     context.fillStyle = "rgba(10, 10, 10, 0.8)";
     context.fillRect(this.x, this.y, this.width, this.height);
     context.fillStyle = "white";
-    context.font = "10px Arial";
-    context.fillText("Game Over", this.x + 20, this.y + 40);
-    context.fillText("Score: " + this.score, this.x + 20, this.y + 80);
-    context.fillText("Press Ctrl + Enter to restart", this.x + 20, this.y + 120);
+    context.font = "16px ErrorPretendard, sans-serif";
+    context.fillText("잠깐 쉬어 가기", this.x + 20, this.y + 40);
+    context.fillText("기록: " + this.score + '점', this.x + 20, this.y + 80);
+    context.font = "12px ErrorPretendard, sans-serif";
+    context.fillText("다시 시작 버튼으로 한 번 더", this.x + 20, this.y + 120);
 }
 // ----------
 // GAME
@@ -129,13 +126,7 @@ function Game () {
     this.height = canvas.height;
     this.context = canvas.getContext("2d");
     this.context.fillStyle = "brown";
-    document.spacePressed = false;
-    document.addEventListener("keydown", function(e) {
-        if (e.key === " ") this.spacePressed = true;
-    });
-    document.addEventListener("keyup", function(e) {
-        if (e.key === " ") this.spacePressed = false;
-    });
+    this.jumpRequested = false;
     this.gravity = 1.5;
     this.divider = new Divider(this.width, this.height);
     this.dino = new Dinosaur(Math.floor(0.1 * this.width), this.divider.y);
@@ -147,6 +138,7 @@ function Game () {
     this.runSpeed = -10;
     this.paused = true;
     this.noOfFrames = 0;
+    this.score = 0;
 }
 
 Game.prototype.spawnCactus = function(probability){
@@ -166,6 +158,8 @@ Game.prototype.start = function() {
     this.paused = false;
     this.noOfFrames = 0;
     this.score = 0;
+    this.resultWindow = null;
+    this.jumpRequested = false;
 }
 
 Game.prototype.update = function () {
@@ -173,9 +167,10 @@ Game.prototype.update = function () {
         return;
     }
 
-    if (document.spacePressed == true && bottomWall(this.dino) >= topWall(this.divider)) {
+    if (this.jumpRequested && bottomWall(this.dino) >= topWall(this.divider)) {
         this.dino.jump(this.context);
     }
+    this.jumpRequested = false;
     this.dino.update(this.divider, this.gravity);
 
     if(this.cacti.length > 0 && rightWall(this.cacti[0]) < 0) {
@@ -191,7 +186,7 @@ Game.prototype.update = function () {
     }
 
 
-    for (i = 0; i < this.cacti.length; i++){
+    for (var i = 0; i < this.cacti.length; i++){
         this.cacti[i].x += this.runSpeed;
     }
 
@@ -204,9 +199,9 @@ Game.prototype.update = function () {
             this.resultWindow = new ResultWindow(this.width, this.height, this.score);
 
         }
-        this.noOfFrames++;
-        this.score = Math.floor(this.noOfFrames/10);
     }
+    this.noOfFrames++;
+    this.score = Math.floor(this.noOfFrames/10);
 
     if(this.noOfFrames % 5 === 0)
         this.spawnStar();
@@ -223,8 +218,8 @@ Game.prototype.update = function () {
 Game.prototype.draw = function () {
     this.context.clearRect(0, 0, this.width, this.height);
     this.divider.draw(this.context);
-    this.dino.draw(this.context, this.noOfFrames);
-    for (i = 0; i < this.cacti.length; i++){
+    if(this.dino.img.complete && this.dino.img.naturalWidth)this.dino.draw(this.context, this.noOfFrames);
+    for (var i = 0; i < this.cacti.length; i++){
         this.cacti[i].draw(this.context);
     }
 
@@ -235,37 +230,51 @@ Game.prototype.draw = function () {
     var oldFill = this.context.fillStyle;
     this.context.fillStyle = "white";
 
-    if(this.dino.isJump) {
-        this.context.fillText(this.score, this.width-40 + Math.random() * 5, 20 + Math.random() * 5, 20);
-    } else {
-        this.context.fillText(this.score, this.width-40, 20, 20);
-    }
+    this.context.font = '16px ErrorPretendard, sans-serif';
+    this.context.fillText(this.score + '점', this.width-70, 30);
     this.context.fillStyle = oldFill;
 
-    if(this.paused) {
+    if(this.resultWindow) {
         this.resultWindow.draw(this.context);
     }
 };
 
 var game = new Game();
-var gameFrame;
-function main (timeStamp) {
-    if(gameFrame)
-        clearInterval(gameFrame);
-
-    gameFrame = setInterval(function(){
-        game.update();
+/* Keep the original game and physics, but use one time-based loop and explicit controls. */
+(() => {
+    let state='idle', frame=0, last=0, debt=0, automatic=false;
+    const changed=()=>document.dispatchEvent(new Event('game-state'));
+    const cancel=()=>{cancelAnimationFrame(frame);frame=0;};
+    function tick(now){
+        if(state!=='running')return;
+        debt+=Math.min(now-last,80);last=now;
+        while(debt>=1000/60){
+            if(automatic && !game.dino.isJump && game.cacti.some(c=>c.x>game.dino.x && c.x-rightWall(game.dino)<150))game.jumpRequested=true;
+            game.update();debt-=1000/60;
+            if(game.resultWindow){state='over';changed();break;}
+        }
         game.draw();
-    }, 1000/60);
-}
-
-//enter key input
-$(document).on("keydown", function(e){
-    if(e.ctrlKey && e.keyCode == 13) {
-        game.resultWindow = null;
-        game.start();
-        $(".error_text_wrap").addClass("display_none");
-        $(".error_bg_grid").addClass("display_none");
-        window.requestAnimationFrame(main);
+        if(state==='running')frame=requestAnimationFrame(tick);
     }
-});
+    const run=()=>{last=performance.now();debt=0;frame=requestAnimationFrame(tick);};
+    const api={
+        get state(){return state;},
+        start(){cancel();game.start();state='running';changed();run();},
+        jump(){if(state==='running')game.jumpRequested=true;},
+        pause(){if(state!=='running')return;cancel();game.paused=true;state='paused';changed();},
+        resume(){if(state!=='paused')return;game.paused=false;state='running';changed();run();},
+        stop(){cancel();automatic=false;game.paused=true;state='idle';changed();},
+        demo(signal,duration=3600){
+            return new Promise((resolve,reject)=>{
+                let timer;
+                const end=error=>{clearTimeout(timer);signal.removeEventListener('abort',abort);automatic=false;api.pause();error?reject(error):resolve();};
+                const abort=()=>end(new DOMException('Preview stopped','AbortError'));
+                if(signal.aborted)return abort();
+                automatic=true;
+                if(state==='paused')api.resume();else if(state!=='running')api.start();
+                signal.addEventListener('abort',abort,{once:true});timer=setTimeout(()=>end(),duration);
+            });
+        }
+    };
+    window.CounselingGame=api;
+})();
