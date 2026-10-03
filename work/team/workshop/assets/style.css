@@ -468,6 +468,7 @@ html { scroll-behavior: smooth; }
 
 /* 차 그림 */
 .car-svg { width: 100%; height: auto; display: block; overflow: visible; margin: 2px 0 4px; }
+/* Position lives on .wheel-anchor; rotation must never replace its SVG translation. */
 .car-svg .wheel { transform-box: fill-box; transform-origin: center; }
 .car-svg .body { transform-box: fill-box; transform-origin: center bottom; animation: idle 2.6s ease-in-out infinite; }
 @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
