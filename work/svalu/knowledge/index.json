@@ -1,0 +1,11 @@
+[
+  {"id":"design","title":"디자인의 기본","file":"design.md","keywords":["디자인","ux","어려운","쉽게","기본","철학","장점"]},
+  {"id":"horizon","title":"Blue Horizon","file":"horizon.md","keywords":["블루","호라이즌","horizon","모바일","다크","컨택","운영","반응형"]},
+  {"id":"os","title":"OS UI","file":"os.md","keywords":["os","상담","창","드래그","작업표시줄","2023","2025","관리자"]},
+  {"id":"weekly","title":"주간보고","file":"weekly.md","keywords":["주간","보고","weekly","질문","엑셀","작성"]},
+  {"id":"workshop","title":"워크샵 준비","file":"workshop.md","keywords":["워크샵","워크숍","카풀","장보기","캐러셀","인원","차량"]},
+  {"id":"her","title":"Her의 방향","file":"her.md","keywords":["her","헤르","아바타","몸","목소리","웹캠","같이","공간","미래"]},
+  {"id":"collaboration","title":"AI와 함께 일하는 방식","file":"collaboration.md","keywords":["ai","친하","협업","드롱","로화","기록","세컨드","브레인","가능성"]},
+  {"id":"svalu","title":"svalu와 장면 기억","file":"svalu.md","keywords":["svalu","스바루","모델","기억","말투","학습","장면","대화"]},
+  {"id":"scope","title":"작업의 역할과 확인 범위","file":"scope.md","keywords":["경력","회사","역할","담당","개발","기간","성과","이직","연락","평가"]}
+]

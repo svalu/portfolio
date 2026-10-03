@@ -9,3 +9,9 @@ data/
 *.xlsx
 Thumbs.db
 desktop.ini
+
+# 로컬 대화 실행 산출물과 인증값
+.chat-runtime/
+.env
+.env.*
+__pycache__/

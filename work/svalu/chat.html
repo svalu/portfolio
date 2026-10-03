@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Her — 희랑의 작업을 함께 읽는 AI</title>
+  <link rel="stylesheet" href="chat.css?v=20261003herchat">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script defer src="chat.js?v=20261003herchat"></script>
+</head>
+<body>
+  <main class="room">
+    <aside class="presence" aria-label="대화 오브젝트">
+      <div class="identity"><span class="wordmark">her<span>↗</span></span><span class="edition">A CONVERSATION WITH AI</span></div>
+      <div class="avatar" id="avatar"><div class="avatar-fallback" aria-hidden="true">✦</div></div>
+      <div class="presence-copy"><span class="eyebrow">다음 이야기는, 함께.</span><h1>어떤 작업이<br>궁금했어?</h1><p>희랑이 남긴 생각과 작업 기록을 읽고<br>너와 이야기하는 AI야.</p></div>
+      <div class="presence-footer"><span id="connection" role="status">공개 기록을 준비하고 있어</span><button type="button" id="memories">지난 기억 14개</button></div>
+    </aside>
+    <section class="conversation" aria-label="희랑의 작업에 관한 대화">
+      <header class="chat-header"><div><span class="live-dot"></span><strong>희랑의 작업실</strong><small id="mode">공개 기록으로 대화</small></div><button type="button" id="reset">새 대화 <span aria-hidden="true">↗</span></button></header>
+      <div class="thread" id="thread" role="log" aria-label="대화 내용" aria-live="off" tabindex="0">
+        <div class="welcome" id="welcome"><span class="speaker">HER · AI</span><p>방금 본 화면에서 궁금했던 게 있어?<br>어떻게 디자인했는지, AI와 뭘 만드는지 함께 얘기해 보자.</p><div class="suggestions" id="suggestions"><button type="button">상담 화면을 왜 OS처럼 만들었어?</button><button type="button">희랑은 AI와 어떻게 일해?</button><button type="button">Her는 어떤 경험을 만들려는 거야?</button></div></div>
+      </div>
+      <button type="button" class="latest" id="latest" hidden>새 답변으로 ↓</button>
+      <div class="answer-status" id="answerStatus" role="status" aria-live="polite"></div>
+      <form class="composer" id="composer"><label class="sr-only" for="question">궁금한 작업이나 생각</label><textarea id="question" rows="1" maxlength="1200" placeholder="궁금한 걸 편하게 물어봐" enterkeyhint="send"></textarea><button type="submit" id="send" aria-label="질문 보내기"><span aria-hidden="true">↑</span></button><button type="button" id="stop" hidden>멈춤</button></form>
+      <p class="disclosure" id="disclosure">공개 작업 기록을 참고해 답해. 틀릴 수 있고, 대화는 저장하지 않아.</p>
+    </section>
+  </main>
+  <dialog id="recordDialog"><div class="record-head"><strong id="recordTitle">참고한 기록</strong><button type="button" id="closeRecord" aria-label="기록 닫기">닫기 ✕</button></div><div id="recordBody"></div><p class="record-note">공개용으로 고른 기록만 보여줘. 개인적인 이야기와 회사 원본은 제외했어.</p></dialog>
+</body>
+</html>
