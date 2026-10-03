@@ -1,7 +1,26 @@
 /* The same report stays readable in the portfolio's phone viewport. */
+header nav a[aria-current="page"]{background:#191a16;color:#fff;box-shadow:0 2px 5px #191a1615}
+header nav a[aria-current="page"]:hover{background:#30312b;color:#fff}
+.easy-demo-card h2{margin:20px 0 12px;font-size:clamp(23px,3vw,32px);font-weight:600;line-height:1.35;word-break:keep-all}
+.easy-demo-card > p{color:#79776d;line-height:1.7;margin-bottom:20px}
+.easy-demo-card textarea{display:block;width:100%;min-height:180px;padding:20px;border:1px solid #dcdad2;border-radius:18px;background:#faf9f5;resize:vertical;font-family:inherit;font-size:17px;line-height:1.8}
+.easy-demo-card textarea:focus{outline:3px solid #ff541a30;border-color:#ff541a}
+.easy-actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.easy-actions button,.easy-actions a{display:flex;align-items:center;justify-content:center;min-height:52px;padding:12px 20px;border-radius:999px;border:1px solid #dcdad2;cursor:pointer;font:inherit}
+.easy-actions [data-next],.easy-actions a{background:#191a16;color:#fff;flex:1}
+.easy-actions button:disabled{opacity:.3;cursor:default}
+.easy-demo-card section{padding:18px 0;border-bottom:1px solid #e8e6de}
+.easy-demo-card section h3{font-weight:600;margin-bottom:10px}
+.easy-demo-card section p{line-height:1.8;overflow-wrap:anywhere}
 @media(max-width:640px){
   main,main .grid,main .grid > *,main section{min-width:0}
   main section > .flex{flex-wrap:wrap;gap:12px;padding-inline:16px}
   main section > .grid{padding-inline:16px}
   main section > .flex .shrink-0{max-width:100%}
 }
+
+.easy-demo-card > *{animation:easy-enter .28s ease-out both}
+@keyframes easy-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.easy-demo-card > *{animation:none}}
+
+.easy-progress{display:flex;gap:6px;flex:1}.easy-progress i{height:7px;flex:1;border-radius:999px;background:#e8e6de;transition:background .25s}.easy-progress .filled{background:#191a16}

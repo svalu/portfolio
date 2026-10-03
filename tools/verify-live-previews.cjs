@@ -26,7 +26,7 @@ function harness({ width = 1440, reduce = false } = {}) {
       if (m.type === 'hello') schedule(() => emit(f, { type: 'ready', stage: f.stage }), 1);
       if (m.type === 'action') schedule(() => {
         emit(f, { type: 'done', id: m.id });
-        const navigation = i === 4 ? {login:'weekly-home', 'open-actions':'weekly-actions', back:'weekly-home'}[m.action] : i === 5 && m.action === 'open-shopping' ? 'workshop-shopping' : null;
+        const navigation = i === 4 ? {login:'weekly-home', 'open-actions':'weekly-actions', back:'weekly-home', 'open-easy':'weekly-easy'}[m.action] : i === 5 ? {'open-people':'workshop-people','open-shopping':'workshop-shopping'}[m.action] : null;
         if (navigation) { f.stage = navigation; emit(f, {type:'ready', stage:f.stage}); }
         if (i === 2 && m.action === 'login') { f.stage = 'counseling-desktop'; emit(f, { type: 'ready', stage: f.stage }); }
       }, 20);
@@ -59,17 +59,17 @@ function harness({ width = 1440, reduce = false } = {}) {
 }
 (async () => {
   const method = harness(); method.ctx.scrollY = 2700;
-  await method.advance(43000);
+  await method.advance(75000);
   assert.equal(method.controls[3].dataset.state, 'done', 'Weekly completes on METHOD');
   assert.equal(method.controls[4].dataset.state, 'done', 'Workshop follows Weekly');
   const methodActions = method.actions();
   assert.equal(methodActions.filter(a=>a.frame<4).length, 0, 'hidden chapters stay still');
-  assert.deepEqual(methodActions.filter(a=>a.frame===4).map(a=>a.action), ['arrival','login','overview','attention','open-actions','actions','back','next']);
-  assert.deepEqual(methodActions.filter(a=>a.frame===5).map(a=>a.action), ['arrival','meeting','schedule','open-shopping','shopping']);
+  assert.deepEqual(methodActions.filter(a=>a.frame===4).map(a=>a.action), ['arrival','login','overview','open-easy','write-week','write-next','write-help','report']);
+  assert.deepEqual(methodActions.filter(a=>a.frame===5).map(a=>a.action), ['arrival','meeting','schedule','open-people','people','carpool','carousel','open-shopping','shopping','check-item','check-progress']);
   const methodManual = harness(); methodManual.ctx.scrollY = 2700;
   await methodManual.advance(1600); methodManual.emit(methodManual.frames[4], {type:'takeover'});
   const methodStopped = methodManual.actions().length;
-  await methodManual.advance(43000);
+  await methodManual.advance(75000);
   assert.equal(methodManual.actions().length, methodStopped, 'reading one app stops its companion tour');
   assert.equal(methodManual.controls[4].dataset.state, 'manual');
   const synced = harness(); await synced.advance(24000);

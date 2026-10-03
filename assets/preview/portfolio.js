@@ -47,18 +47,24 @@
       ['arrival', 'weekly-index', 'Weekly · 이름 하나로 팀의 이번 주에 들어갑니다', 1600],
       ['login', 'weekly-index', '여러 파일 대신 한 화면에서 시작합니다', 500],
       ['overview', 'weekly-home', '누가 보고했고, 무엇이 밀렸는지 먼저 봅니다', 2600],
-      ['attention', 'weekly-home', '지금 챙겨야 할 일을 찾아갑니다', 2800],
-      ['open-actions', 'weekly-home', '밀린 일에서 담당자와 기한으로 이어집니다', 500],
-      ['actions', 'weekly-actions', '누가 언제까지 해야 하는지 함께 확인합니다', 3200],
-      ['back', 'weekly-actions', '확인을 마치면 다시 이번 주로 돌아옵니다', 500],
-      ['next', 'weekly-home', '다음 행동은 내 할 일 가까이에 놓았습니다', 2600]
+      ['open-easy', 'weekly-home', '쉬운 작성에서 한 번에 한 질문씩 답합니다', 600],
+      ['write-week', 'weekly-easy', '이번 주 한 일을 짧은 문장으로 적습니다', 1800],
+      ['write-next', 'weekly-easy', '다음 질문은 앞으로 할 일입니다', 1800],
+      ['write-help', 'weekly-easy', '혼자 해결하기 어려운 일도 놓치지 않습니다', 1800],
+      ['report', 'weekly-easy', '세 번의 답변이 한 장의 주간보고가 됩니다 · 체험용 미리보기', 3500]
     ] },
     { id: 'workshop', section: 'd03', frame: workshop, mount: document.querySelector('#workshopGuide'), scenes: [
       ['arrival', 'workshop-index', '워크샵 · 단체방을 뒤지지 않고 하루를 준비합니다', 1800],
       ['meeting', 'workshop-index', '어디로, 몇 시까지 가면 되는지 먼저 봅니다', 2800],
       ['schedule', 'workshop-index', '모인 뒤의 일정도 순서대로 이어집니다', 3200],
-      ['open-shopping', 'workshop-index', '이제 함께 준비할 것을 확인합니다', 500],
-      ['shopping', 'workshop-shopping', '장보기 목록에서 준비물과 담당을 함께 봅니다', 3200]
+      ['open-people', 'workshop-index', '이번에는 누가 어떻게 오는지 확인합니다', 500],
+      ['people', 'workshop-people', '각자의 도착 시간과 이동 방법을 한눈에 봅니다', 2400],
+      ['carpool', 'workshop-people', '같이 타는 사람과 남은 자리를 확인합니다', 1800],
+      ['carousel', 'workshop-people', '차 카드를 넘겨 다음 차량까지 살펴봅니다', 2200],
+      ['open-shopping', 'workshop-people', '이제 함께 준비할 것을 확인합니다', 500],
+      ['shopping', 'workshop-shopping', '이제 장보기 목록에서 필요한 것을 확인합니다', 1800],
+      ['check-item', 'workshop-shopping', '구매 체크하면 목록에 완료 표시가 남습니다 · 데모', 2200],
+      ['check-progress', 'workshop-shopping', '완료 수와 진행 막대가 함께 바뀝니다', 2600]
     ] }
   ];
   const send = (f, message) => f.contentWindow?.postMessage({ channel, ...message }, origin);
@@ -177,7 +183,7 @@
       peer.stage = m.stage;
       if (peer.owner.id === 'weekly') {
         const label = peer.f.closest('.frame')?.querySelector('.bar > span');
-        if (label) label.textContent = { 'weekly-index': 'weekly / 시작', 'weekly-home': 'weekly / 이번 주', 'weekly-actions': 'weekly / 할 일' }[m.stage] || 'weekly';
+        if (label) label.textContent = { 'weekly-index': 'weekly / 시작', 'weekly-home': 'weekly / 이번 주', 'weekly-actions': 'weekly / 할 일', 'weekly-easy': 'weekly / 쉬운 작성' }[m.stage] || 'weekly';
       }
       return;
     }

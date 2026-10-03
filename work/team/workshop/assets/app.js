@@ -1,14 +1,22 @@
 /* 공통: 공유 저장소(Store), 내 이름 선택, 탭바, 토스트, 컨페티 */
 (function () {
   const CFG = window.WK_CONFIG;
+  const preview = new URLSearchParams(location.search).get('preview') === '1';
+  const memory = new Map();
+  const storage = preview ? { getItem: k => memory.get(k) || null, setItem: (k,v) => memory.set(k,String(v)) } : localStorage;
+  if (preview) document.addEventListener('click', e => {
+    const a = e.target.closest('a[href]'); if (!a) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin === location.origin && url.pathname.startsWith(location.pathname.slice(0,location.pathname.lastIndexOf('/')+1))) { url.searchParams.set('preview','1'); a.href = url.href; }
+  }, true);
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   /* ---------- 내 이름 ---------- */
   const ME_KEY = "wk_me";
-  function getMe() { try { return localStorage.getItem(ME_KEY) || ""; } catch { return ""; } }
-  function setMe(v) { try { localStorage.setItem(ME_KEY, v); } catch {} document.dispatchEvent(new CustomEvent("wk:me", { detail: v })); }
+  function getMe() { try { return storage.getItem(ME_KEY) || ""; } catch { return ""; } }
+  function setMe(v) { try { storage.setItem(ME_KEY, v); } catch {} document.dispatchEvent(new CustomEvent("wk:me", { detail: v })); }
 
   /* ---------- 토스트 ---------- */
   let toastEl, toastTimer;
@@ -41,7 +49,7 @@
      - 실패한 쓰기는 큐에 저장해 두고 연결되면 자동 재시도 (새로고침해도 유지)
      ===================================================================== */
   const S = CFG.storage || {};
-  const provider = S.provider || "local";
+  const provider = preview ? "local" : S.provider || "local";
 
   const adapters = {
     kvdb: {
@@ -99,11 +107,11 @@
   // writable: null = 아직 모름, true = 쓰기 가능, false = 읽기만 가능(저장소 인증 필요)
   const status = { online: provider !== "local", busy: false, writable: provider === "local" ? false : null, provider };
   let queue = [];
-  try { queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"); } catch {}
+  try { queue = JSON.parse(storage.getItem(QUEUE_KEY) || "[]"); } catch {}
 
-  const readCache = (col) => { try { return JSON.parse(localStorage.getItem(cacheKey(col)) || "null"); } catch { return null; } };
-  const writeCache = (col, v) => { try { localStorage.setItem(cacheKey(col), JSON.stringify(v)); } catch {} };
-  const saveQueue = () => { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(queue)); } catch {} };
+  const readCache = (col) => { try { return JSON.parse(storage.getItem(cacheKey(col)) || "null"); } catch { return null; } };
+  const writeCache = (col, v) => { try { storage.setItem(cacheKey(col), JSON.stringify(v)); } catch {} };
+  const saveQueue = () => { try { storage.setItem(QUEUE_KEY, JSON.stringify(queue)); } catch {} };
   const emit = (col) => (listeners[col] || []).forEach((fn) => { try { fn(state[col]); } catch (e) { console.error(e); } });
   const setStatus = (p) => { Object.assign(status, p); document.dispatchEvent(new CustomEvent("wk:status", { detail: { ...status } })); };
   const apply = (col, docs) => { state[col] = docs; writeCache(col, docs); emit(col); };
@@ -291,6 +299,7 @@
         const b = el.querySelector("b");
         if (!b) return;
         b.textContent =
+          preview ? "체험용 · 이 화면에서만 유지" :
           d.provider === "local" ? "내 기기에만 저장 (공유 저장소 미설정)" :
           !d.online ? "오프라인 (내 기기 저장, 자동 재시도)" :
           readOnly ? "저장 대기 중 — 저장소 인증 필요 (내 기기에만 저장)" :
@@ -299,6 +308,7 @@
     });
     if (provider === "local") setTimeout(() => setStatus({ online: false }), 0);
 
+    if (preview) $$(".footer").forEach(el => { el.textContent = "체험용 화면 · 체크와 수정은 서버로 전송되지 않고, 페이지를 나가면 초기화됩니다."; });
     initRipple();
     initPageTransition();
   }
