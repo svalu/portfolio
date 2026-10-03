@@ -521,7 +521,7 @@
       <div class="frame scaled" data-vw="1440" data-responsive="true" data-title="Weekly · 팀 주간업무"><button class="zoom" type="button">크게 보기</button><div class="label">WEEKLY · 엑셀로 돌던 팀 주간업무를 웹앱으로</div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>weekly / login</span></div>
         <div class="view"><iframe data-src="work/team/weekly/index.html?v=20261003guided" title="Weekly"></iframe></div></div></div>
-      <div class="phone" id="phone03" data-vw="390" data-vh="844" data-title="워크샵 앱 · 모바일"><button class="zoom" type="button">크게 보기</button>
+      <div class="phone" id="phone03" data-vw="390" data-vh="844" data-expand-vw="1440" data-expand-vh="900" data-title="워크샵 앱"><button class="zoom" type="button">크게 보기</button>
         <div class="view"><iframe data-src="work/team/workshop/index.html?preview=1&amp;v=20261003guided" title="Workshop app"></iframe></div>
       </div>
       <div id="workshopGuide"></div>
@@ -1026,8 +1026,9 @@ function initTabs01(){
   }
   function sizeView(){
     const responsive=NARROW&&(activeHost.classList.contains('phone')||activeHost.dataset.responsive==='true');
-    cur.w=full?lbStage.clientWidth:responsive?Math.max(280,innerWidth-24):(+activeHost.dataset.vw||1440);
-    cur.h=full?lbStage.clientHeight:responsive?Math.max(420,innerHeight-140):(+activeHost.dataset.vh||Math.round(cur.w*0.625));
+    const expanded=!NARROW&&activeHost.dataset.expandVw;
+    cur.w=full?lbStage.clientWidth:responsive?Math.max(280,innerWidth-24):(+(expanded?activeHost.dataset.expandVw:activeHost.dataset.vw)||1440);
+    cur.h=full?lbStage.clientHeight:responsive?Math.max(420,innerHeight-140):(+(expanded?activeHost.dataset.expandVh:activeHost.dataset.vh)||Math.round(cur.w*0.625));
     lbFrame.style.width=cur.w+'px';lbFrame.style.height=cur.h+'px';
   }
   function setMode(value){
@@ -1049,7 +1050,7 @@ function initTabs01(){
     lbTitle.textContent=host.dataset.title||'';
     if(!parked)lbFrame.src=src.getAttribute('src')||src.dataset.src;
     lastFocus=document.activeElement;
-    lb.hidden=false;lbMode.hidden=host.classList.contains('phone');setMode(mode==='full');
+    lb.hidden=false;lbMode.hidden=host.classList.contains('phone')&&!host.dataset.expandVw;setMode(mode==='full');
     requestAnimationFrame(function(){ if(!lb.hidden)lb.classList.add('on'); });
     openTimer=setTimeout(function(){
       lb.classList.add('on');
