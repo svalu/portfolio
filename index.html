@@ -394,6 +394,7 @@
     .frame .bar{height:44px!important}
     .frame .bar span{max-width:calc(100% - 108px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-left:2px!important}
     .frame[data-responsive="true"] .view{height:70svh!important;max-height:720px;margin-bottom:0!important;transform:none!important;width:100%!important}
+    .frame[data-responsive="true"] .view iframe{height:100%!important}
     .dim .evidence{position:relative;inset:auto;width:100%;order:8;margin-top:24px}
     .evidence summary{min-height:44px}
     #d03 .exhibit > .try{display:block;position:relative;inset:auto;order:6;font-size:12px;margin-top:12px;line-height:1.6}
@@ -413,7 +414,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="assets/preview/portfolio.css?v=20261003color">
+<link rel="stylesheet" href="assets/preview/portfolio.css?v=20261003story">
 </head>
 <body class="act0 locked">
 
@@ -519,10 +520,11 @@
       </div><div class="exhibit">
       <div class="frame scaled" data-vw="1440" data-responsive="true" data-title="Weekly · 팀 주간업무"><button class="zoom" type="button">크게 보기</button><div class="label">WEEKLY · 엑셀로 돌던 팀 주간업무를 웹앱으로</div>
         <div class="win"><div class="bar"><i></i><i></i><i></i><span>weekly / login</span></div>
-        <div class="view"><iframe data-src="work/team/weekly/index.html?v=20260919b" title="Weekly"></iframe></div></div></div>
+        <div class="view"><iframe data-src="work/team/weekly/index.html?v=20261003story" title="Weekly"></iframe></div></div></div>
       <div class="phone" id="phone03" data-vw="390" data-vh="844" data-title="워크샵 앱 · 모바일"><button class="zoom" type="button">크게 보기</button>
-        <div class="view"><iframe data-src="work/team/workshop/index.html?v=20260918" title="Workshop app"></iframe></div>
+        <div class="view"><iframe data-src="work/team/workshop/index.html?v=20261003story" title="Workshop app"></iframe></div>
       </div>
+      <div id="workshopGuide"></div>
       <details class="evidence"><summary>협업 중 남긴 기록 보기</summary><div class="nums">
         <div><b>3.4일 · 8분</b><span>실사용 로그 실측. 대화 단위를 턴에서 시간으로 다시 잡았다</span></div>
         <div><b>17일치</b><span>빠진 기록을 AI가 스스로 찾아 채워 넣었다</span></div>
@@ -1101,6 +1103,6 @@ function initTabs01(){
   });
 })();
 </script>
-<script src="assets/preview/portfolio.js?v=20261003color"></script>
+<script src="assets/preview/portfolio.js?v=20261003story"></script>
 </body>
 </html>

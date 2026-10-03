@@ -13,8 +13,8 @@ function harness({ width = 1440, reduce = false } = {}) {
     querySelector(k) { return this.parts?.[k]; }
     addEventListener(k, fn) { (this.events ||= {})[k] = fn; }
   }
-  const sections = Object.fromEntries(['d01', 'd02'].map((id, i) => [id, { classList: { contains: () => true }, get inert() { return width > 900 && Math.round(ctx.scrollY / 900) !== i + 1; } }]));
-  const mounts = [new Node(), new Node(), new Node()], stages = ['horizon', 'horizon', 'counseling-login', 'admin'];
+  const sections = Object.fromEntries(['d01', 'd02', 'd03'].map((id, i) => [id, { classList: { contains: () => true }, get inert() { return width > 900 && Math.round(ctx.scrollY / 900) !== i + 1; } }]));
+  const mounts = Array.from({length: 5}, () => new Node()), stages = ['horizon', 'horizon', 'counseling-login', 'admin', 'weekly-index', 'workshop-index'];
   const frames = stages.map((stage, i) => {
     const host = { getBoundingClientRect: () => ({ top: 100, bottom: 700, height: 600 }), contains: f => f === frames[i] };
     const f = new Node(); f.dataset.src = 'demo-' + i; f.stage = stage;
@@ -26,6 +26,8 @@ function harness({ width = 1440, reduce = false } = {}) {
       if (m.type === 'hello') schedule(() => emit(f, { type: 'ready', stage: f.stage }), 1);
       if (m.type === 'action') schedule(() => {
         emit(f, { type: 'done', id: m.id });
+        const navigation = i === 4 ? {login:'weekly-home', 'open-actions':'weekly-actions', back:'weekly-home'}[m.action] : i === 5 && m.action === 'open-shopping' ? 'workshop-shopping' : null;
+        if (navigation) { f.stage = navigation; emit(f, {type:'ready', stage:f.stage}); }
         if (i === 2 && m.action === 'login') { f.stage = 'counseling-desktop'; emit(f, { type: 'ready', stage: f.stage }); }
       }, 20);
     } };
@@ -33,7 +35,7 @@ function harness({ width = 1440, reduce = false } = {}) {
   });
   const tabs = new Node();
   const doc = { hidden: false, querySelector(k) { return {
-    '#d01 .frame iframe': frames[0], '#phone01 iframe': frames[1], '#fgrow iframe': frames[2], '#d02 .f2026 iframe': frames[3], '#d01 .story': mounts[0]
+    '#d01 .frame iframe': frames[0], '#phone01 iframe': frames[1], '#fgrow iframe': frames[2], '#d02 .f2026 iframe': frames[3], '#d01 .story': mounts[0], '#d03 .frame iframe':frames[4], '#phone03 iframe':frames[5], '#workshopGuide':mounts[4]
   }[k]; }, createElement: () => new Node(), getElementById: id => sections[id] || (id === 'tabs01' ? tabs : undefined), addEventListener(k, fn) { listeners['document:' + k] = fn; } };
   const ctx = { document: doc, location: { origin: 'http://localhost:5500' }, innerWidth: width, innerHeight: 900, scrollY: 900,
     performance: { now: () => now }, matchMedia: () => ({ matches: reduce, addEventListener() {} }),
@@ -56,6 +58,20 @@ function harness({ width = 1440, reduce = false } = {}) {
   return { ctx, doc, frames, messages, advance, controls, emit, tabs, actions: () => messages.filter(m => m.type === 'action') };
 }
 (async () => {
+  const method = harness(); method.ctx.scrollY = 2700;
+  await method.advance(43000);
+  assert.equal(method.controls[3].dataset.state, 'done', 'Weekly completes on METHOD');
+  assert.equal(method.controls[4].dataset.state, 'done', 'Workshop follows Weekly');
+  const methodActions = method.actions();
+  assert.equal(methodActions.filter(a=>a.frame<4).length, 0, 'hidden chapters stay still');
+  assert.deepEqual(methodActions.filter(a=>a.frame===4).map(a=>a.action), ['arrival','login','overview','attention','open-actions','actions','back','next']);
+  assert.deepEqual(methodActions.filter(a=>a.frame===5).map(a=>a.action), ['arrival','meeting','schedule','open-shopping','shopping']);
+  const methodManual = harness(); methodManual.ctx.scrollY = 2700;
+  await methodManual.advance(1600); methodManual.emit(methodManual.frames[4], {type:'takeover'});
+  const methodStopped = methodManual.actions().length;
+  await methodManual.advance(43000);
+  assert.equal(methodManual.actions().length, methodStopped, 'reading one app stops its companion tour');
+  assert.equal(methodManual.controls[4].dataset.state, 'manual');
   const synced = harness(); await synced.advance(24000);
   assert.equal(synced.controls[0].dataset.state, 'done');
   assert.deepEqual(synced.actions().filter(x => x.frame === 0).map(x => x.action), ['arrival', 'login', 'dashboard', 'attention', 'agents', 'ai-mode', 'ai-analysis']);

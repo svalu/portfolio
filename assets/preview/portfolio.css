@@ -6,6 +6,12 @@
 .preview-controls button:hover{background:var(--line)}
 .preview-controls button:focus-visible{outline:2px solid var(--acc2);outline-offset:3px}
 .frame > .preview-controls{padding-inline:8px;padding-bottom:8px}
+#workshopGuide{position:absolute;bottom:66px;left:0;width:68%;z-index:5;background:var(--paper)}
+#workshopGuide .preview-controls{padding:10px 0;align-items:center}
+#d03 .frame .preview-controls{background:var(--paper);border-radius:0 0 16px 16px}
+@media(max-width:900px){
+  #workshopGuide{position:relative;inset:auto;width:100%;order:4;margin-top:-24px}
+}
 /* The live screen's viewing tools belong to its title bar. */
 .dim .frame .bar{padding-right:5px;gap:6px;}
 .dim .frame .bar > i{flex:none;}

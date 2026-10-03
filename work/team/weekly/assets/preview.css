@@ -1,0 +1,7 @@
+/* The same report stays readable in the portfolio's phone viewport. */
+@media(max-width:640px){
+  main,main .grid,main .grid > *,main section{min-width:0}
+  main section > .flex{flex-wrap:wrap;gap:12px;padding-inline:16px}
+  main section > .grid{padding-inline:16px}
+  main section > .flex .shrink-0{max-width:100%}
+}

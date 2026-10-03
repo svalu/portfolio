@@ -7,6 +7,8 @@
   const phone = document.querySelector('#phone01 iframe');
   const counseling = document.querySelector('#fgrow iframe');
   const admin = document.querySelector('#d02 .f2026 iframe');
+  const weekly = document.querySelector('#d03 .frame iframe');
+  const workshop = document.querySelector('#phone03 iframe');
   const peers = new Map(), pending = new Map();
   const sectionLocks = new Set();
   let sequence = 0, active = null;
@@ -40,6 +42,23 @@
       ['analytics', 'admin', '분석 창을 더해 원인을 확인합니다', 3000],
       ['minimize', 'admin', '잠깐 접어 둬도 작업은 사라지지 않습니다', 1600],
       ['restore', 'admin', '작업표시줄에서 하던 화면으로 돌아옵니다', 2400]
+    ] },
+    { id: 'weekly', section: 'd03', frame: weekly, mount: weekly?.closest('.frame'), scenes: [
+      ['arrival', 'weekly-index', 'Weekly · 이름 하나로 팀의 이번 주에 들어갑니다', 1600],
+      ['login', 'weekly-index', '여러 파일 대신 한 화면에서 시작합니다', 500],
+      ['overview', 'weekly-home', '누가 보고했고, 무엇이 밀렸는지 먼저 봅니다', 2600],
+      ['attention', 'weekly-home', '지금 챙겨야 할 일을 찾아갑니다', 2800],
+      ['open-actions', 'weekly-home', '밀린 일에서 담당자와 기한으로 이어집니다', 500],
+      ['actions', 'weekly-actions', '누가 언제까지 해야 하는지 함께 확인합니다', 3200],
+      ['back', 'weekly-actions', '확인을 마치면 다시 이번 주로 돌아옵니다', 500],
+      ['next', 'weekly-home', '다음 행동은 내 할 일 가까이에 놓았습니다', 2600]
+    ] },
+    { id: 'workshop', section: 'd03', frame: workshop, mount: document.querySelector('#workshopGuide'), scenes: [
+      ['arrival', 'workshop-index', '워크샵 · 단체방을 뒤지지 않고 하루를 준비합니다', 1800],
+      ['meeting', 'workshop-index', '어디로, 몇 시까지 가면 되는지 먼저 봅니다', 2800],
+      ['schedule', 'workshop-index', '모인 뒤의 일정도 순서대로 이어집니다', 3200],
+      ['open-shopping', 'workshop-index', '이제 함께 준비할 것을 확인합니다', 500],
+      ['shopping', 'workshop-shopping', '장보기 목록에서 준비물과 담당을 함께 봅니다', 3200]
     ] }
   ];
   const send = (f, message) => f.contentWindow?.postMessage({ channel, ...message }, origin);
@@ -81,6 +100,7 @@
     tour.caption.textContent = tour.state === 'manual' ? '지금 보던 화면을 직접 만져보세요' : tour.state === 'done' ? '이제 직접 눌러보세요 · 화면은 그대로 이어집니다' : tour.state === 'error' ? '화면을 직접 둘러보거나 다시 재생해 보세요' : tour.scenes[tour.index]?.[2] || '업무 흐름을 짧게 보여드립니다';
     if (tour.id === 'horizon' && tour.index === 4 && !/live\.html/.test(tour.source) && ['running', 'paused', 'idle'].includes(tour.state)) tour.caption.textContent = '최근 이벤트에서 상담 흐름을 확인합니다';
     tour.meta.textContent = tour.state === 'manual' ? '직접 체험 중' : tour.state === 'done' ? '둘러보기 완료' : tour.state === 'running' ? `자동 둘러보기 · ${tour.index + 1} / ${tour.scenes.length}` : tour.state === 'paused' ? '둘러보기 멈춤' : '실제 화면으로 보는 업무 흐름';
+    if (tour.id === 'weekly' || tour.id === 'workshop') tour.meta.textContent = `${tour.id === 'weekly' ? 'Weekly' : '워크샵'} · ${tour.meta.textContent}`;
     tour.play.textContent = tour.state === 'running' ? '멈춤' : tour.state === 'paused' ? '이어보기' : '흐름 보기';
     tour.play.hidden = ['done', 'manual', 'error'].includes(tour.state);
     tour.replay.hidden = tour.state === 'idle';
@@ -130,7 +150,7 @@
   const tours = configurations.filter(c => c.frame && c.mount).map(c => {
     const controls = document.createElement('div'); controls.className = 'preview-controls'; controls.dataset.preview = c.id;
     controls.setAttribute('role', 'group');
-    controls.setAttribute('aria-label', { horizon: 'Blue Horizon 업무 흐름', counseling: '상담사 OS 업무 흐름', admin: '관리자 OS 업무 흐름' }[c.id]);
+    controls.setAttribute('aria-label', { horizon: 'Blue Horizon 업무 흐름', counseling: '상담사 OS 업무 흐름', admin: '관리자 OS 업무 흐름', weekly: 'Weekly 업무 흐름', workshop: '워크샵 준비 흐름' }[c.id]);
     controls.innerHTML = '<div class="preview-copy"><small></small><span class="preview-caption"></span></div><button type="button" class="preview-play">흐름 보기</button><button type="button" class="preview-replay">다시 보기</button>';
     c.mount.append(controls);
     const t = { ...c, controls, meta: controls.querySelector('small'), caption: controls.querySelector('.preview-caption'), play: controls.querySelector('.preview-play'), replay: controls.querySelector('.preview-replay'), index: 0, state: 'idle', phase: 'new', token: 0, autoResume: false, visibleSince: 0, source: c.frame.dataset.src };
@@ -143,7 +163,7 @@
     if (document.hidden || document.getElementById('lb')?.classList.contains('on')) return false;
     const section = document.getElementById(tour.section);
     if (!section.classList.contains('in') || section.inert) return false;
-    if (!narrow()) return Math.abs(scrollY / innerHeight - (tour.section === 'd01' ? 1 : 2)) < .18;
+    if (!narrow()) return Math.abs(scrollY / innerHeight - Number(tour.section.slice(1))) < .18;
     const f = tour.companion || tour.frame, r = f.closest('.phone,.frame').getBoundingClientRect();
     const overlap = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
     return overlap > Math.min(r.height, innerHeight) * .5;
@@ -153,7 +173,14 @@
     if (event.origin !== origin || m?.channel !== channel) return;
     const peer = [...peers.values()].find(p => p.f.contentWindow === event.source && p.session === m.session);
     if (!peer) return;
-    if (m.type === 'ready') { peer.stage = m.stage; return; }
+    if (m.type === 'ready') {
+      peer.stage = m.stage;
+      if (peer.owner.id === 'weekly') {
+        const label = peer.f.closest('.frame')?.querySelector('.bar > span');
+        if (label) label.textContent = { 'weekly-index': 'weekly / 시작', 'weekly-home': 'weekly / 이번 주', 'weekly-actions': 'weekly / 할 일' }[m.stage] || 'weekly';
+      }
+      return;
+    }
     if (m.type === 'takeover') { takeover(peer.owner); return; }
     const request = pending.get(m.id);
     if (!request || request.f !== peer.f) return;
