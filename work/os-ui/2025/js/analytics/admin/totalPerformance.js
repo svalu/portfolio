@@ -134,8 +134,9 @@ $(document).ready(function() {
 
     loadUpperChartDatas();
     var currentDate = new Date();
-    var currentMonth = currentDate.toISOString().slice(0, 7);
-    $("#monthInput").val(currentMonth);
+    // A completed month shows a full trend without future days falling to zero.
+    var reportMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    $("#monthInput").val(reportMonth.getFullYear() + "-" + String(reportMonth.getMonth() + 1).padStart(2, "0"));
     loadLowerChartDatas();
 
     initCombo();

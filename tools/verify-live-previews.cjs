@@ -84,11 +84,11 @@ function harness({ width = 1440, reduce = false } = {}) {
   assert.equal(phone.actions().filter(x => x.frame === 0).length, 0, 'hidden desktop iframe receives no scenes');
   assert.equal(phone.controls[0].dataset.state, 'done');
 
-  const os = harness(); os.ctx.scrollY = 1800; await os.advance(32000);
+  const os = harness(); os.ctx.scrollY = 1800; await os.advance(42000);
   assert.equal(os.controls[1].dataset.state, 'done', 'login navigation waits for the new document');
   assert.equal(os.controls[2].dataset.state, 'done');
   const osActions = os.actions();
-  assert.deepEqual(osActions.filter(x=>x.frame===2).map(x=>x.action),['arrival','password-find','password-mail','login','dashboard','performance','arrange','error','game','return']);
+  assert.deepEqual(osActions.filter(x=>x.frame===2).map(x=>x.action),['arrival','password-find','password-mail','login','dashboard','performance','performance-trend','performance-quality','arrange','error','game','return']);
   assert.ok(osActions.findIndex(x => x.frame === 3) > osActions.findIndex(x => x.action === 'return'), 'OS scenes play sequentially after returning to work');
   const osPause = harness(); osPause.ctx.scrollY = 1800; await osPause.advance(1500); osPause.controls[1].parts['.preview-play'].onclick();
   await osPause.advance(24000); assert.equal(osPause.actions().filter(x => x.frame === 3).length, 0, 'pause does not start the other OS preview');

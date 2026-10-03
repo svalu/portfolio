@@ -38,6 +38,34 @@
     await p.wait(()=>host._dragCleanup && host.querySelector('iframe')?.contentWindow?.CounselingGame,signal);
     return host;
   }
+  // Scroll the real chart pane; stop exactly where a visitor takes over.
+  async function scrollPerformance(host, chartId, signal) {
+    const child=host.querySelector('iframe').contentWindow, doc=child.document;
+    const pane=doc.querySelector('.workspace.performance');
+    let target=0;
+    if(chartId){
+      const canvas=await p.wait(()=>{
+        const node=doc.getElementById(chartId), chart=child.Chart?.getChart(node);
+        return chart?.data.datasets.some(series=>series.data.some(value=>Number(value)>0)) && node;
+      },signal);
+      const heading=chartId==='monthlyCountChart'?canvas.closest('.workspace_sub'):canvas.parentElement;
+      target=pane.scrollTop+heading.getBoundingClientRect().top-pane.getBoundingClientRect().top-12;
+    }
+    target=Math.max(0,Math.min(target,pane.scrollHeight-pane.clientHeight));
+    const from=pane.scrollTop, start=performance.now(), duration=reduced()||Math.abs(from-target)<1?0:1100;
+    await new Promise((resolve,reject)=>{
+      let raf;
+      const finish=error=>{cancelAnimationFrame(raf);signal.removeEventListener('abort',cancel);error?reject(error):resolve();};
+      const cancel=()=>finish(new DOMException('Preview stopped','AbortError'));
+      const tick=now=>{
+        if(signal.aborted)return cancel();
+        const t=duration?Math.min(1,(now-start)/duration):1, eased=t*t*(3-2*t);
+        pane.scrollTop=from+(target-from)*eased;
+        t<1?raf=requestAnimationFrame(tick):finish();
+      };
+      signal.addEventListener('abort',cancel,{once:true});tick(start);
+    });
+  }
   p.register({
     stage: login ? 'counseling-login' : 'counseling-desktop',
     async run(action, signal) {
@@ -66,9 +94,15 @@
       if(action==='performance'){
         const host=await open('전체 실적',signal), doc=host.querySelector('iframe').contentDocument;
         await p.wait(()=>parseInt(doc.getElementById('totalCnslCnt')?.textContent.replace(/,/g,''))>0,signal);
+        await scrollPerformance(host,null,signal);
         p.focus(host);return;
       }
+      if(action==='performance-trend'||action==='performance-quality'){
+        const host=await open('전체 실적',signal);p.focus(host);
+        await scrollPerformance(host,action==='performance-trend'?'monthlyCountChart':'monthlyAvgHourChart',signal);return;
+      }
       if(action==='arrange'){
+        await scrollPerformance(await open('전체 실적',signal),null,signal);
         const dashboard=await open('대시보드',signal);
         await move(dashboard,{x:24,y:100},signal);
         const performance=await open('전체 실적',signal), box=performance.getBoundingClientRect();

@@ -7,13 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.7, maximum-scale=0.7, user-scalable=yes">
     <title>COUNSELING OS</title>
     <link rel="stylesheet" type="text/css" href="../css/main.css?v=20260919d">
+    <style>
+        /* Keep the OS's measured window size while fitting its scroll pane to the visible viewport. */
+        .iframe_body { height: 800px; overflow: hidden; }
+        .workspace.performance { height: min(800px, 100vh); min-height: 0; }
+    </style>
     <script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="../mock/mock-api.js?v=20261001c"></script>
     <script type="text/javascript" src="../js/common/rightMouseClickEvent.js"></script>
     <script type="text/javascript" src="../js/chart.js"></script>
     <script type="text/javascript" src="../js/common/acs.js"></script>
     <script type="text/javascript" src="../js/common/dateFormat.js"></script>
-    <script type="text/javascript" src="../js/analytics/admin/totalPerformance.js"></script>
+    <script type="text/javascript" src="../js/analytics/admin/totalPerformance.js?v=20261003view"></script>
     <script type="text/javascript" src="../js/analytics/analyticsChat.js"></script>
     <script>
         const mbrType = "SYS_ADMIN";

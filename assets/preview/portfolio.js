@@ -27,6 +27,8 @@
       ['login', 'counseling-login', '일할 책상으로 들어갑니다', 600],
       ['dashboard', 'counseling-desktop', '대시보드에서 오늘의 상담 흐름을 확인합니다', 2200],
       ['performance', 'counseling-desktop', '전체 실적을 열어 상담 분포와 평점을 봅니다', 2600],
+      ['performance-trend', 'counseling-desktop', '아래로 내려가 월별 상담 건수의 흐름을 봅니다', 2200],
+      ['performance-quality', 'counseling-desktop', '상담 시간과 평점까지 같은 창에서 확인합니다', 2400],
       ['arrange', 'counseling-desktop', '창을 끌어 옮겨 두 화면을 함께 펼칩니다', 1700],
       ['error', 'counseling-desktop', '404에도 돌아갈 길과 잠깐의 놀이를 넣었습니다', 2000],
       ['game', 'counseling-desktop', '오류 화면에 숨겨 둔 공룡 게임도 움직입니다', 600],
