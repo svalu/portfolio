@@ -654,6 +654,19 @@ const mat = new THREE.MeshPhysicalMaterial({
   clearcoat:.65, clearcoatRoughness:.14, envMapIntensity:1.05,
 
 });
+/* Move the baked studio around the surface, without baking it again each frame.
+   Rotate diffuse and specular lookup together so the reflected room stays coherent. */
+const studioRotation = {value:new THREE.Matrix3()};
+const studioYaw = new THREE.Matrix4(), studioTilt = new THREE.Matrix4();
+mat.onBeforeCompile = shader => {
+  shader.uniforms.studioRotation = studioRotation;
+  const studioChunk = THREE.ShaderChunk.envmap_physical_pars_fragment
+    .replace('textureCubeUV( envMap, worldNormal, 1.0 )', 'textureCubeUV( envMap, studioRotation * worldNormal, 1.0 )')
+    .replace('textureCubeUV( envMap, reflectVec, roughness )', 'textureCubeUV( envMap, studioRotation * reflectVec, roughness )');
+  shader.fragmentShader = shader.fragmentShader.replace('#include <envmap_physical_pars_fragment>',
+    'uniform mat3 studioRotation;\n'+studioChunk);
+};
+mat.customProgramCacheKey = () => 'moving-studio-r128-v1';
 const bodyM = new THREE.Mesh(lathe, mat);
 const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.position.y = 4.15;
 const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
@@ -696,7 +709,7 @@ let lightPhase = 0;
   };
   // Tall softboxes give the curved body a continuous reflection rather than isolated dots.
   panel(-6.0, 1.5, 5.0, 2.8, 10.0, 1.80);
-  panel( 6.0, 2.0, 3.0, 1.2, 8.0, 1.40);
+  panel( 6.0, 2.0, 3.0, 0.75, 9.0, 1.80);
   panel(-2.5, 7.0, 2.0, 7.0, 2.0, 1.10);
   panel( 3.0, -4.5, 5.0, 5.0, 1.4, 0.55);
   const pm = new THREE.PMREMGenerator(renderer);
@@ -938,10 +951,16 @@ function frame(){
     vel.x = (mouse.x - sm.x)*follow(.085); vel.y = (mouse.y - sm.y)*follow(.085); sm.x += vel.x; sm.y += vel.y; spin += vel.x*2.2; spin *= Math.pow(.965,dt*60);
   group.rotation.y = (reducedMotion ? 0 : now*.16) + (sm.x*1.4 + spin)*live;   /* 반사가 흘러야 금속으로 읽힌다 */ group.rotation.x = -sm.y*.42*live; group.rotation.z = 0;
   ball.position.x = sm.x*.7*live; ball.position.z = -sm.y*1.2*live; ball.position.y = 4.15 + (reducedMotion ? 0 : Math.sin(now*1.3)*.06);
-  if(!reducedMotion && !document.hidden) lightPhase += dt*.32;
+  if(!reducedMotion && !document.hidden) lightPhase += dt*(Math.PI*2/14);
   const lightMotion = reducedMotion ? 0 : live;
-  const sweepX = Math.sin(lightPhase)*2.1*lightMotion;
-  const sweepY = (Math.cos(lightPhase*.73)-1)*.9*lightMotion;
+  // Linger at either side, then cross the curve: a sweep rather than a constant orbit.
+  const sweep = Math.tanh(Math.sin(lightPhase)*2.2)/Math.tanh(2.2);
+  const focus = NARROW ? 1-.45*clamp01(scrollY/innerHeight) : 1-.45*clamp01(prog);
+  const sweepX = sweep*3.6*lightMotion;
+  const sweepY = Math.sin(lightPhase*.73)*1.15*lightMotion;
+  studioYaw.makeRotationY(sweep*1.12*lightMotion*focus+sm.x*.28*live);
+  studioTilt.makeRotationZ(Math.sin(lightPhase*.61)*.14*lightMotion*focus);
+  studioRotation.value.setFromMatrix4(studioYaw.multiply(studioTilt));
   key.target.position.copy(group.position);
   rim.target.position.copy(group.position);
   key.position.set(wx-4+sweepX+sm.x*14*live, wy+6+sweepY-sm.y*10*live, 8);
