@@ -14,57 +14,57 @@
   let sequence = 0, active = null;
   const configurations = [
     { id: 'horizon', section: 'd01', frame: horizon, companion: phone, mount: document.querySelector('#d01 .story'), scenes: [
-      ['arrival', 'horizon', '로그인에서 운영 화면으로 이어집니다', 1800],
-      ['login', 'horizon', '로그인하고 운영 화면으로 들어갑니다', 700],
-      ['dashboard', 'horizon', '지금 대기와 처리 상황을 먼저 봅니다', 2600],
-      ['attention', 'horizon', '쌓인 대기에서 주의할 항목을 찾습니다', 2800],
-      ['agents', 'horizon', '상담원 상황까지 이어서 확인합니다', 2200],
-      ['ai-mode', 'horizon', 'AI 모드에서 필요한 분석을 물어봅니다', 1800],
-      ['ai-analysis', 'horizon', '분석 질문을 누르면 답변과 그래프가 함께 열립니다', 4500]
+      ['arrival', 'horizon', '로그인하면 어떤 정보를 먼저 보게 되는지 보여드릴게요', 1800],
+      ['login', 'horizon', '운영 화면으로 들어가 볼게요', 700],
+      ['dashboard', 'horizon', '지금 몇 명이 기다리고 있는지 먼저 봐요', 2600],
+      ['attention', 'horizon', '대기가 밀리면, 주의가 필요한 항목을 확인해요', 2800],
+      ['agents', 'horizon', '상담원 상태도 함께 확인할 수 있어요', 2200],
+      ['ai-mode', 'horizon', '더 자세히 알고 싶으면 AI 모드에서 물어봐요', 1800],
+      ['ai-analysis', 'horizon', '질문을 누르면 답변과 그래프를 함께 볼 수 있어요', 4500]
     ] },
     { id: 'counseling', section: 'd02', frame: counseling, mount: counseling?.closest('.frame'), scenes: [
-      ['arrival', 'counseling-login', '상담사의 하루는 로그인에서 시작합니다', 1400],
-      ['password-find', 'counseling-login', '비밀번호를 잊었을 때도 다음 행동이 보입니다', 1600],
-      ['password-mail', 'counseling-login', '봉투가 접히고 날아가며 발송 과정을 알려줍니다', 900],
-      ['login', 'counseling-login', '일할 책상으로 들어갑니다', 600],
-      ['dashboard', 'counseling-desktop', '대시보드에서 오늘의 상담 흐름을 확인합니다', 2200],
-      ['performance', 'counseling-desktop', '전체 실적을 열어 상담 분포와 평점을 봅니다', 2600],
-      ['performance-trend', 'counseling-desktop', '아래로 내려가 월별 상담 건수의 흐름을 봅니다', 2200],
-      ['performance-quality', 'counseling-desktop', '상담 시간과 평점까지 같은 창에서 확인합니다', 2400],
-      ['arrange', 'counseling-desktop', '창을 끌어 옮겨 두 화면을 함께 펼칩니다', 1700],
-      ['error', 'counseling-desktop', '404에도 돌아갈 길과 잠깐의 놀이를 넣었습니다', 2000],
-      ['game', 'counseling-desktop', '오류 화면에 숨겨 둔 공룡 게임도 움직입니다', 600],
-      ['return', 'counseling-desktop', '쉬었다 돌아와도 펼쳐 둔 작업은 그대로입니다', 2000]
+      ['arrival', 'counseling-login', '상담사 화면은 로그인부터 보여드릴게요', 1400],
+      ['password-find', 'counseling-login', '비밀번호를 잊었다면, 여기서 찾을 수 있어요', 1600],
+      ['password-mail', 'counseling-login', '메일을 보내는 동안에도 진행 상황이 보이도록 했어요', 900],
+      ['login', 'counseling-login', '로그인하고 업무를 시작해 볼게요', 600],
+      ['dashboard', 'counseling-desktop', '오늘 상담이 어떻게 진행되고 있는지 먼저 봐요', 2200],
+      ['performance', 'counseling-desktop', '전체 실적을 열면 상담 분포와 평점을 볼 수 있어요', 2600],
+      ['performance-trend', 'counseling-desktop', '월별로 상담 건수가 어떻게 달라졌는지도 살펴봐요', 2200],
+      ['performance-quality', 'counseling-desktop', '상담 시간과 평점도 같은 창에서 이어서 봐요', 2400],
+      ['arrange', 'counseling-desktop', '창을 옮겨두면 두 정보를 함께 비교할 수 있어요', 1700],
+      ['error', 'counseling-desktop', '페이지를 못 찾았을 때도 돌아가는 방법을 보여줘요', 2000],
+      ['game', 'counseling-desktop', '기다리는 동안 해볼 수 있는 작은 게임도 넣었어요', 600],
+      ['return', 'counseling-desktop', '돌아오면 아까 펼쳐둔 작업을 그대로 이어갈 수 있어요', 2000]
     ] },
     { id: 'admin', section: 'd02', frame: admin, mount: admin?.closest('.frame'), scenes: [
-      ['arrival', 'admin', '같은 책상을 관리자 도구로 넓혔습니다', 1600],
-      ['dashboard', 'admin', '대시보드에서 전화 대기 증가를 발견합니다', 2400],
-      ['analytics', 'admin', '분석 창을 더해 원인을 확인합니다', 3000],
-      ['minimize', 'admin', '잠깐 접어 둬도 작업은 사라지지 않습니다', 1600],
-      ['restore', 'admin', '작업표시줄에서 하던 화면으로 돌아옵니다', 2400]
+      ['arrival', 'admin', '관리자 업무에도 같은 방식을 적용해 봤어요', 1600],
+      ['dashboard', 'admin', '대시보드에서 전화 대기가 늘어난 걸 확인해요', 2400],
+      ['analytics', 'admin', '분석 창을 함께 열고 원인을 살펴봐요', 3000],
+      ['minimize', 'admin', '잠깐 접어둔 창은 작업표시줄에 남아 있어요', 1600],
+      ['restore', 'admin', '여기서 누르면 하던 화면으로 바로 돌아와요', 2400]
     ] },
     { id: 'weekly', section: 'd03', frame: weekly, mount: weekly?.closest('.frame'), scenes: [
-      ['arrival', 'weekly-index', 'Weekly · 이름 하나로 팀의 이번 주에 들어갑니다', 1600],
-      ['login', 'weekly-index', '여러 파일 대신 한 화면에서 시작합니다', 500],
-      ['overview', 'weekly-home', '누가 보고했고, 무엇이 밀렸는지 먼저 봅니다', 2600],
-      ['open-easy', 'weekly-home', '쉬운 작성에서 한 번에 한 질문씩 답합니다', 600],
-      ['write-week', 'weekly-easy', '이번 주 한 일을 짧은 문장으로 적습니다', 1800],
-      ['write-next', 'weekly-easy', '다음 질문은 앞으로 할 일입니다', 1800],
-      ['write-help', 'weekly-easy', '혼자 해결하기 어려운 일도 놓치지 않습니다', 1800],
-      ['report', 'weekly-easy', '세 번의 답변이 한 장의 주간보고가 됩니다 · 체험용 미리보기', 3500]
+      ['arrival', 'weekly-index', '이름을 고르고 이번 주 업무를 확인해 볼게요', 1600],
+      ['login', 'weekly-index', '팀의 업무를 한곳에서 볼 수 있어요', 500],
+      ['overview', 'weekly-home', '누가 보고했는지, 아직 남은 일은 무엇인지 먼저 봐요', 2600],
+      ['open-easy', 'weekly-home', '보고서가 막막하면, 질문에 하나씩 답해 보세요', 600],
+      ['write-week', 'weekly-easy', '먼저 이번 주에 한 일을 짧게 적어요', 1800],
+      ['write-next', 'weekly-easy', '그다음엔 다음 주에 할 일을 적어볼까요?', 1800],
+      ['write-help', 'weekly-easy', '마지막으로 도움이 필요한 일도 함께 남겨요', 1800],
+      ['report', 'weekly-easy', '이렇게 답한 내용을 한 장의 주간보고로 정리해 줘요 · 체험용', 3500]
     ] },
     { id: 'workshop', section: 'd03', frame: workshop, mount: document.querySelector('#workshopGuide'), scenes: [
-      ['arrival', 'workshop-index', '워크샵 · 단체방을 뒤지지 않고 하루를 준비합니다', 1800],
-      ['meeting', 'workshop-index', '어디로, 몇 시까지 가면 되는지 먼저 봅니다', 2800],
-      ['schedule', 'workshop-index', '모인 뒤의 일정도 순서대로 이어집니다', 3200],
-      ['open-people', 'workshop-index', '이번에는 누가 어떻게 오는지 확인합니다', 500],
-      ['people', 'workshop-people', '각자의 도착 시간과 이동 방법을 한눈에 봅니다', 2400],
-      ['carpool', 'workshop-people', '같이 타는 사람과 남은 자리를 확인합니다', 1800],
-      ['carousel', 'workshop-people', '차 카드를 넘겨 다음 차량까지 살펴봅니다', 2200],
-      ['open-shopping', 'workshop-people', '이제 함께 준비할 것을 확인합니다', 500],
-      ['shopping', 'workshop-shopping', '이제 장보기 목록에서 필요한 것을 확인합니다', 1800],
-      ['check-item', 'workshop-shopping', '구매 체크하면 목록에 완료 표시가 남습니다 · 데모', 2200],
-      ['check-progress', 'workshop-shopping', '완료 수와 진행 막대가 함께 바뀝니다', 2600]
+      ['arrival', 'workshop-index', '워크샵 준비도 순서대로 함께 볼까요?', 1800],
+      ['meeting', 'workshop-index', '어디로, 몇 시까지 가면 되는지 먼저 확인해요', 2800],
+      ['schedule', 'workshop-index', '도착한 뒤에는 무엇을 할지도 순서대로 볼 수 있어요', 3200],
+      ['open-people', 'workshop-index', '이번에는 누가 어떻게 오는지 살펴볼게요', 500],
+      ['people', 'workshop-people', '각자의 도착 시간과 이동 방법을 함께 확인해요', 2400],
+      ['carpool', 'workshop-people', '어느 차에 누가 타는지, 빈자리가 있는지 볼 수 있어요', 1800],
+      ['carousel', 'workshop-people', '차 카드를 옆으로 넘기면 다른 차량도 볼 수 있어요', 2200],
+      ['open-shopping', 'workshop-people', '이제 장보기를 준비해 볼게요', 500],
+      ['shopping', 'workshop-shopping', '무엇을 얼마나 사야 하는지 목록에서 확인해요', 1800],
+      ['check-item', 'workshop-shopping', '산 물건은 체크해서 함께 확인할 수 있어요 · 체험용', 2200],
+      ['check-progress', 'workshop-shopping', '체크할 때마다 얼마나 준비됐는지도 함께 보여줘요', 2600]
     ] }
   ];
   const send = (f, message) => f.contentWindow?.postMessage({ channel, ...message }, origin);
@@ -103,9 +103,9 @@
   function render(tour) {
     tour.controls.dataset.state = tour.state;
     tour.controls.dataset.scene = tour.scenes[tour.index]?.[0] || 'complete';
-    tour.caption.textContent = tour.state === 'manual' ? '지금 보던 화면을 직접 만져보세요' : tour.state === 'done' ? '이제 직접 눌러보세요 · 화면은 그대로 이어집니다' : tour.state === 'error' ? '화면을 직접 둘러보거나 다시 재생해 보세요' : tour.scenes[tour.index]?.[2] || '업무 흐름을 짧게 보여드립니다';
-    if (tour.id === 'horizon' && tour.index === 4 && !/live\.html/.test(tour.source) && ['running', 'paused', 'idle'].includes(tour.state)) tour.caption.textContent = '최근 이벤트에서 상담 흐름을 확인합니다';
-    tour.meta.textContent = tour.state === 'manual' ? '직접 체험 중' : tour.state === 'done' ? '둘러보기 완료' : tour.state === 'running' ? `자동 둘러보기 · ${tour.index + 1} / ${tour.scenes.length}` : tour.state === 'paused' ? '둘러보기 멈춤' : '실제 화면으로 보는 업무 흐름';
+    tour.caption.textContent = tour.state === 'manual' ? '자동 안내는 멈췄어요 · 지금 화면에서 직접 써보세요' : tour.state === 'done' ? '여기서부터 직접 눌러보세요 · 보던 화면에서 이어갈 수 있어요' : tour.state === 'error' ? '자동 안내를 이어가지 못했어요 · 직접 둘러보거나 다시 봐주세요' : tour.scenes[tour.index]?.[2] || '어떻게 쓰는지 순서대로 보여드릴게요';
+    if (tour.id === 'horizon' && tour.index === 4 && !/live\.html/.test(tour.source) && ['running', 'paused', 'idle'].includes(tour.state)) tour.caption.textContent = '최근에 어떤 일이 있었는지도 함께 확인해요';
+    tour.meta.textContent = tour.state === 'manual' ? '직접 체험 중' : tour.state === 'done' ? '둘러보기 완료' : tour.state === 'running' ? `자동 둘러보기 · ${tour.index + 1} / ${tour.scenes.length}` : tour.state === 'paused' ? '둘러보기 멈춤' : '화면으로 따라가 보기';
     if (tour.id === 'weekly' || tour.id === 'workshop') tour.meta.textContent = `${tour.id === 'weekly' ? 'Weekly' : '워크샵'} · ${tour.meta.textContent}`;
     tour.play.textContent = tour.state === 'running' ? '멈춤' : tour.state === 'paused' ? '이어보기' : '흐름 보기';
     tour.play.hidden = ['done', 'manual', 'error'].includes(tour.state);
