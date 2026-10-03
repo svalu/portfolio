@@ -658,16 +658,24 @@ const mat = new THREE.MeshPhysicalMaterial({
 /* Move the baked studio around the surface, without baking it again each frame.
    Rotate diffuse and specular lookup together so the reflected room stays coherent. */
 const studioRotation = {value:new THREE.Matrix3()};
+// Spread a smaller patch of sky across the curved surface instead of showing the whole panorama.
+const skySpread = {value:1};
 const studioYaw = new THREE.Matrix4(), studioTilt = new THREE.Matrix4();
 mat.onBeforeCompile = shader => {
   shader.uniforms.studioRotation = studioRotation;
+  shader.uniforms.skySpread = skySpread;
   const studioChunk = THREE.ShaderChunk.envmap_physical_pars_fragment
-    .replace('textureCubeUV( envMap, worldNormal, 1.0 )', 'textureCubeUV( envMap, studioRotation * worldNormal, 1.0 )')
-    .replace('textureCubeUV( envMap, reflectVec, roughness )', 'textureCubeUV( envMap, studioRotation * reflectVec, roughness )');
+    .replace('textureCubeUV( envMap, worldNormal, 1.0 )', 'textureCubeUV( envMap, spreadSky(studioRotation * worldNormal), 1.0 )')
+    .replace('textureCubeUV( envMap, reflectVec, roughness )', 'textureCubeUV( envMap, spreadSky(studioRotation * reflectVec), roughness )');
   shader.fragmentShader = shader.fragmentShader.replace('#include <envmap_physical_pars_fragment>',
-    'uniform mat3 studioRotation;\n'+studioChunk);
+    `uniform mat3 studioRotation;
+     uniform float skySpread;
+     vec3 spreadSky(vec3 direction){
+       return normalize(vec3(direction.xy * skySpread, direction.z));
+     }
+    `+studioChunk);
 };
-mat.customProgramCacheKey = () => 'moving-studio-r128-v1';
+mat.customProgramCacheKey = () => 'moving-sky-spread-r128-v2';
 const bodyM = new THREE.Mesh(lathe, mat);
 const ball = new THREE.Mesh(new THREE.SphereGeometry(.68, 64, 48), mat); ball.position.y = 4.15;
 const group = new THREE.Group(); group.add(bodyM, ball); scene.add(group);
@@ -996,6 +1004,7 @@ function frame(){
   key.position.set(wx-4+sweepX+sm.x*14*live, wy+6+sweepY-sm.y*10*live, 8);
   rim.position.set(wx+5-Math.sin(lightPhase+.6)*1.3*lightMotion, wy-2+Math.sin(lightPhase*.61)*.8*lightMotion, -6);
   skyLightMix += ((skyReady?1:0)-skyLightMix)*follow(.045);
+  skySpread.value = 1 - .62 * skyLightMix;
   key.intensity  = KEY_I * expo * (1-.68*skyLightMix);
   hemi.intensity = HEMI_I * expo * (1-.55*skyLightMix);
   rim.intensity  = RIM_I * expo * (1-.6*skyLightMix);
