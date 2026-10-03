@@ -56,11 +56,11 @@ function harness({ width = 1440, reduce = false } = {}) {
   return { ctx, doc, frames, messages, advance, controls, emit, tabs, actions: () => messages.filter(m => m.type === 'action') };
 }
 (async () => {
-  const synced = harness(); await synced.advance(16000);
+  const synced = harness(); await synced.advance(24000);
   assert.equal(synced.controls[0].dataset.state, 'done');
-  assert.deepEqual(synced.actions().filter(x => x.frame === 0).map(x => x.action), ['arrival', 'login', 'dashboard', 'attention', 'agents']);
-  assert.deepEqual(synced.actions().filter(x => x.frame === 1).map(x => x.action), ['arrival', 'login', 'dashboard', 'attention', 'agents']);
-  const count = synced.actions().length; await synced.advance(16000); assert.equal(synced.actions().length, count, 'does not loop');
+  assert.deepEqual(synced.actions().filter(x => x.frame === 0).map(x => x.action), ['arrival', 'login', 'dashboard', 'attention', 'agents', 'ai-mode', 'ai-analysis']);
+  assert.deepEqual(synced.actions().filter(x => x.frame === 1).map(x => x.action), ['arrival', 'login', 'dashboard', 'attention', 'agents', 'ai-mode', 'ai-analysis']);
+  const count = synced.actions().length; await synced.advance(24000); assert.equal(synced.actions().length, count, 'does not loop');
 
   const manual = harness(); await manual.advance(1500);
   manual.emit(manual.frames[1], { type: 'takeover' }, 'https://unrelated.example');
@@ -70,17 +70,17 @@ function harness({ width = 1440, reduce = false } = {}) {
 
   const paused = harness(); await paused.advance(1700); paused.controls[0].parts['.preview-play'].onclick();
   const atPause = paused.actions().length; await paused.advance(8000); assert.equal(paused.actions().length, atPause);
-  paused.controls[0].parts['.preview-play'].onclick(); await paused.advance(15000); assert.equal(paused.controls[0].dataset.state, 'done', 'continues from paused scene');
+  paused.controls[0].parts['.preview-play'].onclick(); await paused.advance(24000); assert.equal(paused.controls[0].dataset.state, 'done', 'continues from paused scene');
 
   const background = harness(); await background.advance(1700); background.doc.hidden = true; await background.advance(300);
   assert.equal(background.controls[0].dataset.state, 'paused'); const before = background.actions().length;
   await background.advance(8000); assert.equal(background.actions().length, before); background.doc.hidden = false;
-  await background.advance(16000); assert.equal(background.controls[0].dataset.state, 'done');
+  await background.advance(24000); assert.equal(background.controls[0].dataset.state, 'done');
 
   const reduced = harness({ reduce: true }); await reduced.advance(3000); assert.equal(reduced.actions().length, 0, 'reduced motion requires explicit play');
-  reduced.controls[0].parts['.preview-play'].onclick(); await reduced.advance(16000); assert.equal(reduced.controls[0].dataset.state, 'done');
+  reduced.controls[0].parts['.preview-play'].onclick(); await reduced.advance(24000); assert.equal(reduced.controls[0].dataset.state, 'done');
 
-  const phone = harness({ width: 390 }); await phone.advance(16000);
+  const phone = harness({ width: 390 }); await phone.advance(24000);
   assert.equal(phone.actions().filter(x => x.frame === 0).length, 0, 'hidden desktop iframe receives no scenes');
   assert.equal(phone.controls[0].dataset.state, 'done');
 
@@ -89,7 +89,7 @@ function harness({ width = 1440, reduce = false } = {}) {
   assert.equal(os.controls[2].dataset.state, 'done');
   const osActions = os.actions(); assert.ok(osActions.findIndex(x => x.frame === 3) > osActions.findIndex(x => x.action === 'note'), 'OS scenes play sequentially');
   const osPause = harness(); osPause.ctx.scrollY = 1800; await osPause.advance(1500); osPause.controls[1].parts['.preview-play'].onclick();
-  await osPause.advance(16000); assert.equal(osPause.actions().filter(x => x.frame === 3).length, 0, 'pause does not start the other OS preview');
+  await osPause.advance(24000); assert.equal(osPause.actions().filter(x => x.frame === 3).length, 0, 'pause does not start the other OS preview');
   const sameTab = harness(); await sameTab.advance(1700); const beforeTab = sameTab.actions().length;
   sameTab.tabs.events.click({ target: { closest: () => ({}) } });
   assert.equal(sameTab.controls[0].dataset.state, 'running', 'reselecting the current design does not reset the app');

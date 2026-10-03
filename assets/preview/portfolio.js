@@ -16,7 +16,9 @@
       ['login', 'horizon', '로그인하고 운영 화면으로 들어갑니다', 700],
       ['dashboard', 'horizon', '지금 대기와 처리 상황을 먼저 봅니다', 2600],
       ['attention', 'horizon', '쌓인 대기에서 주의할 항목을 찾습니다', 2800],
-      ['agents', 'horizon', '상담원 상황까지 이어서 확인합니다', 2800]
+      ['agents', 'horizon', '상담원 상황까지 이어서 확인합니다', 2200],
+      ['ai-mode', 'horizon', 'AI 모드에서 필요한 분석을 물어봅니다', 1800],
+      ['ai-analysis', 'horizon', '분석 질문을 누르면 답변과 그래프가 함께 열립니다', 4500]
     ] },
     { id: 'counseling', section: 'd02', frame: counseling, mount: counseling?.closest('.frame'), scenes: [
       ['arrival', 'counseling-login', '상담사의 하루는 로그인에서 시작합니다', 1800],

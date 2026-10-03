@@ -1431,6 +1431,14 @@ body, .sidebar, .on-head, .on-body, .on-footer, .on-item,
 #pg-stats .pg-head .pg-head-title,#pg-agents .pg-head .pg-head-title{padding-left:0;}
 .warn-panel .pg-panel-head,.live-panel .pg-panel-head{border-left:0;}
 @media(max-width:900px){
+  .aim-sb:not(.collapsed){position:absolute;inset:0 auto 0 0;z-index:2;width:min(280px,84vw);}
+  .aim-header{padding-inline:12px;gap:8px;}
+  .aim-welcome{padding:24px 16px;justify-content:flex-start;}
+  .aim-ta{min-width:0;}
+  .aim-chat-layout{position:relative;min-height:0;}
+  .aim-stats.open{position:absolute;inset:0;z-index:3;width:100%;border-left:0;background:var(--panel);}
+  .aim-stats-inner{width:100%;}
+  .aim-stats-close{padding:12px;}
   .pg-head{flex-wrap:wrap;gap:10px;}
   .pg-head-right{flex-wrap:wrap;gap:8px;}
   .ag-kpi-item{min-width:0;}
@@ -3084,6 +3092,8 @@ function renderStatBars(){
 
 function showAiMode(){
   closeNav();
+  aiSbCollapsed = matchMedia('(max-width:900px)').matches;
+  document.getElementById('aimSb').classList.toggle('collapsed', aiSbCollapsed);
   // 글로브 캔버스 → aiSpaceBg로 이동
   const spaceBg = document.getElementById('aiSpaceBg');
   const loginEl = document.getElementById('viewLogin');
@@ -3096,6 +3106,8 @@ function showAiMode(){
   // 웰컴 화면으로 초기화
   document.getElementById('aimWelcome').style.display = '';
   document.getElementById('aimChatLayout').style.display = 'none';
+  aiStatsOpen = false;
+  document.getElementById('aimStats').classList.remove('open');
 }
 
 function hideAiMode(){
@@ -3544,6 +3556,6 @@ window.addEventListener('load',()=>{
 </div>
 
 <script src="../../assets/preview/client.js?v=20261002flow"></script>
-<script src="preview.js?v=20261002flow"></script>
+<script src="preview.js?v=20261003ai"></script>
 </body>
 </html>
