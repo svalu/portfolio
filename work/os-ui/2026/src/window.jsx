@@ -105,127 +105,60 @@ function Window({
       ...box,
       w,
       h,
-      x: Math.max(0, Math.min(box.x, parent.w - w)),
-      y: Math.max(0, Math.min(box.y, parent.h - h))
+      x: Math.max(120-w, Math.min(box.x, parent.w-120)),
+      y: Math.max(0, Math.min(box.y, parent.h-32))
     };
   })();
 
-  // ---------- Drag ----------
-  const dragStart = useRef(null);
-  const onTitleMouseDown = e => {
-    if (viewport.w < 640 || e.target.closest('.win-controls')) return;
-    setGeometryMotion(false);
-    onFocus(id);
-    if (maximized || snapRegion) {
-      // un-maximize and jump under cursor
-      const unmaxW = box.w,
-        unmaxH = box.h;
-      onMaximize(id, false);
-      onSnap(id, null);
-      setBox(b => ({
-        ...b,
-        x: e.clientX - unmaxW / 2,
-        y: e.clientY - 16
-      }));
-      dragStart.current = {
-        mx: e.clientX,
-        my: e.clientY,
-        bx: e.clientX - unmaxW / 2,
-        by: e.clientY - 16,
-        bw: unmaxW
-      };
-    } else {
-      dragStart.current = {
-        mx: e.clientX,
-        my: e.clientY,
-        bx: box.x,
-        by: box.y,
-        bw: box.w
-      };
-    }
-    window.addEventListener('mousemove', onDrag_);
-    window.addEventListener('mouseup', onDragEnd_);
-  };
-  const onDrag_ = e => {
-    if (!dragStart.current) return;
-    const dx = e.clientX - dragStart.current.mx;
-    const dy = e.clientY - dragStart.current.my;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight - 48;
-    const bw = dragStart.current.bw || 400;
-    const MARGIN = 120; // titlebar 최소 노출 픽셀
-    const rawX = dragStart.current.bx + dx;
-    const rawY = dragStart.current.by + dy;
-    const x = Math.max(MARGIN - bw, Math.min(vw - MARGIN, rawX));
-    const y = Math.max(0, Math.min(vh - 32, rawY));
-    setBox(b => ({
-      ...b,
-      x,
-      y
+  // Read the rendered geometry at gesture start so clamped/snapped windows do not jump.
+  const interaction = useRef(null);
+  interaction.current = {displayedBox,box,viewport,maximized,snapRegion,onFocus,onMaximize,onSnap,animateGeometry};
+  useEffect(() => {
+    const host = winRef.current;
+    const cleanups = [];
+    cleanups.push(PortfolioDrag.bind(host.querySelector('.win-titlebar'), {
+      exclude: '.win-controls,button',
+      start(event) {
+        const state=interaction.current;
+        if(state.viewport.w<640)return false;
+        setGeometryMotion(false);state.onFocus(id);
+        let start={...state.displayedBox};
+        if(state.maximized || state.snapRegion) {
+          const ratio=(event.clientX-start.x)/start.w;
+          start={x:event.clientX-Math.min(state.box.w,state.viewport.w)*ratio,y:event.clientY-16,w:Math.min(state.box.w,state.viewport.w),h:Math.min(state.box.h,state.viewport.h)};
+          start.restore=true;
+        }
+        return start;
+      },
+      move(start,dx,dy,event) {
+        if(start.restore){
+          interaction.current.onMaximize(id,false);interaction.current.onSnap(id,null);start.restore=false;
+        }
+        const x=Math.max(120-start.w,Math.min(innerWidth-120,start.x+dx));
+        const y=Math.max(0,Math.min(innerHeight-80,start.y+dy));
+        setBox({x,y,w:start.w,h:start.h});
+        const snap=event.clientX<SNAP_EDGE?'left':event.clientX>innerWidth-SNAP_EDGE?'right':event.clientY<SNAP_EDGE?'top':null;
+        snapRef.current=snap;setSnapPreview(snap);
+      },
+      end(start,moved,cancelled) {
+        if(moved&&!cancelled&&snapRef.current){interaction.current.animateGeometry();interaction.current.onSnap(id,snapRef.current);}
+        snapRef.current=null;setSnapPreview(null);
+      }
     }));
-
-    // Snap preview
-    let p = null;
-    if (e.clientX < SNAP_EDGE) p = 'left';else if (e.clientX > window.innerWidth - SNAP_EDGE) p = 'right';else if (e.clientY < SNAP_EDGE) p = 'top';
-    snapRef.current = p;
-    setSnapPreview(p);
-  };
-  const onDragEnd_ = () => {
-    window.removeEventListener('mousemove', onDrag_);
-    window.removeEventListener('mouseup', onDragEnd_);
-    if (snapRef.current) {
-      animateGeometry();
-      onSnap(id, snapRef.current);
-      snapRef.current = null;
-      setSnapPreview(null);
-    }
-    dragStart.current = null;
-  };
-
-  // ---------- Resize ----------
-  const onResizeStart = dir => e => {
-    e.preventDefault();
-    e.stopPropagation();
-    onFocus(id);
-    setGeometryMotion(false);
-    const start = {
-      mx: e.clientX,
-      my: e.clientY,
-      ...box
-    };
-    const onMove = ev => {
-      let {
-        x,
-        y,
-        w,
-        h
-      } = start;
-      const dx = ev.clientX - start.mx;
-      const dy = ev.clientY - start.my;
-      if (dir.includes('e')) w = Math.max(MIN_W, start.w + dx);
-      if (dir.includes('s')) h = Math.max(MIN_H, start.h + dy);
-      if (dir.includes('w')) {
-        w = Math.max(MIN_W, start.w - dx);
-        x = start.x + (start.w - w);
+    host.querySelectorAll('.resize-h').forEach(handle=>cleanups.push(PortfolioDrag.bind(handle,{
+      start() {setGeometryMotion(false);interaction.current.onFocus(id);return {...interaction.current.displayedBox};},
+      move(start,dx,dy) {
+        const dir=handle.dataset.direction;
+        let {x,y,w,h}=start;
+        if(dir.includes('e'))w=Math.max(MIN_W,start.w+dx);
+        if(dir.includes('s'))h=Math.max(MIN_H,start.h+dy);
+        if(dir.includes('w')){w=Math.max(MIN_W,start.w-dx);x=start.x+start.w-w;}
+        if(dir.includes('n')){h=Math.max(MIN_H,start.h-dy);y=start.y+start.h-h;}
+        setBox({x,y,w,h});
       }
-      if (dir.includes('n')) {
-        h = Math.max(MIN_H, start.h - dy);
-        y = Math.max(0, start.y + (start.h - h));
-      }
-      setBox({
-        x,
-        y,
-        w,
-        h
-      });
-    };
-    const onUp = () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-  };
+    })));
+    return ()=>cleanups.forEach(cleanup=>cleanup());
+  },[id]);
   const onDouble = () => { animateGeometry(); onMaximize(id); };
   const cls = ['win'];
   if (opening && !closing && !minimized) cls.push('anim-open');
@@ -243,8 +176,8 @@ function Window({
       width: displayedBox.w,
       height: displayedBox.h,
       zIndex: z
-    }} onMouseDown={() => onFocus(id)}>
-        <div className="win-titlebar" onMouseDown={onTitleMouseDown} onDoubleClick={onDouble}>
+    }} onPointerDown={() => onFocus(id)}>
+        <div className="win-titlebar" onDoubleClick={onDouble}>
           <div className="win-title">
             {icon && <span className="title-icon">{icon}</span>}
             {title}
@@ -273,15 +206,15 @@ function Window({
         </div>
         <div className="win-body">{children}</div>
 
-        {!maximized && !snapRegion && <>
-            <div className="resize-h rh-n" onMouseDown={onResizeStart('n')} />
-            <div className="resize-h rh-s" onMouseDown={onResizeStart('s')} />
-            <div className="resize-h rh-w" onMouseDown={onResizeStart('w')} />
-            <div className="resize-h rh-e" onMouseDown={onResizeStart('e')} />
-            <div className="resize-h rh-nw" onMouseDown={onResizeStart('nw')} />
-            <div className="resize-h rh-ne" onMouseDown={onResizeStart('ne')} />
-            <div className="resize-h rh-sw" onMouseDown={onResizeStart('sw')} />
-            <div className="resize-h rh-se" onMouseDown={onResizeStart('se')} />
+        {<>
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-n" data-direction="n" />
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-s" data-direction="s" />
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-w" data-direction="w" />
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-e" data-direction="e" />
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-nw" data-direction="nw" />
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-ne" data-direction="ne" />
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-sw" data-direction="sw" />
+            <div hidden={maximized || !!snapRegion} className="resize-h rh-se" data-direction="se" />
           </>}
       </div>
 

@@ -35,4 +35,12 @@
 .demo-login .wing_left,.demo-login .wing_right{animation-delay:1.65s;animation-duration:.45s}
 @media(prefers-reduced-motion:reduce){
   .demo-login *{animation:none!important;transition:none!important}
+  .demo-login .ani_opacity{opacity:1}
 }
+
+/* Keep desktop objects visible while moving out of their original category. */
+.main_icon_group_wrap:not(.fold){overflow:visible;backdrop-filter:none;}
+.bg_icon_wrap{position:relative;touch-action:none;user-select:none;}
+.popup_top_line{cursor:grab;touch-action:none;user-select:none;}
+[data-desktop-dragging] iframe{pointer-events:none;}
+[data-desktop-dragging] .popup_top_line,.bg_icon_wrap[data-dragging]{cursor:grabbing;}

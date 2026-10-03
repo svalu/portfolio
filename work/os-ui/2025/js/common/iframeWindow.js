@@ -85,6 +85,7 @@ var iframeWindow = (function($) {
                     } catch(e) {
                         console.error(e);
                     }
+                    iframeWindow[0]._dragCleanup?.();
                     iframeWindow.remove();
                     taskbar.remove(params.menuId);
                     break;

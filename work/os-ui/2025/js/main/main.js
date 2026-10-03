@@ -202,6 +202,19 @@ function closeLogoutPopup() {
 }
 
 function bindMenuClickEvent() {
+    document.querySelectorAll('div[name=menuIcon]').forEach(function(node){
+        if(node._dragCleanup)return;
+        node._dragCleanup=PortfolioDrag.bind(node,{
+            start: function(){var r=node.getBoundingClientRect();return {x:+node.dataset.moveX||0,y:+node.dataset.moveY||0,left:r.left,top:r.top,w:r.width,h:r.height};},
+            move: function(start,dx,dy){
+                var x=Math.max(-start.left,Math.min(innerWidth-start.left-start.w,dx));
+                var y=Math.max(50-start.top,Math.min(innerHeight-start.top-start.h-12,dy));
+                node.dataset.moveX=start.x+x;node.dataset.moveY=start.y+y;
+                node.style.transform='translate('+node.dataset.moveX+'px,'+node.dataset.moveY+'px)';
+                node.style.zIndex='5';
+            }
+        });
+    });
     $("div[name=menuIcon]").on("click", function(e) {
         e.stopPropagation();
         checkSessionAlive();
@@ -282,27 +295,22 @@ function iframeWindowAssignEvent($iframeWindow) {
         }
     });
 
-    $iframeWindow.draggable(
-        {
-            cursor: "move",
-            handle: ".popup_wrap",
-            refreshPositions : true,
-            scroll: false,
-            containment: "body",
-            start: function (event, ui) {
-                event.stopPropagation();
-                iframeWindow.focus($iframeWindow);
-            },
-            drag: function (event, ui) {
-                ui.position.top = Math.max(ui.position.top, 70);
-                $(this).css("top", ui.position.top); // Use $(this) to refer to the specific instance
-                $(this).find(".bts_dragg").removeClass("display_none");
-            },
-            stop: function (event, ui) {
-                $(this).find(".bts_dragg").addClass("display_none");
-            },
+    // Native pointer capture continues dragging across the embedded document.
+    if ($iframeWindow.data('ui-draggable')) $iframeWindow.draggable('destroy');
+    var host=$iframeWindow[0], title=host.querySelector('.popup_top_line');
+    if (!host._dragCleanup) host._dragCleanup=PortfolioDrag.bind(title,{
+        start: function() {
+            iframeWindow.focus($iframeWindow);
+            var rect=host.getBoundingClientRect();
+            host.style.position='absolute';host.style.left=rect.left+'px';host.style.top=rect.top+'px';
+            return {x:rect.left,y:rect.top,w:rect.width};
         },
-    );
+        move: function(start,dx,dy) {
+            host.style.left=Math.max(120-start.w,Math.min(innerWidth-120,start.x+dx))+'px';
+            var header=title.offsetHeight||40;
+            host.style.top=Math.max(50+header,Math.min(innerHeight-36,start.y+dy))+'px';
+        }
+    });
 }
 
 function assignDragFunction(params) {

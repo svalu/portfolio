@@ -145,6 +145,28 @@ function AdminOS() {
     return () => window.removeEventListener('keydown', onKey);
   }, [windows, zTop]);
   const desktopIcons = APPS.filter(a => !a.hiddenOnDesktop);
+  const [iconPositions,setIconPositions]=useState({});
+  const [desktopSize,setDesktopSize]=useState({w:innerWidth,h:innerHeight});
+  const iconArea=useRef(null);
+  const iconPoint=(appId,index)=>{
+    const rows=Math.max(1,Math.floor((desktopSize.h-80)/98));
+    const position=iconPositions[appId]||{x:Math.floor(index/rows)*98,y:(index%rows)*98};
+    return {x:Math.max(0,Math.min(position.x,desktopSize.w-124)),y:Math.max(0,Math.min(position.y,desktopSize.h-172))};
+  };
+  useEffect(()=>{
+    const resize=()=>setDesktopSize({w:innerWidth,h:innerHeight});
+    window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize);
+  },[]);
+  useEffect(()=>{
+    const cleanup=[...iconArea.current.querySelectorAll('.d-icon')].map(node=>PortfolioDrag.bind(node,{
+      start(){setSelectedIcon(node.dataset.app);return {x:node.offsetLeft,y:node.offsetTop};},
+      move(start,dx,dy){
+        const position={x:Math.max(0,Math.min(start.x+dx,innerWidth-124)),y:Math.max(0,Math.min(start.y+dy,innerHeight-172))};
+        setIconPositions(current=>({...current,[node.dataset.app]:position}));
+      }
+    }));
+    return()=>cleanup.forEach(fn=>fn());
+  },[desktopIcons.map(a=>a.id).join(',')]);
   useEffect(() => {
     const p = window.PortfolioPreview;
     if (!p) return;
@@ -182,12 +204,16 @@ function AdminOS() {
   }}>
       <Wallpaper theme={tweaks.theme} accent={tweaks.accent} />
 
-      <div className="desktop-icons" onClick={e => e.stopPropagation()}>
-        {desktopIcons.map((a, i) => <div key={a.id} className={`d-icon ${selectedIcon === a.id ? 'selected' : ''}`} onClick={e => {
+      <div ref={iconArea} className="desktop-icons" onClick={e => e.stopPropagation()}>
+        {desktopIcons.map((a, i) => <div key={a.id} data-app={a.id} style={{left:iconPoint(a.id,i).x,top:iconPoint(a.id,i).y}} className={`d-icon ${selectedIcon === a.id ? 'selected' : ''}`} onClick={e => {
         e.stopPropagation();
         setSelectedIcon(a.id);
         openApp(a.id);
       }} role="button" tabIndex={0} onKeyDown={e => {
+        if(e.altKey&&e.key.startsWith('Arrow')){
+          e.preventDefault();const point=iconPoint(a.id,i);
+          setIconPositions(current=>({...current,[a.id]:{x:point.x+(e.key==='ArrowRight'?16:e.key==='ArrowLeft'?-16:0),y:point.y+(e.key==='ArrowDown'?16:e.key==='ArrowUp'?-16:0)}}));return;
+        }
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           openApp(a.id);
