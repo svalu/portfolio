@@ -185,7 +185,9 @@ function setCnslStatusChart(ajaxData) {
 
     let totalCnt = offlineCnt + lunchCnt + breakCnt + chatCnt + chatWaitCnt + rsvtnCnt;
     let data = [offlineCnt, chatWaitCnt, chatCnt, breakCnt, rsvtnCnt, lunchCnt];
-    let backgroundColor = ['#DD6666', '#0089ff', '#85a2d1', '#e2ca43', '#b4e683', '#82e0c7'];
+    const palette = getComputedStyle(document.documentElement);
+    let backgroundColor = ['offline', 'wait', 'count', 'time', 'reserved', 'grade']
+        .map(name => palette.getPropertyValue('--chart-' + name).trim());
     let labels = [];
     let chartObj = {
         "label_offlin": ["오프라인", offlineCnt],
@@ -222,15 +224,14 @@ function setCnslStatusChart(ajaxData) {
     if(data.reduce((sum, count) => sum + count, 0) === 0) {
         labels = ["상태 데이터 없음"];
         data = [1];
-        backgroundColor = ["#919599"];
+        backgroundColor = [palette.getPropertyValue('--chart-offline').trim()];
     }
 
 
     if(cnslStatusChart !== undefined) {
         cnslStatusChart.data.datasets[0].data = data;
 
-        if(cnslStatusChart.data.datasets[0].backgroundColor.length !== backgroundColor.length)
-            cnslStatusChart.data.datasets[0].backgroundColor = backgroundColor;
+        cnslStatusChart.data.datasets[0].backgroundColor = backgroundColor;
 
         cnslStatusChart.data.labels = labels;
         cnslStatusChart.update();
@@ -245,6 +246,9 @@ function setCnslStatusChart(ajaxData) {
                 datasets: [{
                     data: data, // 데이터 포인트 값
                     backgroundColor: backgroundColor, // 각 데이터 포인트의 색상
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverOffset: 4,
                 }]
             },
             options: {

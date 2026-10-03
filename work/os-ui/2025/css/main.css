@@ -1,4 +1,10 @@
 :root {
+    --chart-count: #3979f6;
+    --chart-wait: #ffb545;
+    --chart-reserved: #9461ef;
+    --chart-time: #20bfa9;
+    --chart-grade: #f07856;
+    --chart-offline: #9aa7b7;
     --font_color_1: #383838;
     --point_color_1: #DD6666;
     --point_color_2: #1f1f1f;
@@ -3436,38 +3442,43 @@ form {
 }
 
 .bar_oj.color_1_1 {
-    background-color: #a0adef;
+    background-color: var(--chart-count);
 }
 
 .bar_oj.color_1_2 {
-    background-color: #7b8edb
+    background-color: #2859c4
 }
 
 .bar_oj.color_1_3 {
-    background-color: #c6cff7
+    background-color: #a5c3ff
 }
 
 .bar_oj.color_2_1 {
-    background-color: #f1a0c7;
+    background-color: var(--chart-time);
 }
 
 .bar_oj.color_2_2 {
-    background-color: #e089b7
+    background-color: #108b7a
 }
 
 .bar_oj.color_2_3 {
-    background-color: #f7d2e6
+    background-color: #9ae8da
 }
 
 .graph_info_text.color_1,
 .per_text.color_1 {
-    color: #7b8edb
+    color: #255ccc
 }
 
 .graph_info_text.color_2,
 .per_text.color_2 {
-    color: #e089b7
+    color: #087f73
 }
+
+#gardeBarWrap .color_1_1 { background-color: var(--chart-grade); }
+#gardeBarWrap .color_1_2 { background-color: #bd5135; }
+#gardeBarWrap .color_1_3 { background-color: #ffc4ad; }
+#gardeBarWrap .per_text { color: #b64c32; }
 
 .graph_info_text {
     font-size: 12px;
@@ -4192,43 +4203,43 @@ canvas#game {
 }
 
 .legend_color_box.textColor_chat {
-    background-color: #85a2d1
+    background-color: var(--chart-count)
 }
 
 .textColor_chat {
-    color: #85a2d1;
+    color: #255ccc;
 }
 
 .legend_color_box.textColor_break {
-    background-color: #e2ca43;
+    background-color: var(--chart-time);
 }
 
 .textColor_break {
-    color: #d4b504
+    color: #087f73
 }
 
 .legend_color_box.textColor_lunch {
-    background-color: #82e0c7;
+    background-color: var(--chart-grade);
 }
 
 .textColor_lunch {
-    color: #2eb994
+    color: #b64c32
 }
 
 .legend_color_box.textColor_offline {
-    background-color: #dd6666;
+    background-color: var(--chart-offline);
 }
 
 .textColor_offline {
-    color: #dd6666
+    color: #64748b
 }
 
 .legend_color_box.textColor_online {
-    background-color: #0089ff;
+    background-color: var(--chart-wait);
 }
 
 .textColor_online {
-    color: #0089ff;
+    color: #995b08;
 }
 
 .legend_color_box.textColor_end {
@@ -4240,11 +4251,11 @@ canvas#game {
 }
 
 .legend_color_box.textColor_rsvtn {
-    background-color: #b4e683
+    background-color: var(--chart-reserved)
 }
 
 .textColor_rsvtn {
-    color: #b4e683;
+    color: #7040c2;
 
 }
 

@@ -1,6 +1,9 @@
 var monthlyAvgHourChart;
 var monthlyCountChart;
 var monthlyGradeChart;
+function analyticsColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue('--chart-' + name).trim();
+}
 
 function setCountDatas(datas) {
     $("#totalCnslCnt").text(datas.totalCnslCnt+"건");
@@ -264,14 +267,17 @@ function setPerfCountCharByMonth(data, searchStartDt, searchEndDt) {
                 {
                     label: '상담완료',
                     data: chatCountData,
-                    borderColor: '#a0adef',
-                    borderWidth: 2
+                    borderColor: analyticsColor('count'),
+                    backgroundColor: analyticsColor('count') + '14',
+                    fill: true,
+                    borderWidth: 2.5
                 },
                 {
                     label: '예약상담완료',
                     data: rsvtnCountData,
-                    borderColor: '#bababa',
-                    borderWidth: 2
+                    borderColor: analyticsColor('reserved'),
+                    backgroundColor: analyticsColor('reserved') + '14',
+                    borderWidth: 2.5
                 }
             ]
         },
@@ -327,8 +333,10 @@ function setPerfHourCharByMonth(data, searchStartDt, searchEndDt) {
             datasets: [{
                 label: '평균 상담시간',
                 data: avgCnslDurations,
-                borderColor: '#3ac9a2',
-                borderWidth: 2
+                borderColor: analyticsColor('time'),
+                backgroundColor: analyticsColor('time') + '14',
+                fill: true,
+                borderWidth: 2.5
             }]
         },
         options: {
@@ -387,8 +395,10 @@ function setPerfGradeCharByMonth(data, searchStartDt, searchEndDt) {
             datasets: [{
                 label: '평균 평점',
                 data: avgGrades,
-                borderColor: '#3ac9a2',
-                borderWidth: 2
+                borderColor: analyticsColor('grade'),
+                backgroundColor: analyticsColor('grade') + '14',
+                fill: true,
+                borderWidth: 2.5
             }]
         },
         options: {

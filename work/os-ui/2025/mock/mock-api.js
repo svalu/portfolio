@@ -719,7 +719,7 @@
         if (path.indexOf(".html") !== -1 || path.indexOf("http") === 0) return url;
         var file = "screens/" + path.replace(/^\//, "").replace(/\//g, "_") + ".html";
         /* 창 안 화면도 캐시된다. 고친 mock 을 쓰게 하려면 여기에도 판 번호를 붙여야 한다 */
-        var V = "v=20261003view";
+        var V = "v=20261003color";
         return parts[1] ? file + "?" + parts[1] + "&" + V : file + "?" + V;
     }
     window.__toStaticView = toStatic;
@@ -816,7 +816,8 @@
             type: "line",
             data: { labels: labels, datasets: [{
                 label: "평균 만족도", data: values,
-                borderColor: "#85a2d1", backgroundColor: "rgba(133,162,209,.2)",
+                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-grade').trim(),
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-grade').trim() + '14',
                 fill: true, tension: .3, pointRadius: 2
             }] },
             options: { responsive: false, scales: { y: { beginAtZero: true, max: 5 } } }
