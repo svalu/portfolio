@@ -14,57 +14,57 @@
   let sequence = 0, active = null;
   const configurations = [
     { id: 'horizon', section: 'd01', frame: horizon, companion: phone, mount: document.querySelector('#d01 .story'), scenes: [
-      ['arrival', 'horizon', '대기가 늘었어요. 지금 어디부터 살펴보면 좋을까요?', 1800],
-      ['login', 'horizon', '로그인하고 센터의 현재 상황을 확인해 볼게요', 700],
-      ['dashboard', 'horizon', '먼저 대기와 처리 현황을 보면, 지금 상황이 잡혀요', 2600],
-      ['attention', 'horizon', '그중 주의가 필요한 항목부터 좁혀볼 수 있어요', 2800],
-      ['agents', 'horizon', '상담원 상태를 함께 보면 대응할 때 필요한 정보가 모여요', 2200],
-      ['ai-mode', 'horizon', '숫자만으로 궁금증이 풀리지 않으면, AI 모드로 이어가요', 1800],
-      ['ai-analysis', 'horizon', '질문을 고르면 답변과 그래프가 열려요. 원인을 더 살펴볼 수 있죠', 4500]
+      ['arrival', 'horizon', '관리자가 어디서든 확인할 수 있도록 운영 화면을 디자인했습니다', 1800],
+      ['login', 'horizon', '로그인 뒤 센터의 현재 상황을 먼저 보여줍니다', 700],
+      ['dashboard', 'horizon', '대기와 처리 현황을 한눈에 비교하도록 배치했습니다', 2600],
+      ['attention', 'horizon', '주의가 필요한 항목은 일반 정보와 구분해 강조했습니다', 2800],
+      ['agents', 'horizon', '상담원 상태를 함께 확인하고 대응할 수 있도록 구성했습니다', 2200],
+      ['ai-mode', 'horizon', '운영 화면에서 AI 분석으로 이어지도록 연결했습니다', 1800],
+      ['ai-analysis', 'horizon', '질문에 대한 답변과 그래프를 함께 보며 분석하도록 구성했습니다', 4500]
     ] },
     { id: 'counseling', section: 'd02', frame: counseling, mount: counseling?.closest('.frame'), scenes: [
-      ['arrival', 'counseling-login', '오늘 상담을 시작하려는데, 비밀번호가 생각나지 않는다면요?', 1400],
-      ['password-find', 'counseling-login', '로그인 옆에서 복구를 시작할 수 있어요', 1600],
-      ['password-mail', 'counseling-login', '보내는 과정을 보여줘서, 눌린 건지 다시 확인하지 않게요', 900],
-      ['login', 'counseling-login', '이제 로그인하고 하던 업무로 들어가요', 600],
-      ['dashboard', 'counseling-desktop', '오늘의 상담 상황을 먼저 펼쳐두고요', 2200],
-      ['performance', 'counseling-desktop', '전체 실적도 열어 두 정보를 함께 살펴봐요', 2600],
-      ['performance-trend', 'counseling-desktop', '건수가 어떻게 달라졌는지 월별로 내려가 보죠', 2200],
-      ['performance-quality', 'counseling-desktop', '시간과 평점까지 보면 건수 밖의 변화도 살펴볼 수 있어요', 2400],
-      ['arrange', 'counseling-desktop', '비교할 창을 옮겨두면, 번갈아 화면을 찾지 않아도 돼요', 1700],
-      ['error', 'counseling-desktop', '다른 페이지를 못 찾았을 때도 업무로 돌아갈 길은 남겨뒀어요', 2000],
-      ['game', 'counseling-desktop', '잠깐 쉬어갈 수 있게 작은 게임도 넣었어요', 600],
-      ['return', 'counseling-desktop', '돌아오면 아까 열어둔 창에서 일을 이어가요', 2000]
+      ['arrival', 'counseling-login', '로그인부터 업무에 들어가는 과정까지 디자인했습니다', 1400],
+      ['password-find', 'counseling-login', '비밀번호 찾기는 로그인 화면에서 바로 시작하도록 배치했습니다', 1600],
+      ['password-mail', 'counseling-login', '메일 발송 과정을 보여주어 요청에 대한 반응을 확인하도록 했습니다', 900],
+      ['login', 'counseling-login', '로그인 뒤 상담 업무를 시작하는 화면으로 이어집니다', 600],
+      ['dashboard', 'counseling-desktop', '대시보드에서 상담 현황을 먼저 확인하도록 구성했습니다', 2200],
+      ['performance', 'counseling-desktop', '전체 실적은 별도 창으로 열어 대시보드와 함께 볼 수 있습니다', 2600],
+      ['performance-trend', 'counseling-desktop', '월별 건수의 변화를 이어서 확인하도록 구성했습니다', 2200],
+      ['performance-quality', 'counseling-desktop', '상담 시간과 평점도 함께 살펴보도록 정리했습니다', 2400],
+      ['arrange', 'counseling-desktop', '창을 옮겨 필요한 정보를 나란히 비교하도록 디자인했습니다', 1700],
+      ['error', 'counseling-desktop', '404 화면에도 업무로 돌아오는 경로를 남겼습니다', 2000],
+      ['game', 'counseling-desktop', '404 화면에는 잠시 쉬어갈 수 있는 게임을 구성했습니다', 600],
+      ['return', 'counseling-desktop', '업무로 돌아오면 열어둔 창에서 다시 이어갈 수 있습니다', 2000]
     ] },
     { id: 'admin', section: 'd02', frame: admin, mount: admin?.closest('.frame'), scenes: [
-      ['arrival', 'admin', '이번에는 관리자예요. 운영 상황을 보고 원인도 살펴봐야 하죠', 1600],
-      ['dashboard', 'admin', '대시보드에서 전화 대기가 늘어난 걸 발견했어요', 2400],
-      ['analytics', 'admin', '분석을 옆에 열면, 앞의 상황을 놓치지 않고 비교할 수 있어요', 3000],
-      ['minimize', 'admin', '당장 필요 없는 창은 잠깐 접어두고요', 1600],
-      ['restore', 'admin', '다시 필요해지면 여기서 꺼내요. 처음부터 찾을 필요 없이요', 2400]
+      ['arrival', 'admin', '상담사 화면의 창 구조를 관리자 업무로 확장했습니다', 1600],
+      ['dashboard', 'admin', '대시보드에서 운영 상태와 주요 지표를 확인합니다', 2400],
+      ['analytics', 'admin', '분석 창을 함께 열어 현황과 비교하도록 구성했습니다', 3000],
+      ['minimize', 'admin', '사용하지 않는 창은 최소화해 작업 공간을 정리할 수 있습니다', 1600],
+      ['restore', 'admin', '작업표시줄에서 창을 복원해 하던 일을 이어갈 수 있습니다', 2400]
     ] },
     { id: 'weekly', section: 'd03', frame: weekly, mount: weekly?.closest('.frame'), scenes: [
-      ['arrival', 'weekly-index', '이번 주 보고서, 어디부터 써야 할지 막막하다면요?', 1600],
-      ['login', 'weekly-index', '내 이름으로 들어가 팀이 일하는 상황부터 볼게요', 500],
-      ['overview', 'weekly-home', '아직 정리되지 않은 보고와 남은 일을 확인해요', 2600],
-      ['open-easy', 'weekly-home', '빈 문서 앞에서 고민하는 대신, 질문 하나로 시작해요', 600],
-      ['write-week', 'weekly-easy', '이번 주에는 무슨 일을 했나요? 기억나는 것부터 적어요', 1800],
-      ['write-next', 'weekly-easy', '그다음엔 다음 주에 할 일을 생각해 보고요', 1800],
-      ['write-help', 'weekly-easy', '마지막으로, 함께 해결할 일이나 도움이 필요한 일을 남겨요', 1800],
-      ['report', 'weekly-easy', '세 답변이 모이면 보고서가 돼요. 이제 내용을 읽고 다듬으면 되죠 · 체험용', 3500]
+      ['arrival', 'weekly-index', '주간보고를 세 질문에 답하는 흐름으로 디자인했습니다', 1600],
+      ['login', 'weekly-index', '이름을 선택하면 자신의 업무 화면으로 들어갑니다', 500],
+      ['overview', 'weekly-home', '보고 현황과 남은 일을 먼저 확인하도록 구성했습니다', 2600],
+      ['open-easy', 'weekly-home', '쉬운 작성에서는 한 번에 한 질문에 집중하도록 구성했습니다', 600],
+      ['write-week', 'weekly-easy', '첫 질문은 이번 주에 한 일입니다 · 작성 예시', 1800],
+      ['write-next', 'weekly-easy', '다음 주에 할 일을 입력해 계획을 정리합니다 · 작성 예시', 1800],
+      ['write-help', 'weekly-easy', '도움이 필요한 일을 남겨 팀과 공유할 내용을 정리합니다 · 작성 예시', 1800],
+      ['report', 'weekly-easy', '세 답변을 보고서로 모아 확인하고 수정하도록 구성했습니다', 3500]
     ] },
     { id: 'workshop', section: 'd03', frame: workshop, mount: document.querySelector('#workshopGuide'), scenes: [
-      ['arrival', 'workshop-index', '워크샵에 가기로 했어요. 이제 무엇부터 준비하면 될까요?', 1800],
-      ['meeting', 'workshop-index', '모일 장소와 시간부터 확인하면 출발 준비가 잡혀요', 2800],
-      ['schedule', 'workshop-index', '그다음은 도착해서 함께 보낼 하루를 살펴봐요', 3200],
-      ['open-people', 'workshop-index', '일정을 봤으니, 함께 갈 사람들을 확인해 볼까요?', 500],
-      ['people', 'workshop-people', '누가 언제, 어떻게 오는지 한곳에서 볼 수 있어요', 2400],
-      ['carpool', 'workshop-people', '차가 필요한 사람은 함께 탈 수 있는 자리를 찾아요', 1800],
-      ['carousel', 'workshop-people', '차량을 넘겨보며 누가 타는지, 빈자리는 있는지 비교해요', 2200],
-      ['open-shopping', 'workshop-people', '이동을 정했으면, 함께 준비할 물건을 챙겨요', 500],
-      ['shopping', 'workshop-shopping', '장보기 목록을 열어 필요한 수량부터 확인하고요', 1800],
-      ['check-item', 'workshop-shopping', '산 물건에 체크하면, 무엇이 남았는지 구분돼요 · 체험용', 2200],
-      ['check-progress', 'workshop-shopping', '준비한 만큼 진행도 채워져요. 남은 물건을 이어서 챙기면 돼요', 2600]
+      ['arrival', 'workshop-index', '워크샵 준비를 참여자의 행동 순서에 맞춰 디자인했습니다', 1800],
+      ['meeting', 'workshop-index', '모일 장소와 시간을 먼저 확인하도록 배치했습니다', 2800],
+      ['schedule', 'workshop-index', '이어서 하루의 일정을 살펴볼 수 있습니다', 3200],
+      ['open-people', 'workshop-index', '일정 확인에서 참석 인원 확인으로 연결했습니다', 500],
+      ['people', 'workshop-people', '참석 여부와 이동 정보를 한곳에 모았습니다', 2400],
+      ['carpool', 'workshop-people', '함께 탈 차량과 좌석을 확인하도록 구성했습니다', 1800],
+      ['carousel', 'workshop-people', '차량은 캐러셀로 넘겨 탑승자와 빈자리를 비교할 수 있습니다', 2200],
+      ['open-shopping', 'workshop-people', '이동 준비 다음에는 장보기 목록으로 이어집니다', 500],
+      ['shopping', 'workshop-shopping', '필요한 물건과 수량을 목록으로 정리했습니다', 1800],
+      ['check-item', 'workshop-shopping', '구매한 물건은 체크해 남은 준비와 구분합니다 · 체험용', 2200],
+      ['check-progress', 'workshop-shopping', '체크한 수량과 진행도로 준비 상태를 확인하도록 디자인했습니다', 2600]
     ] }
   ];
   const send = (f, message) => f.contentWindow?.postMessage({ channel, ...message }, origin);
@@ -103,11 +103,11 @@
   function render(tour) {
     tour.controls.dataset.state = tour.state;
     tour.controls.dataset.scene = tour.scenes[tour.index]?.[0] || 'complete';
-    tour.caption.textContent = tour.state === 'manual' ? '이제 직접 이어가고 있어요 · 보던 흐름은 여기서 멈춰둘게요' : tour.state === 'done' ? '한 번 따라가 봤어요 · 궁금했던 곳을 직접 살펴보세요' : tour.state === 'error' ? '이야기가 잠시 멈췄어요 · 다시 시작하거나 지금 화면을 직접 살펴보세요' : tour.scenes[tour.index]?.[2] || '한 사람이 이 화면에서 일을 마치는 과정을 따라가요';
-    if (tour.id === 'horizon' && tour.index === 4 && !/live\.html/.test(tour.source) && ['running', 'paused', 'idle'].includes(tour.state)) tour.caption.textContent = '최근 이벤트를 보면 대기가 쌓인 전후의 상황도 살펴볼 수 있어요';
-    tour.meta.textContent = tour.state === 'manual' ? '직접 이어가는 중' : tour.state === 'done' ? '여기까지 따라왔어요' : tour.state === 'running' ? `이야기 따라가기 · ${tour.index + 1} / ${tour.scenes.length}` : tour.state === 'paused' ? '잠깐 멈춰 있어요' : '이 화면에서 시작하는 이야기';
+    tour.caption.textContent = tour.state === 'manual' ? '직접 체험 중입니다 · 자동 안내는 현재 화면에서 멈춥니다' : tour.state === 'done' ? '안내가 끝났습니다 · 지금 화면에서 직접 사용할 수 있습니다' : tour.state === 'error' ? '안내가 중단됐습니다 · 다시 보거나 현재 화면에서 직접 사용할 수 있습니다' : tour.scenes[tour.index]?.[2] || '실제 화면으로 디자인한 사용 흐름을 보여줍니다';
+    if (tour.id === 'horizon' && tour.index === 4 && !/live\.html/.test(tour.source) && ['running', 'paused', 'idle'].includes(tour.state)) tour.caption.textContent = '최근 이벤트로 운영 상태의 변화를 확인하도록 구성했습니다';
+    tour.meta.textContent = tour.state === 'manual' ? '직접 이어가는 중' : tour.state === 'done' ? '안내 완료' : tour.state === 'running' ? `사용 흐름 · ${tour.index + 1} / ${tour.scenes.length}` : tour.state === 'paused' ? '일시정지' : '디자인한 사용 흐름';
     if (tour.id === 'weekly' || tour.id === 'workshop') tour.meta.textContent = `${tour.id === 'weekly' ? 'Weekly' : '워크샵'} · ${tour.meta.textContent}`;
-    tour.play.textContent = tour.state === 'running' ? '멈춤' : tour.state === 'paused' ? '이어보기' : '따라가 보기';
+    tour.play.textContent = tour.state === 'running' ? '멈춤' : tour.state === 'paused' ? '이어보기' : '흐름 보기';
     tour.play.hidden = ['done', 'manual', 'error'].includes(tour.state);
     tour.replay.hidden = tour.state === 'idle';
   }
@@ -157,7 +157,7 @@
     const controls = document.createElement('div'); controls.className = 'preview-controls'; controls.dataset.preview = c.id;
     controls.setAttribute('role', 'group');
     controls.setAttribute('aria-label', { horizon: 'Blue Horizon 업무 흐름', counseling: '상담사 OS 업무 흐름', admin: '관리자 OS 업무 흐름', weekly: 'Weekly 업무 흐름', workshop: '워크샵 준비 흐름' }[c.id]);
-    controls.innerHTML = '<div class="preview-copy"><small></small><span class="preview-caption"></span></div><button type="button" class="preview-play">따라가 보기</button><button type="button" class="preview-replay">다시 보기</button>';
+    controls.innerHTML = '<div class="preview-copy"><small></small><span class="preview-caption"></span></div><button type="button" class="preview-play">흐름 보기</button><button type="button" class="preview-replay">다시 보기</button>';
     c.mount.append(controls);
     const t = { ...c, controls, meta: controls.querySelector('small'), caption: controls.querySelector('.preview-caption'), play: controls.querySelector('.preview-play'), replay: controls.querySelector('.preview-replay'), index: 0, state: 'idle', phase: 'new', token: 0, autoResume: false, visibleSince: 0, source: c.frame.dataset.src };
     t.play.onclick = () => t.state === 'running' ? pause(t) : start(t);
