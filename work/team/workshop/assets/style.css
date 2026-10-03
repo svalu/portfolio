@@ -445,6 +445,13 @@ html { scroll-behavior: smooth; }
   -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
 .cars::-webkit-scrollbar { display: none; }
+.cars{cursor:grab;touch-action:pan-x pan-y;user-select:none}
+.cars.dragging{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.cars.dragging *{cursor:grabbing!important}
+.cars:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+.cars-tools{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:var(--ink-2)}
+.cars-tools span{flex:1}
+.cars-tools button{width:44px;height:44px;border:2px solid var(--ink);border-radius:50%;background:var(--paper);font-size:20px;cursor:pointer}
 .car {
   flex: 0 0 min(78vw, 300px); scroll-snap-align: start; position: relative;
   border: 3px solid var(--ink); border-radius: 20px; background: #fff; box-shadow: var(--shadow-sm);
@@ -539,7 +546,7 @@ html { scroll-behavior: smooth; }
 
 @media (min-width: 640px) { .car { flex-basis: 300px; } }
 @media (min-width: 960px) {
-  .cars { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); overflow: visible; margin: 0; padding: 12px 0 6px; }
-  .car { flex: auto; }
+  .cars { margin: 0; padding: 12px 0 14px; }
+  .car { flex: 0 0 300px; }
   .car.car-new { min-height: 220px; }
 }

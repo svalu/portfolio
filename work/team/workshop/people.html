@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/style.css?v=10">
+<link rel="stylesheet" href="./assets/style.css?v=20261003drag">
 <link rel="stylesheet" href="../../../assets/preview/client.css?v=20261003guided"></head>
 <body data-reading-tour="workshop">
 <div class="wrap">
@@ -49,7 +49,8 @@
     <p style="margin:0 0 6px;color:var(--ink-2);font-size:14px;font-weight:600">
       자리(사람 이름)나 빈자리를 누르면 바꿀 수 있어. 운전하는 사람은 자기 차 만들고, 타는 사람은 차 골라 타기!
     </p>
-    <div class="cars first" id="cars"></div>
+    <div class="cars-tools"><span>옆으로 넘겨 차량을 확인해요</span><button type="button" id="carsPrev" aria-label="이전 차량">←</button><button type="button" id="carsNext" aria-label="다음 차량">→</button></div>
+    <div class="cars first" id="cars" tabindex="0" role="region" aria-label="카풀 차량 캐러셀"></div>
     <div class="pool-wrap" id="poolWrap">
       <div class="pool-title">🙋 아직 못 탄 사람 <span class="cnt" id="poolCnt">0</span></div>
       <div class="pool" id="pool"></div>
@@ -166,6 +167,7 @@
   </div>
 </div>
 
+<script src="./assets/carousel.js?v=20261003drag"></script>
 <script src="./assets/data.js?v=10"></script>
 <script src="./assets/app.js?v=20261003guided"></script>
 <script>
