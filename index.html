@@ -98,7 +98,7 @@
   .ctl button{font:11px/1 system-ui,sans-serif;letter-spacing:.2em;padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.18);background:rgba(255,255,255,.7);color:#333;cursor:pointer}
 
   /* ───────────── 차원 공통 편집 체계 ───────────── */
-  .dim{--paper:#0b1020;--ink:#e8ecf4;--ink2:rgba(232,236,244,.62);--ink3:rgba(232,236,244,.62);--line:rgba(232,236,244,.12);--acc:#4b6cff;--acc2:#8ea0ff;--band-c:#16204a}
+  .dim{--scroll:rgba(232,236,244,.20);--paper:#0b1020;--ink:#e8ecf4;--ink2:rgba(232,236,244,.62);--ink3:rgba(232,236,244,.62);--line:rgba(232,236,244,.12);--acc:#4b6cff;--acc2:#8ea0ff;--band-c:#16204a}
   .dim .sheet{position:absolute;inset:0;background:var(--paper);color:var(--ink)}
   .dim .no{position:absolute;left:3.6%;top:5.2%;font-size:12px;letter-spacing:.34em;color:var(--ink3)}
   .dim .title{position:absolute;left:3.4%;top:9.5%;font-size:clamp(56px,9.4vw,150px);font-weight:200;letter-spacing:-.03em;line-height:.9;color:var(--ink)}
@@ -166,7 +166,7 @@
 
   /* 차원별 팔레트 */
   #d01{--paper:#0b1020;--acc:#4b6cff;--acc2:#9fb0ff;--band-c:#151d3f}
-  #d02{--paper:#f5f2ea;--ink:#16150f;--ink2:rgba(22,21,15,.62);--ink3:rgba(22,21,15,.62);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band-c:#e9dcc6}
+  #d02{--scroll:rgba(22,21,15,.22);--paper:#f5f2ea;--ink:#16150f;--ink2:rgba(22,21,15,.62);--ink3:rgba(22,21,15,.62);--line:rgba(22,21,15,.14);--acc:#e0762e;--acc2:#b85a1c;--band-c:#e9dcc6}
   #d03{--paper:#0f1412;--acc:#2fd3a0;--acc2:#8ff0cf;--band-c:#14241e}
   #d04{--paper:#070a12;--ink:#f0eef5;--ink2:rgba(240,238,245,.62);--ink3:rgba(240,238,245,.62);--line:rgba(240,238,245,.12);--acc:#c0203a;--acc2:#ff7a90;--band-c:#1a0d14}
 
@@ -317,7 +317,11 @@
 
   /* Text flows inside its own column, including on short laptop screens. */
   .dim:not(.intro) .sheet{display:grid;grid-template-columns:minmax(0,40fr) minmax(0,56fr);gap:4%;padding:5vh 3.6% 12vh}
-  .story{min-width:0;min-height:0;overflow:auto;scrollbar-width:thin;padding-right:10px;overscroll-behavior:contain}
+  .story{min-width:0;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--scroll) transparent;padding-right:10px;overscroll-behavior:contain}
+  .story::-webkit-scrollbar{width:7px}
+  .story::-webkit-scrollbar-track{background:transparent}
+  .story::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:99px}
+  .story:hover::-webkit-scrollbar-thumb{background:var(--ink2)}
   .dim .story > .no,.dim .story > .title,.dim .story > .ddots,.dim .story > .tabs,.dim .story > .hook,.dim .story > .sub,.dim .story > .facts,.dim .story > .try{position:relative;inset:auto;width:auto}
   .dim .story .title,#d01 .story .title{font-size:clamp(48px,6.4vw,96px);margin-top:18px}
   #d03 .story .title{font-size:clamp(44px,5.6vw,88px)}
@@ -359,17 +363,31 @@
   #lbPct{flex:none;min-width:4ch;text-align:right;font-variant-numeric:tabular-nums}
   .lb-bar button{min-height:44px;letter-spacing:0;font-size:12px}
   .lb-bar .sp{display:none}
-  /* 노트북처럼 세로가 짧은 화면에서는 글 열에 스크롤이 생겨 휠이 먹힌다. 여백을 먼저 줄인다. */
-  @media (min-width:901px) and (max-height:820px){
+  /* 세로가 짧을수록 여백을 단계로 조인다. 글이 넘치면 휠이 글 열 안에서 먹혀 차원이 안 넘어간다. */
+  @media (min-width:901px) and (max-height:1040px){
     .dim:not(.intro) .sheet{padding-top:3.4vh}
-    .dim .story .title,#d01 .story .title{margin-top:10px}
+    .dim .story .title,#d01 .story .title{margin-top:10px;font-size:clamp(46px,5.9vw,88px)}
+    #d03 .story .title{font-size:clamp(42px,5.2vw,80px)}
     .dim .story .ddots{margin-top:20px}
-    .dim .story .tabs{margin-top:16px}
+    .dim .story .tabs{margin-top:15px}
     .dim .story .hook{margin-top:17px}
-    .dim .story .sub{margin-top:10px}
-    .dim .story .facts{margin-top:17px;padding-top:14px;gap:11px}
-    .dim .story .facts p{line-height:1.7}
-    .dim .story .try{margin-top:17px}
+    .dim .story .sub{margin-top:9px}
+    .dim .story .facts{margin-top:17px;padding-top:13px;gap:10px}
+    .dim .story .try{margin-top:16px}
+    .story .preview-controls{margin-top:9px}
+  }
+  @media (min-width:901px) and (max-height:820px){
+    .dim:not(.intro) .sheet{padding-top:2.6vh}
+    .dim .story .title,#d01 .story .title{margin-top:7px;font-size:clamp(42px,5.2vw,78px)}
+    #d03 .story .title{font-size:clamp(38px,4.6vw,70px)}
+    .dim .story .ddots{margin-top:10px}
+    .dim .story .tabs{margin-top:10px}
+    .dim .story .hook{margin-top:9px}
+    .dim .story .sub{margin-top:5px}
+    .dim .story .facts{margin-top:9px;padding-top:9px;gap:6px}
+    .dim .story .facts p{line-height:1.66}
+    .dim .story .try{margin-top:8px}
+    .story .preview-controls{margin-top:5px}
   }
 
   @media (max-width:900px){
