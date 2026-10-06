@@ -16,8 +16,8 @@
   #d02 .exhibit{grid-template-columns:minmax(0,1fr);padding-top:12px;z-index:1;}
   #d02 .exhibit .frame[hidden]{display:none;}
 
-  /* 오른쪽 여백을 걷어 액자가 화면 끝까지 닿게 한다. 글 열은 왼쪽 여백을 그대로 쓴다. */
-  #d02 .sheet{padding-right:0;}
+  /* 오른쪽 여백은 50px 만 남긴다. 끝까지 붙이면 액자가 화면 모서리를 물어 답답하다. */
+  #d02 .sheet{padding-right:50px;}
 
   /* 액자는 16:9 로 눕힌다. 요즘 모니터 모양이고, 같은 높이에서 가장 넓게 선다.
      높이로 폭을 묶되 칸을 가득 채우는 쪽이 이기게 min() 안쪽을 키웠다. 세로가 아주
