@@ -19,11 +19,11 @@
   /* 오른쪽 여백은 50px 만 남긴다. 끝까지 붙이면 액자가 화면 모서리를 물어 답답하다. */
   #d02 .sheet{padding-right:50px;}
 
-  /* 액자는 16:9 로 눕힌다. 요즘 모니터 모양이고, 같은 높이에서 가장 넓게 선다.
+  /* 액자를 더 눕힌다(1440×691). 16:9 로는 아래 여백 50px 을 비우느라 폭까지 깎였다.
      높이로 폭을 묶되 칸을 가득 채우는 쪽이 이기게 min() 안쪽을 키웠다. 세로가 아주
      낮아 칸을 못 채울 때도 오른쪽 끝에는 붙어 있도록 end 로 보낸다.
      빼는 376px = 글 머리 + 액자 바·라벨 + 액자 안의 조작부 + 아래 여백 50px. */
-  #d02 .exhibit .frame{width:min(100%,calc((100svh - 376px)/.5625));justify-self:end;}
+  #d02 .exhibit .frame{width:min(100%,calc((100svh - 376px)/.48));justify-self:end;}
 
   /* "2025년 제품에도 남았습니다" 배지는 액자 아래에 걸려 세로를 먹고 화면 밖으로 밀렸다.
      문장은 본문에도 있으니, 라벨과 같은 줄 오른쪽으로 올려 자리를 비운다. */
@@ -34,7 +34,7 @@
 @media (min-width:901px) and (max-height:820px){
   #d02 .sheet{grid-template-rows:120px minmax(0,1fr) auto;}
   #d02 .story .tabs{margin-top:88px;}
-  #d02 .exhibit .frame{width:min(100%,calc((100svh - 350px)/.5625));}
+  #d02 .exhibit .frame{width:min(100%,calc((100svh - 350px)/.48));}
 }
 
 @media (max-width:900px){
