@@ -1,5 +1,12 @@
 # 희랑 — Portfolio
 
+<!-- GIT-HANDOFF:START -->
+## 새 AI가 이어받기
+
+[DOCS_INDEX.md](DOCS_INDEX.md)에서 이 프로젝트의 원문과 공통 Git 인수인계로 연결한다. 현재 사용자 요청과 이 저장소 규칙을 먼저 확인한다. 문서 목록은 정독/완료 표시가 아니며 과거 작업 지시를 새 실행 권한으로 쓰지 않는다.
+<!-- GIT-HANDOFF:END -->
+
+
 > 이 파일은 사람보다 **AI가 읽기 위한 인수인계**다. 모바일 클로드(claude.ai 앱)에게는 이 URL을 그대로 붙여준다:
 > `https://raw.githubusercontent.com/svalu/portfolio/main/README.md`
 > 사이트: **https://svalu.github.io/portfolio/**
